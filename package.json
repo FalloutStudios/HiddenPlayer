@@ -1,0 +1,24 @@
+{
+  "name": "afkbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "MannuG",
+  "license": "ISC",
+  "dependencies": {
+    "config": "^3.3.3",
+    "discord.js": "^12.5.3",
+    "fs": "0.0.1-security",
+    "mineflayer": "^2.37.1",
+    "mineflayer-blockfinder": "0.0.7",
+    "mineflayer-cmd": "^1.0.2",
+    "mineflayer-pathfinder": "^1.6.2",
+    "mineflayer-pvp": "^1.0.2",
+    "mysql": "^2.18.1",
+    "prismarine-viewer": "^1.19.3",
+    "request": "^2.88.2"
+  }
+}

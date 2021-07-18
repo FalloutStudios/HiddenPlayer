@@ -1,0 +1,68 @@
+{
+	"server": {
+		"ip": "laggyserverfrom.aternos.me",
+		"port": 34958,
+		"reconnectTimeout": 5000
+	},
+	"player": {
+		"enabled": true,
+		"name": "HiddenPlayer",
+		"version": "1.16.5",
+		"message": "hello",
+		"pvp": {
+			"enabled": true
+		},
+		"commands": {
+			"kill": true,
+			"reload": true,
+			"restart": true
+		}
+	},
+	"chat": {
+		"chatDelay": 500
+	},
+	"autosave": {
+		"enable": true,
+		"interval": 60000
+	},
+	"staffs": {
+		"GhexterCortes": "admin",
+		"GhescaCortes": "admin"
+	},
+	"discord": {
+		"enabled": true,
+		"token": "ODU0MjMwMzY2MDg4MjAwMjMz.YMg6Bg.qZ5vYtSu327Feue0AKw10QRsWEY",
+		"prefix": ["hiddenplayer", "hidden", "hd"],
+		"command-prefix": ">",
+		"motivate": {
+			"enabled": true,
+			"src": "assets/motivate.json"
+		},
+		"emotes": {
+			"enabled": true,
+			"src": "assets/emotes.json"
+		},
+		"react": {
+			"enabled": true,
+			"src": "assets/reacts.json"
+		},
+		"facts": {
+			"enabled": true
+		}
+	},
+	"database": {
+		"enabled": true,
+		"host": "127.0.0.1",
+		"user": "root",
+		"pass": "",
+		"database": "bot"
+	},
+	"debug": {
+		"enabled": true,
+		"movements": false,
+		"prefix": "Beta",
+		"sufix": ""
+	},
+	"onlineConfig": "http://localhost/hidden.json",
+	"version": "1.49"
+}
