@@ -127,7 +127,7 @@ function findValueOfProperty(obj, propertyName){
 //Main bot [MC / Discord] functions and databases
 function newBot(){
     //movements
-    var actions = [ 'forward', 'back', 'left', 'right'];
+    var actions = ['forward', 'back', 'left', 'right'];
     var jump = true;
 
     //login
@@ -153,7 +153,7 @@ function newBot(){
         logged = false;
     }
 
-    if(config['player']['enabled'] == false){
+    if(!config['player']['enabled']){
         if(debug) console.log('[Log] Minecraft player is turned off');
         return;
     }
@@ -917,8 +917,8 @@ function connectDB(){
     });
 }
 
-if(db_enable == true) connectDB();
-if(config['discord']['enabled'] == true) DiscordBot();
-if(config['player']['enabled'] == true) newBot();
+if(db_enable) connectDB();
+if(config['discord']['enabled']) DiscordBot();
+if(config['player']['enabled']) newBot();
 
 // if(conn) connection.end();
