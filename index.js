@@ -15,49 +15,8 @@ let client = new Discord.Client();
 let conf = fs.readFileSync('config.json');
 let config = JSON.parse(conf);
 
-//Player Informations
-let player = config['player']['name'];
-let JoinPlayer = config['player']['enabled'];
-let firstMessage = config['player']['message'];
-
-//connection
-let ip = config['server']['ip'];
-let port = config['server']['port'];
-let reconnectTime = config['server']['reconnecTimout'];
-
 //debug
 let debug = config['debug']['enabled'];
-let player_prefix = config['debug']['prefix'];
-let player_sufix = config['debug']['sufix'];
-let movement_log = config['debug']['movements'];
-let staffs = config['staffs'];
-
-//autosave
-let ServerSave = config['autosave']['enable'];
-let ServerSaveDelay = config['autosave']['interval'];
-
-//online stuffs
-let onlineConf = config['onlineConfig'];
-
-//Player Commands
-let chatDelay = config['chat']['chatDelay'];
-
-//discord conf
-let discordBot = config['discord']['enabled'];
-let discordToken = config['discord']['token'];
-let discordPrefixes = config['discord']['prefix'];
-let discordCMDPrefixes = config['discord']['command-prefix'];
-
-let discordEmotes = config['discord']['emotes']['enabled'];
-let discordEmotesSrc = config['discord']['emotes']['src'];
-
-let discordReact = config['discord']['react']['enabled'];
-let discordReactSrc = config['discord']['react']['src'];
-
-let discordMotivate = config['discord']['motivate']['enabled'];
-let discordMotivateSrc = config['discord']['motivate']['src'];
-
-let discordFacts = config['discord']['facts']['enabled'];
 
 //databes conf
 let db_enable = config['database']['enabled'];
@@ -72,11 +31,6 @@ const configVersion = config['version'];
 var discordConnected = false;
 var conn = null;
 
-//search engine
-var cseKey = 'AIzaSyDUdDBNxY6g9ahJjDiKQ3Z3-b9bPn29bS0';
-var searchQuery = "https://cse.google.com/cse?cx=12e8676e51b6bd9a6&q=";
-let searchURI = "https://www.googleapis.com/customsearch/v1?key="+ cseKey +"&cx=12e8676e51b6bd9a6&num=1&q=";
-
 function parse (url = null){
     if(url != null){
         if(debug) console.log('[Log] Config triggered');
@@ -89,59 +43,25 @@ function parse (url = null){
 		}, function (error, response, body) {
 
             if (!error && response.statusCode === 200) {
-                conf = null;
-                config = body;
+                body_conf = null;
+                body_config = body;
                 
                 if(debug) {
-                    console.log('[Log] Config Requested from: '+onlineConf);
-                    console.log(config);
+                    console.log('[Log] Config Requested from: '+config['onlineConfig']);
+                    console.log(body_config);
                 }
 
-                var confV = config['version'];
+                var confV = body_config['version'];
 
                 if(configVersion != confV) {
                     console.error('[Error] Config reload failed: Different config versions');
                     process.exit();
                 }
 
-                //connection
-                ip = config['server']['ip'];
-                port = config['server']['port'];
-                reconnectTime = config['server']['reconnecTimout'];
+                config = body_config;
 
                 //debug
                 debug = config['debug']['enabled'];
-                player_prefix = config['debug']['prefix'];
-                player_sufix = config['debug']['sufix'];
-                movement_log = config['debug']['movements'];
-                staffs = config['staffs'];
-
-                //autosave
-                ServerSave = config['autosave']['enable'];
-                ServerSaveDelay = config['autosave']['interval'];
-
-                //online stuffs
-                onlineConf = config['onlineConfig'];
-
-                //Player Commands
-                chatDelay = config['chat']['chatDelay'];
-
-                //discord conf
-                discordBot = config['discord']['enabled'];
-                discordToken = config['discord']['token'];
-                discordPrefixes = config['discord']['prefix'];
-                discordCMDPrefixes = config['discord']['command-prefix'];
-
-                discordEmotes = config['discord']['emotes']['enabled'];
-                discordEmotesSrc = config['discord']['emotes']['src'];
-
-                discordReact = config['discord']['react']['enabled'];
-                discordReactSrc = config['discord']['react']['src'];
-
-                discordMotivate = config['discord']['motivate']['enabled'];
-                discordMotivateSrc = config['discord']['motivate']['src'];
-
-                discordFacts = config['discord']['facts']['enabled'];
 
                 //databes conf
                 db_enable = config['database']['enabled'];
@@ -151,7 +71,6 @@ function parse (url = null){
                 db_name = config['database']['database'];
 
                 if(debug) console.log('[Log] Config reload success');
-                if(debug) console.log('[Log] Config reload body - '+body);
                 success = true;
             } else{
                 if(debug) console.log('[Log] Config reload failed error - '+error);
@@ -161,8 +80,8 @@ function parse (url = null){
 
             connectDB();
 
-            if(discordBot == true) DiscordBot();
-            if(JoinPlayer == true) newBot();
+            if(config['discord']['enabled'] == true) DiscordBot();
+            if(config['player']['enabled'] == true) newBot();
             return success;
         });
         
@@ -234,7 +153,7 @@ function newBot(){
         logged = false;
     }
 
-    if(JoinPlayer == false){
+    if(config['player']['enabled'] == false){
         if(debug) console.log('[Log] Minecraft player is turned off');
         return;
     }
@@ -243,31 +162,32 @@ function newBot(){
     
     var player = config['player']['name'];
     
-    if(debug == true && player_prefix != null || debug == true || player_sufix != null){
-        player = player_prefix+player+player_sufix;
+    if(debug && config['debug']['prefix'] != null || debug && config['debug']['sufix'] != null){
+        player = config['debug']['prefix'] + player + config['debug']['sufix'];
     
         if(debug) console.log('[Log] Prefix and Sufix enabled');
     
-        if(debug == true && player.length > 16){
+        if(debug && player.length > 16){
             console.error('[Error] Name length expected 16 or less. '+player.length+' requested'); 
             process.exit();
         }
     }
     //make bot
-    if(port == null){
-        var bot = mineflayer.createBot({
-            host: ip,
-            username: player
-        });
-    } else{
-        var bot = mineflayer.createBot({
-            host: ip,
-            port: port,
-            username: player
-        });
+    var port = parseInt(config['server']['port']);
+    var ip = config['server']['ip'];
+
+    if (isNaN(port)) { 
+        console.error('[Error] Invalid Port'); 
+        process.exit();        
     }
 
-    if(debug) console.log('[Log] IP: '+ip+'; Port: '+port+'; PlayerName: '+player+'; Prefix: '+player_prefix+'; Sufix: '+player_sufix);
+    var bot = mineflayer.createBot({
+        host: ip,
+        port: port,
+        username: player
+    });
+
+    if(debug) console.log('[Log] IP: '+ip+'; Port: '+port+'; PlayerName: '+player+'; Prefix: '+config['debug']['prefix']+'; Sufix: '+config['debug']['sufix']);
 
     bot.loadPlugin(cmd);
     bot.loadPlugin(pathfinder);
@@ -276,7 +196,6 @@ function newBot(){
 
     //first spawn
     bot.once('spawn', () => {
-        // keep your eyes on the target, so creepy!
         if(debug) console.log('[Log] First Spawn');
     });
 
@@ -285,7 +204,7 @@ function newBot(){
         if(debug) console.log('[Log] Spawned');
         if(connected == false && logged == false){
             connected = true;
-            bot.chat(firstMessage);
+            bot.chat(config['player']['message']);
             logged = true;
             if(debug) console.log('[Log] connected = '+connected+'; logged = '+logged);
         }
@@ -303,7 +222,11 @@ function newBot(){
         var admin = false;
         if(username == player || username == 'you') { return; }
 
-        if(staffs[username] != undefined && staffs[username] == 'admin') { admin = true; console.log('[Log] '+username+' is an admin'); } else{ console.log('[Log] '+username+' is not an admin'); }
+        if(config['staffs'][username] != undefined && config['staffs'][username] == 'admin') { 
+            admin = true; console.log('[Log] '+username+' is an admin'); 
+        } else{ 
+            console.log('[Log] '+username+' is not an admin'); 
+        }
 
         if(message.substr(0,1) == '!'){
             var args = message.slice(1).trim().split(/ +/);
@@ -316,7 +239,7 @@ function newBot(){
                 bot.chat('invalid command type !help to get help');
             } else if (admin == true && command == 'reloadonlineconfig' || admin == true && command == 'restartconfig'){
                 bot.chat("Reloading Bot Config");
-                parse(onlineConf);
+                parse(config['onlineConfig']);
             } else if (admin == true && command == 'restartbot' || admin == true && command == 'reloadbot'){
                 bot.chat("Restarting Bot");
                 bot.quit();
@@ -335,7 +258,7 @@ function newBot(){
             }
 
         } else{
-            if(debug) console.log('[Log] Player chat recieved from '+username+' > '+message);
+            if (debug) console.log('[Log] Player chat recieved from '+username+' > '+message);
 
             var reply = null;
 
@@ -348,9 +271,9 @@ function newBot(){
                     message = replaceAll(message,"  ",' ');
                     message = replaceAll(message,"?",'');
                     message = replaceAll(message,"!",'').trim();
-                msg = message;
+                    msg = message;
             removeMensions = replaceAll(message,player,"").trim();
-                rmsg = removeMensions;
+                            rmsg = removeMensions;
 
             //lower
             lmsg = message.toLowerCase();
@@ -395,7 +318,7 @@ function newBot(){
             if(reply != null) {
                 setTimeout(() => {
                     bot.chat(reply);
-                }, chatDelay);
+                }, config['chat']['chatDelay']);
             }
         }
     });
@@ -413,7 +336,7 @@ function newBot(){
     }
 
     bot.on('time',function (time){
-        if(JoinPlayer == false) {
+        if(config['player']['enabled'] == false) {
             bot.quit();
             bot.end();
             return;
@@ -422,7 +345,7 @@ function newBot(){
         if(logged != true && connected != true) { return; }
 
         entity = bot.nearestEntity();
-        if(entity != null && entity.position != null && entity.isValid && entity.type == 'mob' || entity != null && entity.position != null && entity.isValid && entity.type == 'player') bot.lookAt(entity.position.offset(0, 1.6, 0));
+        if(entity != null && entity.position != null && entity.isValid && entity.type == 'mob' || entity != null && entity.position != null && entity.isValid && entity.type == 'player') { bot.lookAt(entity.position.offset(0, 1.6, 0)); }
 
         if(entity && entity.kind && entity.isValid && entity.type == 'mob' && entity.kind.toLowerCase() == 'hostile mobs' && pvpBot){
             onPVP = true;
@@ -448,14 +371,14 @@ function newBot(){
                     bot.setControlState(lastaction,false);
                     bot.deactivateItem();
                     moving = false;
-                    if(debug == true && movement_log == true) console.log('[Log] age = '+bot.time.age+'; moving = '+moving);
+                    if(debug && config['debug']['movements'] == true) console.log('[Log] age = '+bot.time.age+'; moving = '+moving);
                 } else{
                     lastaction = actions[Math.floor(Math.random() * actions.length)];
                     bot.setControlState(lastaction,true);
                     moving = true;
                     lasttime = bot.time.age;
                     bot.activateItem();
-                    if(debug == true && movement_log == true) console.log('[Log] age = '+bot.time.age+'; moving = '+moving);
+                    if(debug && config['debug']['movements'] == true) console.log('[Log] age = '+bot.time.age+'; moving = '+moving);
                 }
             }
 
@@ -472,11 +395,11 @@ function newBot(){
         }
     });
 
-    if(ServerSave){
+    if(config['autosave']){
         setInterval(() => {
             saveAll();
             if (debug) console.log('[Log] Game saved');
-        }, ServerSaveDelay);
+        }, config['autosave']['interval']);
     }
 
     //if bot end
@@ -490,10 +413,10 @@ function newBot(){
         logged = false;
 
         setTimeout(() => {
-            if(JoinPlayer == false) return;
+            if(config['player']['enabled'] == false) return;
             newBot();
             if(debug) console.log('[Log] End');
-        }, reconnectTime);
+        }, config['server']['reconnectTimeout']);
     });
 }
 function DiscordBot(){
@@ -504,12 +427,12 @@ function DiscordBot(){
         discordConnected = false;
     }
     
-    if(discordBot == false){
+    if(config['discord']['enabled'] == false){
         if(debug) console.log('[Log] Discord bot is turned off');
         return;
     }
 
-    client.login(discordToken);
+    client.login(config['discord']['token']);
 
     if(debug) console.log("[Log] Discord bot enabled");
 
@@ -522,24 +445,24 @@ function DiscordBot(){
         var reacts = null;
         var motivations = null;
 
-        if(discordEmotes == true){
-            emotes = fs.readFileSync(discordEmotesSrc);
+        if(config['discord']['emotes']['enabled'] == true){
+            emotes = fs.readFileSync(config['discord']['emotes']['src']);
             emotes = JSON.parse(emotes);
         }
 
-        if(discordReact == true){
-            reacts = fs.readFileSync(discordReactSrc);
+        if(config['discord']['react']['enabled'] == true){
+            reacts = fs.readFileSync(config['discord']['react']['src']);
             reacts = JSON.parse(reacts);
         }
 
-        if(discordMotivate == true){
-            motivations = fs.readFileSync(discordMotivateSrc);
+        if(config['discord']['motivate']['enabled'] == true){
+            motivations = fs.readFileSync(config['discord']['motivate']['src']);
             motivations = JSON.parse(motivations);
         }
 
         client.on('message', message => {
             //disconnect
-            if(discordBot == false){
+            if(config['discord']['enabled'] == false){
                 client.destroy();
                 return;
             }
@@ -595,8 +518,8 @@ function DiscordBot(){
 
                 found = false;
 
-                for (var i=0; i < discordPrefixes.length; i++) {
-                    if (string.indexOf(' '+discordPrefixes[i].toLowerCase()+' ') > -1 || string.indexOf(discordPrefixes[i].toLowerCase()+' ') > -1 || string.indexOf(' '+discordPrefixes[i].toLowerCase()) > -1 || discordPrefixes[i].toLowerCase() == string){
+                for (var i=0; i < config['discord']['prefix'].length; i++) {
+                    if (string.indexOf(' '+config['discord']['prefix'][i].toLowerCase()+' ') > -1 || string.indexOf(config['discord']['prefix'][i].toLowerCase()+' ') > -1 || string.indexOf(' '+config['discord']['prefix'][i].toLowerCase()) > -1 || config['discord']['prefix'][i].toLowerCase() == string){
                         return found = true;
                     }
                 }
@@ -609,11 +532,11 @@ function DiscordBot(){
 
                 string = string.toLowerCase().trim();
 
-                for (var i=0; i < discordPrefixes.length; i++) {
-                    if (string.indexOf(' '+discordPrefixes[i]+' ') > -1 || string.indexOf(discordPrefixes[i]+' ') > -1 || string.indexOf(' '+discordPrefixes[i]) > -1 || string.startsWith(discordPrefixes[i]+' ')){
-                        string = replaceAll(string,' '+discordPrefixes[i]+' ','');
-                        string = replaceAll(string,discordPrefixes[i]+' ','');
-                        string = replaceAll(string,' '+discordPrefixes[i],'');
+                for (var i=0; i < config['discord']['prefix'].length; i++) {
+                    if (string.indexOf(' '+config['discord']['prefix'][i]+' ') > -1 || string.indexOf(config['discord']['prefix'][i]+' ') > -1 || string.indexOf(' '+config['discord']['prefix'][i]) > -1 || string.startsWith(config['discord']['prefix'][i]+' ')){
+                        string = replaceAll(string,' '+config['discord']['prefix'][i]+' ','');
+                        string = replaceAll(string,config['discord']['prefix'][i]+' ','');
+                        string = replaceAll(string,' '+config['discord']['prefix'][i],'');
                         string = string.trim();
                     }
                 }
@@ -659,8 +582,8 @@ function DiscordBot(){
             if(author.bot) return;
 
             //CMD or STRING parser
-            if (!rawMessage.startsWith(discordCMDPrefixes)){
-                if(debug) console.log("[Log] Discord message instead of command: "+rawMessage);
+            if (!rawMessage.startsWith(config['discord']['command-prefix'])){
+                if(debug) console.log("[Log] Discord message sent by: "+author);
                 //discord msg
 
                 if(findName(rawMessage) && removeMensions(lowerMessage) == 'hi' || lowerMessage == 'hi guys'){
@@ -797,7 +720,7 @@ function DiscordBot(){
                     }
                 } else if (findName(rawMessage) && removeMensions(lowerMessage).substr(0,11).replace('tell','').replace('me','').trim() == 'random fact') {
                     
-                } else if (removeMensions(lowerMessage).indexOf('im') > -1 && removeMensions(lowerMessage).indexOf('sick') > -1 && removeMensions(lowerMessage).indexOf('not') < -1) {
+                } else if (removeMensions(lowerMessage).indexOf('im') > -1 && removeMensions(lowerMessage).indexOf('sick') > -1 && removeMensions(lowerMessage).indexOf('not') < 0) {
                     
                     if(randomResponse == 0)
                         message.reply('Get rest :thumbsup:');
@@ -812,7 +735,7 @@ function DiscordBot(){
             } else {
                 if(debug) console.log("[Log] Executed Discord bot command: "+command+" by "+author);
 
-                var args = rawMessage.slice(discordCMDPrefixes.length).trim().split(/ +/);
+                var args = rawMessage.slice(config['discord']['command-prefix'].length).trim().split(/ +/);
                 var command = args.shift().toLowerCase();
 
                 //commands
@@ -851,9 +774,9 @@ function DiscordBot(){
                     if(message.member.hasPermission("ADMINISTRATOR")) {
                         message.delete();
 
-                        var title = rawMessage.slice(discordCMDPrefixes.length).substr(command.length + 1).split(" ",1)[0];
+                        var title = rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).split(" ",1)[0];
                             title = replaceAll(title,"_"," ").trim();
-                        var content = rawMessage.slice(discordCMDPrefixes.length).substr(command.length + 1).slice(title.length);
+                        var content = rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).slice(title.length);
 
                         var embed = new Discord.MessageEmbed()
                             .setColor('#0099ff')
@@ -870,7 +793,7 @@ function DiscordBot(){
                 } else if (command == 'send') {
                     if(message.member.hasPermission("ADMINISTRATOR")) {
                         message.delete();
-                        message.channel.send(rawMessage.slice(discordCMDPrefixes.length).substr(command.length + 1).trim());
+                        message.channel.send(rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).trim());
                     } else {
                         message.reply('You don\'t have permission to do that').then(msg => {
                             setTimeout(() => { msg.delete(); message.delete() }, 3000);
@@ -934,7 +857,7 @@ function DiscordBot(){
                     if(message.member.hasPermission("ADMINISTRATOR")) {
                         message.delete();
                         message.reply('Reloading Minecraft and Discord bots');
-                        parse(onlineConf);
+                        parse(config['onlineConfig']);
                     } else {
                         message.reply('You don\'t have permission to do that').then(msg => {
                             setTimeout(() => { msg.delete(); message.delete() }, 3000);
@@ -944,8 +867,8 @@ function DiscordBot(){
             }
 
             if(debug) {
-                console.log("[Log] Discord message: "+message.content);
-                console.log('[Log] Raw Message: '+rawMessage+'; LowerRemoveMensions: '+removeMensions(lowerMessage)+'; BotFind: '+findName(lowerMessage));
+                console.log("[Log] Discord message: "+limitText(message.content));
+                console.log('[Log] Raw Message: '+limitText(rawMessage)+'; LowerRemoveMensions: '+limitText(removeMensions(lowerMessage))+'; BotFind: '+limitText(findName(lowerMessage)));
             }
         });
     });
@@ -989,7 +912,7 @@ function connectDB(){
 }
 
 if(db_enable == true) connectDB();
-if(discordBot == true) DiscordBot();
-if(JoinPlayer == true) newBot();
+if(config['discord']['enabled'] == true) DiscordBot();
+if(config['player']['enabled'] == true) newBot();
 
 // if(conn) connection.end();
