@@ -1,0 +1,108 @@
+{
+    "cry": {
+        "sentences": [
+            "%author% is now crying :<",
+            "%author% is crying 😭",
+            "%author% 😭"
+        ],
+        "sources": [
+            ""
+        ]
+    },
+    "dance": {
+        "sentences": [
+            ""
+        ],
+        "sources": [
+            ""
+        ]
+    },
+    "sing": {
+        "sentences": [
+            ""
+        ],
+        "sources": [
+            ""
+        ]
+    },
+    "smile": {
+        "sentences": [
+            ""
+        ],
+        "sources": [
+            ""
+        ]
+    },
+    "laughing": {
+        "sentences": [
+            ""
+        ],
+        "sources": [
+            ""
+        ]
+    },
+    "blush": {
+        "sentences": [
+            ""
+        ],
+        "sources": [
+            ""
+        ]
+    },
+    "thinking": {
+        "sentences": [
+            ""
+        ],
+        "sources": [
+            ""
+        ]
+    },
+    "happy": {
+        "sentences": [
+            ""
+        ],
+        "sources": [
+            ""
+        ]
+    },
+    "triggered": {
+        "sentences": [
+            ""
+        ],
+        "sources": [
+            ""
+        ]
+    },
+    "sad": {
+        "sentences": [
+            ""
+        ],
+        "sources": [
+            ""
+        ]
+    },
+    "sick": {
+        "sentences": [
+            ""
+        ],
+        "sources": [
+            ""
+        ]
+    },
+    "tired": {
+        "sentences": [
+            ""
+        ],
+        "sources": [
+            ""
+        ]    
+    },
+    "pray": {
+        "sentences": [
+            ""
+        ],
+        "sources": [
+            ""
+        ]    
+    }
+}
