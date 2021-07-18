@@ -331,8 +331,17 @@ function newBot(){
     var jump = false;
     var onPVP = false;
 
-    function saveAll (){
-        bot.chat(`/minecraft:save-all`);
+    function saveAll(){
+        if (!bot) return;
+        if (!config['player']['enable']) return;
+
+        if(debug) console.log("[Log] Saved the game");
+
+        if(bot.chat(`/minecraft:save-all`)) {
+            setTimeout(() => {
+                saveAll();
+            }, config['autosave']['interval']);
+        }
     }
 
     bot.on('time',function (time){
@@ -396,10 +405,7 @@ function newBot(){
     });
 
     if(config['autosave']){
-        setInterval(() => {
-            saveAll();
-            if (debug) console.log('[Log] Game saved');
-        }, config['autosave']['interval']);
+        saveAll();
     }
 
     //if bot end
