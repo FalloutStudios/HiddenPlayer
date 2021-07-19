@@ -64,5 +64,5 @@
 		"sufix": ""
 	},
 	"onlineConfig": "http://localhost/hidden.json",
-	"version": "1.49"
+	"version": "1.5"
 }
