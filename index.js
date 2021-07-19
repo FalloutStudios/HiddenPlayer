@@ -828,22 +828,22 @@ function DiscordBot(){
                 } else if (command == 'reloademotes' || command == 'reloademote' || command == 'reloadall' || command == 'reloadassets') {
                     if(message.member.hasPermission("ADMINISTRATOR")) {
                         message.reply(`Reloading assets`);
-                        if(discordEmotes == true){
-                            emotes = fs.readFileSync(discordEmotesSrc);
+                        if(config['discord']['emotes']['enable'] == true){
+                            emotes = fs.readFileSync(config['discord']['emotes']['src']);
                             emotes = JSON.parse(emotes);
 
                             if(debug) console.log('[Log] Emotes reloaded');
                         }
                 
-                        if(discordReact == true){
-                            reacts = fs.readFileSync(discordReactSrc);
+                        if(config['discord']['react']['enable'] == true){
+                            reacts = fs.readFileSync(config['discord']['react']['src']);
                             reacts = JSON.parse(reacts);
 
                             if(debug) console.log('[Log - Discord Bot] Reacts reloaded');
                         }
                 
-                        if(discordMotivate == true){
-                            motivations = fs.readFileSync(discordMotivateSrc);
+                        if(config['discord']['motivate']['enable'] == true){
+                            motivations = fs.readFileSync(config['discord']['motivate']['src']);
                             motivations = JSON.parse(motivations);
 
                             if(debug) console.log('[Log - Discord Bot] Motivations reloaded');
