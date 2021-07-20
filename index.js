@@ -851,28 +851,43 @@ function DiscordBot(){
                                 msg += ' '+args[i];
                             }
                         }
+
+                        var disabled_channels = config.discord.spam.disabled_channels;
                         
                         msg = msg.trim();
 
+                        console.log();
+                        console.log();
+                        console.log(disabled_channels);
+                        console.log(disabled_channels.includes(channelID) + ' - ' + channelID);
+                        console.log();
+                        console.log();
+
                         if (count > 0 && count <= 30){
-                            if(!findValueOfProperty(config['discord']['spam']['disabled_channels'],channelID)){
-                                for (let spam = 0; spam < count; spam++) {
-                                    message.channel.send(`\`spam:\` `+msg);
+                            if(!disabled_channels.includes(channelID)){
+                                if(msg != null && msg != ''){
+                                    for (let spam = 0; spam < count; spam++) {
+                                        message.channel.send(`\`spam:\` `+msg);
+                                    }
+                                } else{
+                                    message.reply(`Provide spam message :no_entry_sign:`).then(msg => {
+                                        setTimeout(() => { msg.delete(); message.delete() }, 3000);
+                                    });
                                 }
                             } else {
                                 message.reply(`Spam command is disabled in this channel :no_entry_sign:`).then(msg => {
                                     setTimeout(() => { msg.delete(); message.delete() }, 3000);
-                                });;
+                                });
                             }
                         } else{
                             message.reply(`Spam chat count is too small or too large :no_entry_sign:`).then(msg => {
                                 setTimeout(() => { msg.delete(); message.delete() }, 3000);
-                            });;
+                            });
                         }
                     } else{
                         message.reply(`This command is only for Admins :no_entry_sign:`).then(msg => {
                             setTimeout(() => { msg.delete(); message.delete() }, 3000);
-                        });;
+                        });
                     }
 
                 } else if (command == 'exembed') {

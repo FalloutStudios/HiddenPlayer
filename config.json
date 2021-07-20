@@ -5,7 +5,7 @@
 		"reconnectTimeout": 5000
 	},
 	"player": {
-		"enabled": true,
+		"enabled": false,
 		"name": "HiddenPlayer",
 		"version": "1.16.5",
 		"message": "hello",
@@ -74,5 +74,5 @@
 		"sufix": ""
 	},
 	"onlineConfig": null,
-	"version": "1.57"
+	"version": "1.58"
 }
