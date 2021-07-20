@@ -22,7 +22,7 @@
 		"chatDelay": 500
 	},
 	"autosave": {
-		"enable": true,
+		"enabled": true,
 		"interval": 60000
 	},
 	"staffs": {
@@ -34,6 +34,15 @@
 		"token": "ODU0MjMwMzY2MDg4MjAwMjMz.YMg6Bg.qZ5vYtSu327Feue0AKw10QRsWEY",
 		"prefix": ["hiddenplayer", "hidden", "hd"],
 		"command-prefix": ">",
+		"embed_messages": true,
+		"send_bot_messages": true,
+		"spam": {
+			"enabled": true,
+			"disabled_channels": [
+				"856557072166420511",
+				"848008449006632960"
+			]
+		},
 		"motivate": {
 			"enabled": true,
 			"src": "assets/motivate.json"
@@ -47,7 +56,8 @@
 			"src": "assets/reacts.json"
 		},
 		"facts": {
-			"enabled": true
+			"enabled": true,
+			"src": "assets/facts.json"
 		}
 	},
 	"database": {
@@ -63,6 +73,6 @@
 		"prefix": "Beta",
 		"sufix": ""
 	},
-	"onlineConfig": "http://localhost/hidden.json",
-	"version": "1.5"
+	"onlineConfig": null,
+	"version": "1.57"
 }
