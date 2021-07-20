@@ -6,15 +6,28 @@
             "%author% 😭"
         ],
         "sources": [
-            ""
+            "https://media1.tenor.com/images/ce52606293142a2bd11cda1d3f0dc12c/tenor.gif",
+            "https://media1.tenor.com/images/031c7c348d3b86296976e2407723d4a8/tenor.gif",
+            "https://media1.tenor.com/images/4f0673fe4091e88cac9ef1b683f9f81c/tenor.gif",
+            "https://media1.tenor.com/images/7ef999b077acd6ebef92afc34690097e/tenor.gif",
+            "https://media1.tenor.com/images/a31cf174105fcb01b1f8f857204c723e/tenor.gif",
+            "https://media1.tenor.com/images/26ac3b5992ad5992b4011369e5648be0/tenor.gif"
         ]
     },
     "dance": {
         "sentences": [
-            ""
+            "%author% is a very good dancer!",
+            "%author% loves dancing!",
+            "Watch %author% how to dance",
+            "Cool steps %author%!"
         ],
         "sources": [
-            ""
+            "https://media1.tenor.com/images/caa670d36bc6c69bd5e8be8572871264/tenor.gif",
+            "https://media1.tenor.com/images/1644650a4cf9d5b5df5e04e7d63142a5/tenor.gif",
+            "https://media1.tenor.com/images/1ff6de099dbe187b44113cb7eb671020/tenor.gif",
+            "https://media1.tenor.com/images/2bb878f33afd34e139d592a2e37db1b2/tenor.gif",
+            "https://media1.tenor.com/images/86ed183f271b9b322aef616ed086c8b6/tenor.gif",
+            "https://media1.tenor.com/images/b013100cef1cde9158b0371fc1cf7489/tenor.gif"
         ]
     },
     "sing": {
@@ -104,5 +117,13 @@
         "sources": [
             ""
         ]    
+    },
+    "sus": {
+        "sentences": [
+            ""
+        ],
+        "sources": [
+            ""
+        ]
     }
 }
