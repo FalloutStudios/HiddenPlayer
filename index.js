@@ -197,7 +197,7 @@ function newBot(){
     var port = parseInt(config['server']['port']);
     var ip = config['server']['ip'];
 
-    if (isNaN(port)) { 
+    if (typeof port != 'null' && isNaN(port) || typeof port != 'undefined' && isNaN(port)) { 
         console.error('[Error - Mincraft Bot] Invalid Port'); 
         process.exit();        
     }
@@ -205,10 +205,11 @@ function newBot(){
     var bot = mineflayer.createBot({
         host: ip,
         port: port,
-        username: player
+        username: player,
+        version: config['player']['version']
     });
 
-    if(debug) console.log('[Log - Mincraft Bot] IP: '+ip+'; Port: '+port+'; PlayerName: '+player+'; Prefix: '+config['debug']['prefix']+'; Sufix: '+config['debug']['sufix']);
+    if(debug) console.log('[Log - Mincraft Bot] IP: '+ip+'; Port: '+port+'; PlayerName: '+player+'; Prefix: '+config['debug']['prefix']+'; Sufix: '+config['debug']['sufix']+'; Version: '+config['player']['version']);
 
     bot.loadPlugin(cmd);
     bot.loadPlugin(pathfinder);
@@ -855,13 +856,6 @@ function DiscordBot(){
                         var disabled_channels = config.discord.spam.disabled_channels;
                         
                         msg = msg.trim();
-
-                        console.log();
-                        console.log();
-                        console.log(disabled_channels);
-                        console.log(disabled_channels.includes(channelID) + ' - ' + channelID);
-                        console.log();
-                        console.log();
 
                         if (count > 0 && count <= 30){
                             if(!disabled_channels.includes(channelID)){

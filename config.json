@@ -1,11 +1,11 @@
 {
 	"server": {
-		"ip": "laggyserverfrom.aternos.me",
-		"port": 34958,
+		"ip": "PVP17fWY.aternos.me",
+		"port": 25565,
 		"reconnectTimeout": 5000
 	},
 	"player": {
-		"enabled": false,
+		"enabled": true,
 		"name": "HiddenPlayer",
 		"version": "1.16.5",
 		"message": "hello",
@@ -22,7 +22,7 @@
 		"chatDelay": 500
 	},
 	"autosave": {
-		"enabled": true,
+		"enabled": false,
 		"interval": 60000
 	},
 	"staffs": {
@@ -38,10 +38,7 @@
 		"send_bot_messages": true,
 		"spam": {
 			"enabled": true,
-			"disabled_channels": [
-				"856557072166420511",
-				"848008449006632960"
-			]
+			"disabled_channels": []
 		},
 		"motivate": {
 			"enabled": true,
@@ -74,5 +71,5 @@
 		"sufix": ""
 	},
 	"onlineConfig": null,
-	"version": "1.58"
+	"version": "1.59"
 }
