@@ -32,57 +32,61 @@ var discordConnected = false;
 var conn = null;
 
 function parse (url = null){
+    var success = false;
+
     if(url != null){
         if(debug) console.log('[Log - Config] Config triggered');
 
-        var success = false;
+        success = new Promise(resolve => {request({
+                url: url,
+                json: true
+            }, function (error, response, body) {
 
-        request({
-			url: url,
-			json: true
-		}, function (error, response, body) {
+                if (!error && response.statusCode === 200) {
+                    body_conf = null;
+                    body_config = body;
+                    
+                    if(debug) {
+                        console.log('[Log - Config] Config Requested from: '+config['onlineConfig']);
+                        console.log(body_config);
+                    }
 
-            if (!error && response.statusCode === 200) {
-                body_conf = null;
-                body_config = body;
-                
-                if(debug) {
-                    console.log('[Log - Config] Config Requested from: '+config['onlineConfig']);
-                    console.log(body_config);
+                    var confV = body_config['version'];
+
+                    if(configVersion != confV) {
+                        console.error('[Error - Config] Config reload failed: Different config versions');
+                    } else {
+                        success = true;
+                    }
+
+                    config = body_config;
+
+                    //debug
+                    debug = config['debug']['enabled'];
+
+                    //databes conf
+                    db_enable = config['database']['enabled'];
+                    db_host = config['database']['host'];
+                    db_user = config['database']['user'];
+                    db_pass = config['database']['pass'];
+                    db_name = config['database']['database'];
+
+                    if(debug) console.log('[Log - Config] Config reload success');
+                } else{
+                    if(debug) console.error('[Error - Config] Config reload failed error - '+error);
+                    if(debug) console.loh('[Log - Config] Config reload body - '+body);
+                    success = false;
                 }
 
-                var confV = body_config['version'];
+                if(success){
+                    connectDB();
 
-                if(configVersion != confV) {
-                    console.error('[Error - Config] Config reload failed: Different config versions');
-                    process.exit();
+                    if(config['discord']['enabled']) DiscordBot();
+                    if(config['player']['enabled']) newBot();
                 }
 
-                config = body_config;
-
-                //debug
-                debug = config['debug']['enabled'];
-
-                //databes conf
-                db_enable = config['database']['enabled'];
-                db_host = config['database']['host'];
-                db_user = config['database']['user'];
-                db_pass = config['database']['pass'];
-                db_name = config['database']['database'];
-
-                if(debug) console.log('[Log - Config] Config reload success');
-                success = true;
-            } else{
-                if(debug) console.log('[Log - Config] Config reload failed error - '+error);
-                if(debug) console.log('[Log - Config] Config reload body - '+body);
-                success = false;
-            }
-
-            connectDB();
-
-            if(config['discord']['enabled']) DiscordBot();
-            if(config['player']['enabled']) newBot();
-            return success;
+                return success;
+            });
         });
         
     } else{
@@ -98,7 +102,8 @@ function parse (url = null){
 
         if(configVersion != confV) {
             console.error('[Error - Config] Config reload failed: Different config versions');
-            process.exit();
+        } else{
+            success = true;
         }
 
         config = body_config;
@@ -162,16 +167,15 @@ function newBot(){
     if(debug) console.log('[Log - Mincraft Bot] Making new minecraft session');
 
     if(connected && logged) {
-        
-        if(bot){
-            bot.quit();
-            bot.end();
-        }
-
         if(debug) console.log('[Log - Mincraft Bot] Disconnecting Minecraft bot');
 
         connected = false;
         logged = false;
+
+        if(bot){
+            bot.quit();
+            bot.end();
+        }
     }
 
     if(!config['player']['enabled']){
@@ -264,13 +268,18 @@ function newBot(){
                 bot.chat('invalid command type !help to get help');
             } else if (admin && command == 'reloadonlineconfig' || admin && command == 'restartconfig'){
                 bot.chat("Reloading Bot Config");
-                parse(config['onlineConfig']);
+                var reload = new Promise(resolve => (parse(config['onlineConfig'])));
+                if(reload){
+                    bot.chat(`Config Reloaded!`);
+                } else{
+                    bot.chat(`Failed to reload config!`);
+                }
             } else if (admin && command == 'restartbot' || admin && command == 'reloadbot'){
                 bot.chat("Restarting Bot");
                 bot.quit();
                 bot.end();
             } else if (admin && command == 'kill') {
-                if(findValueOfProperty(bot.players, args[0].trim()).length > 0){
+                if(bot.players.includes(args[0].trim())){
                     bot.chat(`/minecraft:kill `+args[0].trim());
                     bot.chat(username+` killed `+args[0].trim());
                 } else{
@@ -438,6 +447,8 @@ function newBot(){
         bot.end();
     });
     bot.on('end', () => {
+        if(!connected && !logged) return;
+
         connected = false;
         logged = false;
 
@@ -823,7 +834,7 @@ function DiscordBot(){
                         message.channel.send(embed);
                     } else {
                         message.reply('You don\'t have permission to do that').then(msg => {
-                            setTimeout(() => { msg.delete(); message.delete() }, 3000);
+                            setTimeout(() => { msg.delete(); message.delete() }, 5000);
                         });
                     }
                 } else if (command == 'send' && config['discord']['send_bot_messages']) {
@@ -832,7 +843,7 @@ function DiscordBot(){
                         message.channel.send(rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).trim());
                     } else {
                         message.reply('You don\'t have permission to do that').then(msg => {
-                            setTimeout(() => { msg.delete(); message.delete() }, 3000);
+                            setTimeout(() => { msg.delete(); message.delete() }, 5000);
                         });
                     }
                 } else if (command == 'spam' && config['discord']['spam']['enabled']) {
@@ -860,30 +871,38 @@ function DiscordBot(){
                         if (count > 0 && count <= 30){
                             if(!disabled_channels.includes(channelID)){
                                 if(msg != null && msg != ''){
-                                    for (let spam = 0; spam < count; spam++) {
-                                        message.channel.send(`\`spam:\` `+msg);
+                                    if(!message.mentions.users.size && !message.mentions.roles.size  && !message.mentions.everyone && !config['discord']['spam']['player_ping']){
+                                        for (let spam = 0; spam < count; spam++) {
+                                            message.channel.send(`\`spam:\` `+msg);
+                                        }
+                                    } else{
+                                        message.reply(`Pings are disabled in spam command :no_entry_sign:`).then(msg => {
+                                            setTimeout(() => { msg.delete(); message.delete() }, 5000);
+                                        });
                                     }
                                 } else{
                                     message.reply(`Provide spam message :no_entry_sign:`).then(msg => {
-                                        setTimeout(() => { msg.delete(); message.delete() }, 3000);
+                                        setTimeout(() => { msg.delete(); message.delete() }, 5000);
                                     });
                                 }
                             } else {
                                 message.reply(`Spam command is disabled in this channel :no_entry_sign:`).then(msg => {
-                                    setTimeout(() => { msg.delete(); message.delete() }, 3000);
+                                    setTimeout(() => { msg.delete(); message.delete() }, 5000);
                                 });
                             }
                         } else{
                             message.reply(`Spam chat count is too small or too large :no_entry_sign:`).then(msg => {
-                                setTimeout(() => { msg.delete(); message.delete() }, 3000);
+                                setTimeout(() => { msg.delete(); message.delete() }, 5000);
                             });
                         }
                     } else{
                         message.reply(`This command is only for Admins :no_entry_sign:`).then(msg => {
-                            setTimeout(() => { msg.delete(); message.delete() }, 3000);
+                            setTimeout(() => { msg.delete(); message.delete() }, 5000);
                         });
                     }
 
+                } else if (command == 'smap') {
+                    message.reply("Did you mean `>spam` :thinking:");
                 } else if (command == 'exembed') {
                     if(message.member.hasPermission("ADMINISTRATOR")) {
                         var embed = new Discord.MessageEmbed()
@@ -906,7 +925,7 @@ function DiscordBot(){
                         message.channel.send(embed);
                     } else {
                         message.reply('You don\'t have permission to do that').then(msg => {
-                            setTimeout(() => { msg.delete(); message.delete() }, 3000);
+                            setTimeout(() => { msg.delete(); message.delete() }, 5000);
                         });
                     }
                 } else if (command == 'reloadall' || command == 'reloadassets') {
@@ -935,17 +954,22 @@ function DiscordBot(){
                         message.channel.send(`Assets Reloaded`);
                     } else {
                         message.reply('You don\'t have permission to do that').then(msg => {
-                            setTimeout(() => { msg.delete(); message.delete() }, 3000);
+                            setTimeout(() => { msg.delete(); message.delete() }, 5000);
                         });
                     }
                 } else if (command == 'reload') {
                     if(message.member.hasPermission("ADMINISTRATOR")) {
-                        message.delete();
                         message.reply('Reloading Minecraft and Discord bots');
-                        parse(config['onlineConfig']);
+                        var reload = new Promise(resolve => (parse(config['onlineConfig'])));
+
+                        if(reload){
+                            message.reply(':white_check_mark: Config Reloaded!');
+                        } else{
+                            message.reply(':no_entry_sign: Failed to reload config!');
+                        }
                     } else {
                         message.reply('You don\'t have permission to do that').then(msg => {
-                            setTimeout(() => { msg.delete(); message.delete() }, 3000);
+                            setTimeout(() => { msg.delete(); message.delete() }, 5000);
                         });
                     }
                 }
@@ -960,15 +984,6 @@ function DiscordBot(){
 }
 function connectDB(){
     if(debug) console.log('[Log - Discord Bot] Connecting to databse');
-
-    if(conn){
-        if(conn.end()){
-            if(debug) console.log('[Log - Discord Bot] Previous Database Connection has closed');
-        } else{
-            console.error('[Error - Discord Bot] Unable to disconnect to database!');
-            process.exit();
-        }
-    }
 
     if(db_enable == false){
         if(debug) console.log('[Log - Discord Bot] Database is disabled');
@@ -987,7 +1002,7 @@ function connectDB(){
             console.error('[Error - Database] Unable to connect to database!');
             return;
         }
-       
+
         if(debug) console.log('[Log - Database] Database connected! name: '+db_name+'; host: '+db_host+'; pass: '+db_pass+'; user: '+db_user);
 
         conn.query("INSERT INTO `connection` VALUES('','"+Date.now()+"')", function(){

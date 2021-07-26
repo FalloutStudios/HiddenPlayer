@@ -1,13 +1,13 @@
 {
 	"server": {
-		"ip": "PVP17fWY.aternos.me",
+		"ip": "laggyserverfrom.aternos.me",
 		"port": 25565,
 		"reconnectTimeout": 5000
 	},
 	"player": {
 		"enabled": true,
 		"name": "HiddenPlayer",
-		"version": "1.16.5",
+		"version": null,
 		"message": "hello",
 		"pvp": {
 			"enabled": true
@@ -38,6 +38,7 @@
 		"send_bot_messages": true,
 		"spam": {
 			"enabled": true,
+			"player_ping": false,
 			"disabled_channels": []
 		},
 		"motivate": {
@@ -70,6 +71,6 @@
 		"prefix": "Beta",
 		"sufix": ""
 	},
-	"onlineConfig": null,
-	"version": "1.59"
+	"onlineConfig": "http://localhost/config.json",
+	"version": "1.5.3"
 }
