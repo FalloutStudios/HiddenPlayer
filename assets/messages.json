@@ -1,0 +1,67 @@
+{
+    "reload_config": {
+        "internal": "Config reload internal",
+        "external": "Config reload external",
+        "success": "Config reload success!",
+        "failed": "Config reload failed",
+        "different_versions": "Config reload failed: different versions"
+    },
+    "logging": {
+        "enabled": "Debug mode enabled!",
+        "disabled": "Debug mode disabled!"
+    },
+    "minecraft_bot": {
+        "disabled": "Minecraft bot was disabled!",
+        "starting": "Creating minecraft bot!",
+        "proccessing": "Starting Minecraft bot...",
+        "disconnect_bot": "Disconnection Minecraft bot",
+        "prefix_and_suffix_enabled": "Player Name Prefix and Sufix enabled!",
+        "invalid_name": "Invalid name more than 16 or less than 3 characters",
+        "invalid_port": "Invalid Port",
+        "first_spawn": "First spawn triggered!",
+        "spawned": "Bot Spawned!",
+        "died": "Bot died",
+        "command_execute": "Player command executed",
+        "saved": "Game saved!",
+        "set_last_time": "Last time enabled",
+        "disconnected": "Bot disconnected from server",
+        "bot_end": "Bot closed!",
+        "chats": {
+            "command_invalid": "Invalid Command",
+            "command_failed": "You're not allowed to execute this command!",
+            "command_restarting": "Restating"
+        },
+        "response": {
+            "hi": "Hello %player%!",
+            "hello": "Hi %player%!",
+            "im_new": "Welcome %player%",
+            "who": "I'm a bot!",
+            "what": "Bots are players controlled by a program or artificial intellegence or AI in short they're not human.",
+            "spy": "No! I'm innocent!",
+            "kill": "Pls... don't"
+        }
+    },
+    "discord_bot": {
+        "disabled": "Discord bot was disabled!",
+        "enabled": "Discord bot enabled!",
+        "ready": "Discord bot ready",
+        "message_sent": "Message from",
+        "message_received": "Discord Message",
+        "command_execute": "Executed Discord bot command",
+        "reloading": "Reloading config files...",
+        "reload_complete": "Reload complete",
+        "chats": {
+            "command_no_perm": "You don't have permission to do that",
+            "reloaded": ":white_check_mark: Config Reloaded!",
+            "reload_failed": ":no_entry_sign: Failed to reload config!"
+        }
+    },
+    "database": {
+        "connecting": "Connecting to database...",
+        "disabled": "Database disabled!",
+        "connect_failed": "Unable to connect to database!",
+        "connected": "Database connected!",
+        "connection_logged": "MySQL connection logged!"
+    },
+    "version": "1.5.4"
+}

@@ -39,6 +39,7 @@
 		"spam": {
 			"enabled": true,
 			"player_ping": false,
+			"max": 30,
 			"disabled_channels": []
 		},
 		"motivate": {
@@ -69,8 +70,9 @@
 		"enabled": true,
 		"movements": false,
 		"prefix": "Beta",
-		"sufix": ""
+		"suffix": ""
 	},
+	"messages": "assets/messages.json",
 	"onlineConfig": "http://localhost/config.json",
-	"version": "1.5.3"
+	"version": "1.5.4"
 }

@@ -25,6 +25,19 @@ let db_user = config['database']['user'];
 let db_pass = config['database']['pass'];
 let db_name = config['database']['database'];
 
+//messages
+if (config['messages'] == null) {
+    console.error('[Error - Config] Can\'t load messages file');
+    process.exit(0);
+}
+
+let messages = JSON.parse(fs.readFileSync(config['messages']));
+
+if(messages['version'] != config['version']) {
+    console.error('[Error - Config] Config version doesn\'t match messages file version');
+    process.exit(0);
+}
+
 const configVersion = config['version'];
 
 //Other Connections
@@ -35,7 +48,7 @@ function parse (url = null){
     var success = false;
 
     if(url != null){
-        if(debug) console.log('[Log - Config] Config triggered');
+        if(debug) console.log('[Log - Config] '+messages['reload_config']['external']);
 
         success = new Promise(resolve => {request({
                 url: url,
@@ -47,14 +60,13 @@ function parse (url = null){
                     body_config = body;
                     
                     if(debug) {
-                        console.log('[Log - Config] Config Requested from: '+config['onlineConfig']);
                         console.log(body_config);
                     }
 
                     var confV = body_config['version'];
 
                     if(configVersion != confV) {
-                        console.error('[Error - Config] Config reload failed: Different config versions');
+                        console.error('[Error - Config] '+messages['reload_config']['different_versions']);
                     } else {
                         success = true;
                     }
@@ -71,10 +83,22 @@ function parse (url = null){
                     db_pass = config['database']['pass'];
                     db_name = config['database']['database'];
 
-                    if(debug) console.log('[Log - Config] Config reload success');
+                    if (config['messages'] == null) {
+                        console.error('[Error - Config] Can\'t load messages file');
+                        process.exit(0);
+                    }
+
+                    let messages = JSON.parse(fs.readFileSync(config['messages']));
+
+                    if(messages['version'] != config['version']) {
+                        console.error('[Error - Config] Config version doesn\'t match messages file version');
+                        process.exit(0);
+                    }
+
+                    if(debug) console.log('[Log - Config] '+messages['reload_config']['success']);
                 } else{
-                    if(debug) console.error('[Error - Config] Config reload failed error - '+error);
-                    if(debug) console.loh('[Log - Config] Config reload body - '+body);
+                    console.log(body);
+                    if(debug) console.error('[Error - Config] '+messages['reload_config']['failed']+': '+error);
                     success = false;
                 }
 
@@ -91,17 +115,17 @@ function parse (url = null){
         
     } else{
         let body_conf = fs.readFileSync('config.json');
-        let body_config = JSON.parse(conf);
+        let body_config = JSON.parse(body_conf);
         
         if(debug) {
-            console.log('[Log - Config] Config Requested from: '+config['onlineConfig']);
+            console.log('[Log - Config] '+messages['reload_config']);
             console.log(body_config);
         }
 
         var confV = body_config['version'];
 
         if(configVersion != confV) {
-            console.error('[Error - Config] Config reload failed: Different config versions');
+            console.error('[Error - Config] '+messages['reload_config']['different_versions']);
         } else{
             success = true;
         }
@@ -118,13 +142,25 @@ function parse (url = null){
         db_pass = config['database']['pass'];
         db_name = config['database']['database'];
 
-        if(debug) console.log('[Log - Config] Config reload success');
+        if (config['messages'] == null) {
+            console.error('[Error - Config] Can\'t load messages file');
+            process.exit(0);
+        }
+
+        let messages = JSON.parse(fs.readFileSync(config['messages']));
+
+        if(messages['version'] != config['version']) {
+            console.error('[Error - Config] Config version doesn\'t match messages file version');
+            process.exit(0);
+        }
+
+        if(debug) console.log('[Log - Config] '+messages['reload_config']['success']);
     }
 }
 
 //debug mode
-if(debug) console.log('[Log - Debug Mode] Debug mode enabled');
-if(!debug) console.log('[Log - Debug Mode] Debug mode disabled');
+if(debug) console.log('[Log - Debug Mode] '+messages['logging']['enabled']);
+if(!debug) console.log('[Log - Debug Mode] '+messages['logging']['disabled']);
 
 //Other functions
 function escapeRegExp(string) {
@@ -164,10 +200,10 @@ function newBot(){
     var entity = null;
     var target = null;
 
-    if(debug) console.log('[Log - Mincraft Bot] Making new minecraft session');
+    if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['starting']);
 
     if(connected && logged) {
-        if(debug) console.log('[Log - Mincraft Bot] Disconnecting Minecraft bot');
+        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['disconnected_bot']);
 
         connected = false;
         logged = false;
@@ -179,21 +215,21 @@ function newBot(){
     }
 
     if(!config['player']['enabled']){
-        if(debug) console.log('[Log - Mincraft Bot] Minecraft player is turned off');
+        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['disabled']);
         return;
     }
 
-    if(debug) console.log('[Log - Mincraft Bot] Start');
+    if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['proccessing']);
     
     var player = config['player']['name'];
     
-    if(debug && config['debug']['prefix'] != null || debug && config['debug']['sufix'] != null){
-        player = config['debug']['prefix'] + player + config['debug']['sufix'];
+    if(debug && config['debug']['prefix'] != null || debug && config['debug']['suffix'] != null){
+        player = config['debug']['prefix'] + player + config['debug']['suffix'];
     
-        if(debug) console.log('[Log - Mincraft Bot] Prefix and Sufix enabled');
+        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['prefix_and_suffix_enabled']);
     
-        if(debug && player.length > 16){
-            console.error('[Error - Mincraft Bot] Name length expected 16 or less. '+player.length+' requested'); 
+        if(player.length > 16 || player.length < 3){
+            console.error('[Error - Mincraft Bot] '+messages['minecraft_bot']['invalid_name']+': '+player.length); 
             process.exit();
         }
     }
@@ -202,8 +238,8 @@ function newBot(){
     var ip = config['server']['ip'];
 
     if (typeof port != 'null' && isNaN(port) || typeof port != 'undefined' && isNaN(port)) { 
-        console.error('[Error - Mincraft Bot] Invalid Port'); 
-        process.exit();        
+        console.error('[Error - Mincraft Bot] '+messages['minecraft_bot']['invalid_port']+': '+port); 
+        process.exit(0);        
     }
 
     var bot = mineflayer.createBot({
@@ -213,7 +249,7 @@ function newBot(){
         version: config['player']['version']
     });
 
-    if(debug) console.log('[Log - Mincraft Bot] IP: '+ip+'; Port: '+port+'; PlayerName: '+player+'; Prefix: '+config['debug']['prefix']+'; Sufix: '+config['debug']['sufix']+'; Version: '+config['player']['version']);
+    if(debug) console.log('[Log - Mincraft Bot] IP: '+ip+'; Port: '+port+'; PlayerName: '+player+'; Prefix: '+config['debug']['prefix']+'; suffix: '+config['debug']['suffix']+'; Version: '+config['player']['version']);
 
     bot.loadPlugin(cmd);
     bot.loadPlugin(pathfinder);
@@ -222,7 +258,7 @@ function newBot(){
 
     //first spawn
     bot.once('spawn', () => {
-        if(debug) console.log('[Log - Mincraft Bot] First Spawn');
+        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['first_spawn']);
         if(config['autosave']['enbled']){
             saveAll();
         }
@@ -230,7 +266,7 @@ function newBot(){
 
     //login message
     bot.on('spawn', () => {
-        if(debug) console.log('[Log - Mincraft Bot] Spawned');
+        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['spawned']);
         if(connected == false && logged == false){
             connected = true;
             bot.chat(config['player']['message']);
@@ -243,7 +279,7 @@ function newBot(){
     bot.on('death',function() {
         bot.emit("respawn");
 
-        if(debug) console.log('[Log - Mincraft Bot] Died');
+        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['died']);
     });
 
     //on chat
@@ -261,21 +297,21 @@ function newBot(){
             var args = message.slice(1).trim().split(/ +/);
             var command = args.shift().toLowerCase();
 
-            if(debug) console.log('[Log - Mincraft Bot] Player Command Executed');
+            if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['command_execute']+': '+command);
             
             //commands
             if(command == ''){
-                bot.chat('invalid command type !help to get help');
+                bot.chat(messages['minecraft_bot']['chats']['command_invalid']);
             } else if (admin && command == 'reloadonlineconfig' || admin && command == 'restartconfig'){
                 bot.chat("Reloading Bot Config");
                 var reload = new Promise(resolve => (parse(config['onlineConfig'])));
                 if(reload){
-                    bot.chat(`Config Reloaded!`);
+                    bot.chat(messages['reload_config']['success']);
                 } else{
-                    bot.chat(`Failed to reload config!`);
+                    bot.chat(messages['reload_config']['success']);
                 }
             } else if (admin && command == 'restartbot' || admin && command == 'reloadbot'){
-                bot.chat("Restarting Bot");
+                bot.chat(messages['minecraft_bot']['chats']['command_restarting']);
                 bot.quit();
                 bot.end();
             } else if (admin && command == 'kill') {
@@ -286,9 +322,9 @@ function newBot(){
                     bot.chat('Player '+args[0].trim()+' not found');
                 }
             } else if (admin == false){
-                bot.chat('You can\'t execute this command');
+                bot.chat(messages['minecraft_bot']['chats']['command_failed']);
             } else{
-                bot.chat('Invalid command argument type !help to get help');
+                bot.chat(messages['minecraft_bot']['chats']['invalid']);
             }
 
         } else{
@@ -317,38 +353,27 @@ function newBot(){
 
             //bot reply
             if(lmsg == player.toLowerCase() + ' hi'|| lmsg == 'hi ' + player.toLowerCase() || lrmsg == 'hi guys' || lrmsg == 'hi bot' || lrmsg == 'bot hi'){
-                reply = 'Hello '+username+'!';
+                reply = messages['minecraft_bot']['response']['hi'];
             } else if (lmsg == player.toLowerCase() + 'hello' || lmsg == 'hello ' + player.toLowerCase() || lrmsg == 'hello guys' || lmsg == player.toLowerCase()){
-                reply = 'Hi '+username+'!';
+                reply = messages['minecraft_bot']['response']['hello'];
             } else if (lrmsg.replace('hello','').replace('hi','').trim() == 'im new' || lrmsg.replace('hello','').replace('hi','').trim() == 'im new here' || lrmsg.replace('hello','').replace('hi','').trim() == 'new here'){
-                reply = 'Welcome '+username+'!';
+                reply = messages['minecraft_bot']['response']['im_new'];
             } else if (lmsg.indexOf("who") > -1 && lmsg.indexOf("is") > -1 && lmsg.indexOf(player.toLowerCase()) > -1 || lmsg == 'whos '+player.toLowerCase() || lmsg == player.toLowerCase()+' who are you'){
-                reply = 'I\'m a bot!';
+                reply = messages['minecraft_bot']['response']['who'];
             } else if (lmsg.indexOf("what") > -1 && lmsg.indexOf("is") > -1 && lmsg.indexOf("bot") > -1 || lmsg.indexOf("what") > -1 && lmsg.indexOf("are") > -1 && lmsg.indexOf("bot") > -1){
-                reply = 'Bots are players controlled by a program or artificial intellegence or AI in short they\'re not human.';
+                reply = messages['minecraft_bot']['response']['what'];
             } else if (lrmsg == 'a government spy' && lmsg.indexOf(player.toLowerCase()) > -1){
-                
-                if(randommizer == 0)
-                    reply = 'I\'m not a govenment spy ;( [Cries]';
-                else if (randommizer == 2)
-                    reply = 'I\'m not a spy! You don\'t have a proof :>';
-                else if (randommizer == 3)
-                    reply = 'I\'m not a spy! Why are you like that :(';
-                else 
-                    reply = 'I\'m not a spy! I just jump and eat roasted chicken lol :>';
-
-            } else if (lmsg.indexOf("kill "+player.toLowerCase()) > -1){
-                
-                if(randommizer == 0)
-                    reply = 'Dont kill me :<';
-                else if (randommizer == 2)
-                    reply = 'Kill me! I can ban :)';
-                else if (randommizer == 3)
-                    reply = 'You can\'t kill me!';
-                else
-                    reply = 'kill me! I\'ll tell the owner';
-
+                reply = messages['minecraft_bot']['response']['spy'];
+            } else if (lmsg.indexOf("kill "+player) > -1){
+                reply = messages['minecraft_bot']['response']['kill'];
             }
+
+            reply = replaceAll(reply, "%player%", username);
+            reply = replaceAll(reply, "%player_lowercase%", username.toLowerCase());
+            reply = replaceAll(reply, "%player_uppercase%", username.toUpperCase());
+            reply = replaceAll(reply, "%bot%", botName);
+            reply = replaceAll(reply, "%bot_lowercase%", botName.toLowerCase());
+            reply = replaceAll(reply, "%bot_uppercase%", botName.toUpperCase());
 
             //summon reply
             if(reply != null) {
@@ -371,7 +396,7 @@ function newBot(){
         if (!bot) return;
         if (!config['player']['enabled']) return;
 
-        if(debug) console.log("[Log - Mincraft Bot] Saved the game");
+        if(debug) console.log("[Log - Mincraft Bot] "+messages['minecraft_bot']['saved']);
 
         if(logged && connected) bot.chat(`/minecraft:save-all`);
 
@@ -404,7 +429,7 @@ function newBot(){
 
         if (lasttime < 0) {
             lasttime = bot.time.age;
-            if(debug) console.log('[Log - Mincraft Bot] last Time set');
+            if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['set_last_time']);
         } else{
             var randomadd = Math.random() * maxrandom * 50;
             var interval = moveinterval * 20 + randomadd;
@@ -442,7 +467,7 @@ function newBot(){
 
     //if bot end
     bot.on('error kicked',function (reason){
-        if(debug) console.log('[Log - Mincraft Bot] Bot left the game - reason: '+reason);
+        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['disconnected']+': '+reason);
         bot.quit();
         bot.end();
     });
@@ -455,7 +480,7 @@ function newBot(){
         setTimeout(() => {
             if(config['player']['enabled'] == false) return;
             newBot();
-            if(debug) console.log('[Log - Mincraft Bot] End');
+            if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['bot_end']);
         }, config['server']['reconnectTimeout']);
     });
 }
@@ -468,17 +493,17 @@ function DiscordBot(){
     }
     
     if(config['discord']['enabled'] == false){
-        if(debug) console.log('[Log - Discord Bot] Discord bot is turned off');
+        if(debug) console.log('[Log - Discord Bot] '+messages['discord_bot']['disabled']);
         return;
     }
 
     client.login(config['discord']['token']);
 
-    if(debug) console.log("[Log - Discord Bot] Discord bot enabled");
+    if(debug) console.log("[Log - Discord Bot] "+messages['discord_bot']['enabled']);
 
     client.on('ready', () => {
         discordConnected = true;
-        if(debug) console.log("[Log - Discord Bot] Discord bot is ready: "+client.user.tag+"; "+client.user.id);
+        if(debug) console.log("[Log - Discord Bot] "+messages['discord_bot']['ready']+": "+client.user.tag+"; "+client.user.id);
 
         //actions
         var emotes = null;
@@ -629,7 +654,7 @@ function DiscordBot(){
 
             //CMD or STRING parser
             if (!rawMessage.startsWith(config['discord']['command-prefix'])){
-                if(debug) console.log("[Log - Discord Bot] Discord message sent by: "+author);
+                if(debug) console.log("[Log - Discord Bot] "+messages['discord_bot']['message_sent']+": "+author);
                 //discord msg
 
                 if(findName(rawMessage) && removeMensions(lowerMessage) == 'hi' || lowerMessage == 'hi guys'){
@@ -780,7 +805,7 @@ function DiscordBot(){
                     message.react('854320612565450762');
                 }
             } else {
-                if(debug) console.log("[Log - Discord Bot] Executed Discord bot command: "+command+" by "+author);
+                if(debug) console.log("[Log - Discord Bot] "+messages['discord_bot']['command_execute']+": "+command+" by "+author);
 
                 var args = rawMessage.slice(config['discord']['command-prefix'].length).trim().split(/ +/);
                 var command = args.shift().toLowerCase();
@@ -833,7 +858,7 @@ function DiscordBot(){
                             .setTimestamp()
                         message.channel.send(embed);
                     } else {
-                        message.reply('You don\'t have permission to do that').then(msg => {
+                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(msg => {
                             setTimeout(() => { msg.delete(); message.delete() }, 5000);
                         });
                     }
@@ -842,7 +867,7 @@ function DiscordBot(){
                         message.delete();
                         message.channel.send(rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).trim());
                     } else {
-                        message.reply('You don\'t have permission to do that').then(msg => {
+                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(msg => {
                             setTimeout(() => { msg.delete(); message.delete() }, 5000);
                         });
                     }
@@ -868,10 +893,10 @@ function DiscordBot(){
                         
                         msg = msg.trim();
 
-                        if (count > 0 && count <= 30){
+                        if (count > 0 && count <= config['discord']['spam']['max']){
                             if(!disabled_channels.includes(channelID)){
                                 if(msg != null && msg != ''){
-                                    if(!message.mentions.users.size && !message.mentions.roles.size  && !message.mentions.everyone && !config['discord']['spam']['player_ping']){
+                                    if(!config['discord']['spam']['player_ping'] && !message.mentions.users.size && !message.mentions.roles.size  && !message.mentions.everyone || config['discord']['spam']['player_ping']){
                                         for (let spam = 0; spam < count; spam++) {
                                             message.channel.send(`\`spam:\` `+msg);
                                         }
@@ -924,7 +949,7 @@ function DiscordBot(){
                             .setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');
                         message.channel.send(embed);
                     } else {
-                        message.reply('You don\'t have permission to do that').then(msg => {
+                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(msg => {
                             setTimeout(() => { msg.delete(); message.delete() }, 5000);
                         });
                     }
@@ -935,40 +960,40 @@ function DiscordBot(){
                             emotes = fs.readFileSync(config['discord']['emotes']['src']);
                             emotes = JSON.parse(emotes);
 
-                            if(debug) console.log('[Log] Emotes reloaded');
+                            if(debug) console.log('[Log] '+messages['discord_bot']['reload_complete']+': Emotes');
                         }
                 
                         if(config['discord']['react']['enabled']){
                             reacts = fs.readFileSync(config['discord']['react']['src']);
                             reacts = JSON.parse(reacts);
 
-                            if(debug) console.log('[Log - Discord Bot] Reacts reloaded');
+                            if(debug) console.log('[Log - Discord Bot] '+messages['discord_bot']['reload_complete']+': Reacts');
                         }
                 
                         if(config['discord']['motivate']['enabled']){
                             motivations = fs.readFileSync(config['discord']['motivate']['src']);
                             motivations = JSON.parse(motivations);
 
-                            if(debug) console.log('[Log - Discord Bot] Motivations reloaded');
+                            if(debug) console.log('[Log - Discord Bot] '+messages['discord_bot']['reload_complete']+': Motivations');
                         }
-                        message.channel.send(`Assets Reloaded`);
+                        message.channel.send(messages['discord_bot']['reload_complete']+': Assets');
                     } else {
-                        message.reply('You don\'t have permission to do that').then(msg => {
+                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(msg => {
                             setTimeout(() => { msg.delete(); message.delete() }, 5000);
                         });
                     }
                 } else if (command == 'reload') {
                     if(message.member.hasPermission("ADMINISTRATOR")) {
-                        message.reply('Reloading Minecraft and Discord bots');
+                        message.reply(messages['discord_bot']['reloading']);
                         var reload = new Promise(resolve => (parse(config['onlineConfig'])));
 
                         if(reload){
-                            message.reply(':white_check_mark: Config Reloaded!');
+                            message.reply(messages['discord_bot']['chats']['reloaded']);
                         } else{
-                            message.reply(':no_entry_sign: Failed to reload config!');
+                            message.reply(messages['discord_bot']['chats']['reload_failed']);
                         }
                     } else {
-                        message.reply('You don\'t have permission to do that').then(msg => {
+                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(msg => {
                             setTimeout(() => { msg.delete(); message.delete() }, 5000);
                         });
                     }
@@ -976,17 +1001,17 @@ function DiscordBot(){
             }
 
             if(debug) {
-                console.log("[Log - Discord Bot] Discord message: "+limitText(message.content));
-                console.log('[Log - Discord Bot] Raw Message: '+limitText(rawMessage)+'; LowerRemoveMensions: '+limitText(removeMensions(lowerMessage))+'; BotFind: '+limitText(findName(lowerMessage)));
+                console.log("[Log - Discord Bot] "+messages['discord_bot']['message_received']+": "+limitText(message.content));
+                //console.log('[Log - Discord Bot] Raw Message: '+limitText(rawMessage)+'; LowerRemoveMensions: '+limitText(removeMensions(lowerMessage))+'; BotFind: '+limitText(findName(lowerMessage)));
             }
         });
     });
 }
 function connectDB(){
-    if(debug) console.log('[Log - Discord Bot] Connecting to databse');
+    if(debug) console.log('[Log - Discord Bot] '+messages['database']['connecting']);
 
     if(db_enable == false){
-        if(debug) console.log('[Log - Discord Bot] Database is disabled');
+        if(debug) console.log('[Log - Discord Bot] '+messages['database']['disabled']);
         return;
     }
 
@@ -999,14 +1024,14 @@ function connectDB(){
 
     conn.connect(function(error) {
         if (error) {
-            console.error('[Error - Database] Unable to connect to database!');
+            console.error('[Error - Database] '+messages['database']['connect_failed']);
             return;
         }
 
-        if(debug) console.log('[Log - Database] Database connected! name: '+db_name+'; host: '+db_host+'; pass: '+db_pass+'; user: '+db_user);
+        if(debug) console.log('[Log - Database] '+messages['database']['connected']+' name: '+db_name+'; host: '+db_host+'; pass: '+db_pass+'; user: '+db_user);
 
         conn.query("INSERT INTO `connection` VALUES('','"+Date.now()+"')", function(){
-            if(debug) console.log('[Log - Database] MySQL connection logged!');
+            if(debug) console.log('[Log - Database] '+messages['database']['connection_logged']);
         });
     });
 }
