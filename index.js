@@ -63,7 +63,7 @@ var conn = null;
 //Parse reloaded config file
 function parse (url = null){
     //success pre variable
-    var success = false;
+    let success = false;
 
     //use external or internal file
     if(url != null){
@@ -86,7 +86,7 @@ function parse (url = null){
                     }
 
                     //get response config version
-                    var confV = body_config['version'];
+                    let confV = body_config['version'];
 
                     //throw error when versions doesn't match
                     if(configVersion != confV) {
@@ -99,14 +99,14 @@ function parse (url = null){
                     config = body_config;
 
                     //debug enabled/disabled
-                    let debug = config['debug']['enabled'];
+                    debug = config['debug']['enabled'];
 
                     //databes conf
-                    let db_enable = config['database']['enabled'];
-                    let db_host = config['database']['host'];
-                    let db_user = config['database']['user'];
-                    let db_pass = config['database']['pass'];
-                    let db_name = config['database']['database'];
+                    db_enable = config['database']['enabled'];
+                    db_host = config['database']['host'];
+                    db_user = config['database']['user'];
+                    db_pass = config['database']['pass'];
+                    db_name = config['database']['database'];
 
                     //messages file
                     //messages null check
@@ -116,7 +116,7 @@ function parse (url = null){
                     }
 
                     //parse messages file
-                    let messages = JSON.parse(fs.readFileSync(config['messages']));
+                    messages = JSON.parse(fs.readFileSync(config['messages']));
 
                     //messages file version check
                     if(messages['version'] != config['version']) {
@@ -155,7 +155,7 @@ function parse (url = null){
         }
 
         //get config version
-        var confV = body_config['version'];
+        let confV = body_config['version'];
 
         //throw error when versions doesn't match
         if(configVersion != confV) {
@@ -168,14 +168,14 @@ function parse (url = null){
         config = body_config;
 
         //debug enabled/disabled
-        let debug = config['debug']['enabled'];
+        debug = config['debug']['enabled'];
 
         //databes conf
-        let db_enable = config['database']['enabled'];
-        let db_host = config['database']['host'];
-        let db_user = config['database']['user'];
-        let db_pass = config['database']['pass'];
-        let db_name = config['database']['database'];
+        db_enable = config['database']['enabled'];
+        db_host = config['database']['host'];
+        db_user = config['database']['user'];
+        db_pass = config['database']['pass'];
+        db_name = config['database']['database'];
 
         //messages file
         //messages null check
@@ -185,7 +185,7 @@ function parse (url = null){
         }
 
         //parse messages file
-        let messages = JSON.parse(fs.readFileSync(config['messages']));
+        messages = JSON.parse(fs.readFileSync(config['messages']));
 
         //messages file version check
         if(messages['version'] != config['version']) {
@@ -230,16 +230,15 @@ function findValueOfProperty(obj, propertyName){
 //Minecraft bot function
 function newBot(){
     //movements
-    var actions = ['forward', 'back', 'left', 'right'];
-    var jump = true;
+    let actions = ['forward', 'back', 'left', 'right'];
 
     //login
-    var logged = false;
-    var connected = false;
+    let logged = false;
+    let connected = false;
 
     //entities
-    var entity = null;
-    var target = null;
+    let entity = null;
+    let target = null;
 
     if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['starting']);
 
@@ -262,7 +261,7 @@ function newBot(){
 
     if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['proccessing']);
     
-    var player = config['player']['name'];
+    let player = config['player']['name'];
     
     if(debug && config['debug']['prefix'] != null || debug && config['debug']['suffix'] != null){
         player = config['debug']['prefix'] + player + config['debug']['suffix'];
@@ -275,8 +274,8 @@ function newBot(){
         }
     }
     //make bot
-    var port = parseInt(config['server']['port']);
-    var ip = config['server']['ip'];
+    let port = parseInt(config['server']['port']);
+    let ip = config['server']['ip'];
 
     if (typeof port != 'null' && isNaN(port) || typeof port != 'undefined' && isNaN(port)) { 
         console.error('[Error - Mincraft Bot] '+messages['minecraft_bot']['invalid_port']+': '+port); 
@@ -325,7 +324,7 @@ function newBot(){
 
     //on chat
     bot.on('chat', function (username, message){
-        var admin = false;
+        let admin = false;
         if(username == player || username == 'you') { return; }
 
         if(config['staffs'][username] != undefined && config['staffs'][username] == 'admin') { 
@@ -335,8 +334,8 @@ function newBot(){
         }
 
         if(message.substr(0,1) == '!'){
-            var args = message.slice(1).trim().split(/ +/);
-            var command = args.shift().toLowerCase();
+            let args = message.slice(1).trim().split(/ +/);
+            let command = args.shift().toLowerCase();
 
             if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['command_execute']+': '+command);
             
@@ -371,7 +370,7 @@ function newBot(){
         } else{
             if (debug) console.log('[Log - Mincraft Bot] Player chat recieved from '+username+' > '+message);
 
-            var reply = null;
+            let reply = null;
 
             message = message.trim();
                     message = replaceAll(message,"'",'');
@@ -390,7 +389,7 @@ function newBot(){
             lmsg = message.toLowerCase();
             lrmsg = removeMensions.toLowerCase();
 
-            var randommizer = randomInteger(0,5);
+            let randommizer = randomInteger(0,5);
 
             //bot reply
             if(lmsg == player.toLowerCase() + ' hi'|| lmsg == 'hi ' + player.toLowerCase() || lrmsg == 'hi guys' || lrmsg == 'hi bot' || lrmsg == 'bot hi'){
@@ -426,12 +425,12 @@ function newBot(){
     });
 
     //moves
-    var lasttime = -1;
-    var moveinterval = 5;
-    var maxrandom = 5;
-    var moving = false;
-    var jump = false;
-    var onPVP = false;
+    let lasttime = -1;
+    let moveinterval = 5;
+    let maxrandom = 5;
+    let moving = false;
+    let jump = false;
+    let onPVP = false;
 
     function saveAll(){
         if (!bot) return;
@@ -472,8 +471,8 @@ function newBot(){
             lasttime = bot.time.age;
             if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['set_last_time']);
         } else{
-            var randomadd = Math.random() * maxrandom * 50;
-            var interval = moveinterval * 20 + randomadd;
+            let randomadd = Math.random() * maxrandom * 50;
+            let interval = moveinterval * 20 + randomadd;
 
             if (bot.time.age - lasttime > interval) {
                 if (onPVP) return;
@@ -549,10 +548,10 @@ function DiscordBot(){
         if(debug) console.log("[Log - Discord Bot] "+messages['discord_bot']['ready']+": "+client.user.tag+"; "+client.user.id);
 
         //actions
-        var emotes = null;
-        var reacts = null;
-        var motivations = null;
-        var factslist = null;
+        let emotes = null;
+        let reacts = null;
+        let motivations = null;
+        let factslist = null;
 
         if(config['discord']['emotes']['enabled']){
             emotes = fs.readFileSync(config['discord']['emotes']['src']);
@@ -582,8 +581,8 @@ function DiscordBot(){
             }
 
             //Placeholders
-            var rawMessage = message.content;
-            var lowerMessage = message.content.toLowerCase()
+            let rawMessage = message.content;
+            let lowerMessage = message.content.toLowerCase()
                         lowerMessage = replaceAll(lowerMessage,'!','')
                         lowerMessage = replaceAll(lowerMessage,'?','')
                         lowerMessage = replaceAll(lowerMessage,'.','')
@@ -593,27 +592,24 @@ function DiscordBot(){
                         lowerMessage = replaceAll(lowerMessage,'\\','')
                         lowerMessage = replaceAll(lowerMessage,'/','').trim();
 
-            var botAvatar = client.user.displayAvatarURL();
-            var botName = client.user.tag;
-            var botUser_id = client.user.id;
-            var userAvatar = message.author.displayAvatarURL({ format: 'png', dynamic: true });
+            let botAvatar = client.user.displayAvatarURL();
+            let botName = client.user.tag;
+            let botUser_id = client.user.id;
+            let userAvatar = message.author.displayAvatarURL({ format: 'png', dynamic: true });
 
-            var taggedUser = message.mentions.users.first();
-            var taggedUsername = null;
-            var pinged = '<@!'+taggedUser+'>';
+            let taggedUser = message.mentions.users.first();
+            let taggedUsername = null;
+            let pinged = '<@!'+taggedUser+'>';
                 //prevent user error: !message.mentions.users.size
                 if (message.mentions.users.size) taggedUsername = taggedUser.username;
 
-            var author = message.author.username;
-            var user_id = message.author.id;
+            let author = message.author.username;
+            let user_id = message.author.id;
 
-            var mension = '<@!'+user_id+'>';
+            let mension = '<@!'+user_id+'>';
 
-            var channelName = message.channel.name;
-            var channelID = message.channel.id;
-
-            var command = false;
-            var args = null;
+            let channelName = message.channel.name;
+            let channelID = message.channel.id;
             
 
             //bot utility functions
@@ -672,15 +668,15 @@ function DiscordBot(){
                 if(message == null) return;
                 if(!findName(message)) return;
 
-                var actions = Object.keys(emotes);
-                var found = null;
+                let actions = Object.keys(emotes);
+                let found = null;
 
                 if(get == false) 
                     found = false;
                 
-                for (var i=0; i < actions.length; i++) {
+                for (let i=0; i < actions.length; i++) {
                     if(removeMensions(message).toLowerCase().startsWith(actions[i].toLowerCase())){
-                        var found = true;
+                        let found = true;
 
                         if(get) return actions[i].toLowerCase();
 
@@ -779,14 +775,14 @@ function DiscordBot(){
                     }
                 } else if (findName(rawMessage) && actionFind(lowerMessage) && config['discord']['emotes']['enabled']) {
                     if(message.mentions.users.size){
-                        var emoteName = actionFind(lowerMessage, true);
-                        var emote = emotes[emoteName];
+                        let emoteName = actionFind(lowerMessage, true);
+                        let emote = emotes[emoteName];
 
-                        var selfPing = false;
+                        let selfPing = false;
                         if(taggedUser == user_id) selfPing = true;
 
-                        var phrase = null;
-                        var RandomImage = null;
+                        let phrase = null;
+                        let RandomImage = null;
                         
                         if(selfPing){
                             if(randomResponse == 0 && emote['selfAllow']){
@@ -821,10 +817,10 @@ function DiscordBot(){
                     }
                 } else if (findName(rawMessage) && removeMensions(lowerMessage).substr(0,8) == 'motivate' || findName(rawMessage) && removeMensions(lowerMessage).substr(0,11) == 'motivate me' || findName(rawMessage) && removeMensions(lowerMessage).substr(0,10) == 'motivation' || findName(rawMessage) && removeMensions(lowerMessage).substr(0,5) == 'quote' || removeMensions(lowerMessage).substr(0,11) == 'motivate me') {
                     if(config['discord']['motivate']['enabled']){
-                        var randomKey = Math.floor(Math.random() * Object.keys(motivations).length);
+                        let randomKey = Math.floor(Math.random() * Object.keys(motivations).length);
                         
-                        var msg = Object.keys(motivations)[randomKey];
-                        var author = motivations[msg]['author'];
+                        let msg = Object.keys(motivations)[randomKey];
+                        let author = motivations[msg]['author'];
 
 
                         var embed = new Discord.MessageEmbed()
@@ -848,10 +844,10 @@ function DiscordBot(){
                     message.react('854320612565450762');
                 }
             } else {
-                if(debug) console.log("[Log - Discord Bot] "+messages['discord_bot']['command_execute']+": "+command+" by "+author);
+                let args = rawMessage.slice(config['discord']['command-prefix'].length).trim().split(/ +/);
+                let command = args.shift().toLowerCase();
 
-                var args = rawMessage.slice(config['discord']['command-prefix'].length).trim().split(/ +/);
-                var command = args.shift().toLowerCase();
+                if(debug) console.log("[Log - Discord Bot] "+messages['discord_bot']['command_execute']+": "+command+" by "+author);
 
                 //commands
                 if (command == 'help'){
@@ -879,19 +875,19 @@ function DiscordBot(){
                     else if (randomResponse == 2)
                         message.channel.send('I need privacy :smirk:');
                     else
-                        var bot = new Discord.MessageEmbed()
+                        var embed = new Discord.MessageEmbed()
                         .setColor('#0099ff')
                         .setAuthor(botName, botAvatar)
                         .setTimestamp();
-                        message.channel.send(bot);
+                        message.channel.send(embed);
 
                 } else if (command == 'embed' && config['discord']['embed_messages']) {
                     if(message.member.hasPermission("ADMINISTRATOR")) {
                         message.delete();
 
-                        var title = rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).split(" ",1)[0];
+                        let title = rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).split(" ",1)[0];
                             title = replaceAll(title,"_"," ").trim();
-                        var content = rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).slice(title.length);
+                        let content = rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).slice(title.length);
 
                         var embed = new Discord.MessageEmbed()
                             .setColor('#0099ff')
@@ -916,18 +912,18 @@ function DiscordBot(){
                     }
                 } else if (command == 'spam' && config['discord']['spam']['enabled']) {
                     
-                    var count = 10;
-                    var msg = '';
+                    let count = 10;
+                    let msg = '';
 
                     if(message.member.hasPermission("ADMINISTRATOR")) {
-                        for (var i = 0; i < args.length; i++) {
+                        for (let i = 0; i < args.length; i++) {
                             msg += ' '+args[i];
                         }
 
                         if(args.length > 1 && !isNaN(parseInt(args[0]))){
                             msg = '';
                             count = args[0];
-                            for (var i = 1; i < args.length; i++) {
+                            for (let i = 1; i < args.length; i++) {
                                 msg += ' '+args[i];
                             }
                         }
@@ -1028,7 +1024,7 @@ function DiscordBot(){
                 } else if (command == 'reload') {
                     if(message.member.hasPermission("ADMINISTRATOR")) {
                         message.reply(messages['discord_bot']['reloading']);
-                        var reload = new Promise(resolve => (parse(config['onlineConfig'])));
+                        let reload = new Promise(resolve => (parse(config['onlineConfig'])));
 
                         if(reload){
                             message.reply(messages['discord_bot']['chats']['reloaded']);
