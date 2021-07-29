@@ -74,5 +74,5 @@
 	},
 	"messages": "assets/messages.json",
 	"onlineConfig": "http://localhost/config.json",
-	"version": "1.5.4"
+	"version": "1.5.8"
 }

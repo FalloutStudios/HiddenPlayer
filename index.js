@@ -1,21 +1,32 @@
-//HiddePlayer
+// HiddePlayer GPL-3.0 License
+
+//Packages
+//Mineflayer bot
 const mineflayer = require('mineflayer');
 const cmd = require('mineflayer-cmd').plugin;
 const { pathfinder, Movements, goals } = require('mineflayer-pathfinder');
 const pvpBot = require('mineflayer-pvp').plugin;
+
+//Fs
 const fs = require('fs');
+
+//request
 const request = require("request");
+
+//mysql
 const mysql = require('mysql');
 
 //Discord
 const Discord = require('discord.js');
+
+//Create discord client
 let client = new Discord.Client();
 
-//configuration
+//configuration file
 let conf = fs.readFileSync('config.json');
 let config = JSON.parse(conf);
 
-//debug
+//debug enabled/disabled
 let debug = config['debug']['enabled'];
 
 //databes conf
@@ -25,37 +36,48 @@ let db_user = config['database']['user'];
 let db_pass = config['database']['pass'];
 let db_name = config['database']['database'];
 
-//messages
+//messages file
+//messages null check
 if (config['messages'] == null) {
     console.error('[Error - Config] Can\'t load messages file');
     process.exit(0);
 }
 
+//parse messages file
 let messages = JSON.parse(fs.readFileSync(config['messages']));
 
+//messages file version check
 if(messages['version'] != config['version']) {
     console.error('[Error - Config] Config version doesn\'t match messages file version');
     process.exit(0);
 }
 
+//config version
 const configVersion = config['version'];
 
-//Other Connections
+//Discord connected false
 var discordConnected = false;
+//Database connected null
 var conn = null;
 
+//Parse reloaded config file
 function parse (url = null){
+    //success pre variable
     var success = false;
 
+    //use external or internal file
     if(url != null){
         if(debug) console.log('[Log - Config] '+messages['reload_config']['external']);
 
+        //Promise config response
         success = new Promise(resolve => {request({
                 url: url,
                 json: true
             }, function (error, response, body) {
 
+                //check response status
                 if (!error && response.statusCode === 200) {
+                    //response body
                     body_conf = null;
                     body_config = body;
                     
@@ -63,33 +85,40 @@ function parse (url = null){
                         console.log(body_config);
                     }
 
+                    //get response config version
                     var confV = body_config['version'];
 
+                    //throw error when versions doesn't match
                     if(configVersion != confV) {
                         console.error('[Error - Config] '+messages['reload_config']['different_versions']);
                     } else {
                         success = true;
                     }
 
+                    //change config contents
                     config = body_config;
 
-                    //debug
-                    debug = config['debug']['enabled'];
+                    //debug enabled/disabled
+                    let debug = config['debug']['enabled'];
 
                     //databes conf
-                    db_enable = config['database']['enabled'];
-                    db_host = config['database']['host'];
-                    db_user = config['database']['user'];
-                    db_pass = config['database']['pass'];
-                    db_name = config['database']['database'];
+                    let db_enable = config['database']['enabled'];
+                    let db_host = config['database']['host'];
+                    let db_user = config['database']['user'];
+                    let db_pass = config['database']['pass'];
+                    let db_name = config['database']['database'];
 
+                    //messages file
+                    //messages null check
                     if (config['messages'] == null) {
                         console.error('[Error - Config] Can\'t load messages file');
                         process.exit(0);
                     }
 
+                    //parse messages file
                     let messages = JSON.parse(fs.readFileSync(config['messages']));
 
+                    //messages file version check
                     if(messages['version'] != config['version']) {
                         console.error('[Error - Config] Config version doesn\'t match messages file version');
                         process.exit(0);
@@ -102,18 +131,21 @@ function parse (url = null){
                     success = false;
                 }
 
+                //success callback
                 if(success){
+                    //restart all proccesses
                     connectDB();
-
                     if(config['discord']['enabled']) DiscordBot();
                     if(config['player']['enabled']) newBot();
                 }
 
+                //return success
                 return success;
             });
         });
         
     } else{
+        //response body
         let body_conf = fs.readFileSync('config.json');
         let body_config = JSON.parse(body_conf);
         
@@ -122,33 +154,40 @@ function parse (url = null){
             console.log(body_config);
         }
 
+        //get config version
         var confV = body_config['version'];
 
+        //throw error when versions doesn't match
         if(configVersion != confV) {
             console.error('[Error - Config] '+messages['reload_config']['different_versions']);
         } else{
             success = true;
         }
 
+        //change config contents
         config = body_config;
 
-        //debug
-        debug = config['debug']['enabled'];
+        //debug enabled/disabled
+        let debug = config['debug']['enabled'];
 
         //databes conf
-        db_enable = config['database']['enabled'];
-        db_host = config['database']['host'];
-        db_user = config['database']['user'];
-        db_pass = config['database']['pass'];
-        db_name = config['database']['database'];
+        let db_enable = config['database']['enabled'];
+        let db_host = config['database']['host'];
+        let db_user = config['database']['user'];
+        let db_pass = config['database']['pass'];
+        let db_name = config['database']['database'];
 
+        //messages file
+        //messages null check
         if (config['messages'] == null) {
             console.error('[Error - Config] Can\'t load messages file');
             process.exit(0);
         }
 
+        //parse messages file
         let messages = JSON.parse(fs.readFileSync(config['messages']));
 
+        //messages file version check
         if(messages['version'] != config['version']) {
             console.error('[Error - Config] Config version doesn\'t match messages file version');
             process.exit(0);
@@ -158,11 +197,11 @@ function parse (url = null){
     }
 }
 
-//debug mode
+//debug mode enabled/disabled log
 if(debug) console.log('[Log - Debug Mode] '+messages['logging']['enabled']);
 if(!debug) console.log('[Log - Debug Mode] '+messages['logging']['disabled']);
 
-//Other functions
+//Global functions
 function escapeRegExp(string) {
     return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
@@ -186,7 +225,9 @@ function findValueOfProperty(obj, propertyName){
     }, []);
 }
 
-//Main bot [MC / Discord] functions and databases
+//Main Functions
+
+//Minecraft bot function
 function newBot(){
     //movements
     var actions = ['forward', 'back', 'left', 'right'];
@@ -484,6 +525,8 @@ function newBot(){
         }, config['server']['reconnectTimeout']);
     });
 }
+
+//Discord bot function
 function DiscordBot(){
     if(discordConnected){
         if(client){
@@ -1007,6 +1050,8 @@ function DiscordBot(){
         });
     });
 }
+
+//Database function
 function connectDB(){
     if(debug) console.log('[Log - Discord Bot] '+messages['database']['connecting']);
 
@@ -1036,6 +1081,7 @@ function connectDB(){
     });
 }
 
+//Start all proccess
 if(db_enable) connectDB();
 if(config['discord']['enabled']) DiscordBot();
 if(config['player']['enabled']) newBot();
