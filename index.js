@@ -63,138 +63,72 @@ var conn = null;
 //Parse reloaded config file
 function parse (url = null){
     //success pre variable
-    let success = false;
+    var success = false;
 
-    //use external or internal file
-    if(url != null){
-        if(debug) console.log('[Log - Config] '+messages['reload_config']['external']);
+    //parse default config
+    var body_conf = fs.readFileSync('config.json');
 
-        //Promise config response
-        success = new Promise(resolve => {request({
-                url: url,
-                json: true
-            }, function (error, response, body) {
+    //parse JSON
+    var body_config = JSON.parse(body_conf);
 
-                //check response status
-                if (!error && response.statusCode === 200) {
-                    //response body
-                    body_conf = null;
-                    body_config = body;
-                    
-                    if(debug) {
-                        console.log(body_config);
-                    }
-
-                    //get response config version
-                    let confV = body_config['version'];
-
-                    //throw error when versions doesn't match
-                    if(configVersion != confV) {
-                        console.error('[Error - Config] '+messages['reload_config']['different_versions']);
-                    } else {
-                        success = true;
-                    }
-
-                    //change config contents
-                    config = body_config;
-
-                    //debug enabled/disabled
-                    debug = config['debug']['enabled'];
-
-                    //databes conf
-                    db_enable = config['database']['enabled'];
-                    db_host = config['database']['host'];
-                    db_user = config['database']['user'];
-                    db_pass = config['database']['pass'];
-                    db_name = config['database']['database'];
-
-                    //messages file
-                    //messages null check
-                    if (config['messages'] == null) {
-                        console.error('[Error - Config] Can\'t load messages file');
-                        process.exit(0);
-                    }
-
-                    //parse messages file
-                    messages = JSON.parse(fs.readFileSync(config['messages']));
-
-                    //messages file version check
-                    if(messages['version'] != config['version']) {
-                        console.error('[Error - Config] Config version doesn\'t match messages file version');
-                        process.exit(0);
-                    }
-
-                    if(debug) console.log('[Log - Config] '+messages['reload_config']['success']);
-                } else{
-                    console.log(body);
-                    if(debug) console.error('[Error - Config] '+messages['reload_config']['failed']+': '+error);
-                    success = false;
-                }
-
-                //success callback
-                if(success){
-                    //restart all proccesses
-                    connectDB();
-                    if(config['discord']['enabled']) DiscordBot();
-                    if(config['player']['enabled']) newBot();
-                }
-
-                //return success
-                return success;
-            });
-        });
-        
-    } else{
-        //response body
-        let body_conf = fs.readFileSync('config.json');
-        let body_config = JSON.parse(body_conf);
-        
-        if(debug) {
-            console.log('[Log - Config] '+messages['reload_config']);
-            console.log(body_config);
-        }
-
-        //get config version
-        let confV = body_config['version'];
-
-        //throw error when versions doesn't match
-        if(configVersion != confV) {
-            console.error('[Error - Config] '+messages['reload_config']['different_versions']);
-        } else{
-            success = true;
-        }
-
-        //change config contents
-        config = body_config;
-
-        //debug enabled/disabled
-        debug = config['debug']['enabled'];
-
-        //databes conf
-        db_enable = config['database']['enabled'];
-        db_host = config['database']['host'];
-        db_user = config['database']['user'];
-        db_pass = config['database']['pass'];
-        db_name = config['database']['database'];
-
-        //messages file
-        //messages null check
-        if (config['messages'] == null) {
-            console.error('[Error - Config] Can\'t load messages file');
-            process.exit(0);
-        }
-
-        //parse messages file
-        messages = JSON.parse(fs.readFileSync(config['messages']));
-
-        //messages file version check
-        if(messages['version'] != config['version']) {
-            console.error('[Error - Config] Config version doesn\'t match messages file version');
-            process.exit(0);
-        }
-
-        if(debug) console.log('[Log - Config] '+messages['reload_config']['success']);
+    if(debug) {
+        console.log('[Log - Config] '+messages['reload_config']);
+        console.log(body_config);
     }
+
+    //get config version
+    var confV = body_config['version'];
+
+    //throw error when versions doesn't match
+    if(configVersion != confV) {
+        console.error('[Error - Config] '+messages['reload_config']['different_versions']);
+        return success;
+    } else{
+        success = true;
+    }
+
+    console.log();
+    console.log();
+    console.log();
+
+    //change config contents
+    config = body_config;
+
+    //debug enabled/disabled
+    debug = config['debug']['enabled'];
+
+    //databes conf
+    db_enable = config['database']['enabled'];
+    db_host = config['database']['host'];
+    db_user = config['database']['user'];
+    db_pass = config['database']['pass'];
+    db_name = config['database']['database'];
+
+    //messages file
+    //messages null check
+    if (config['messages'] == null) {
+        console.error('[Error - Config] Can\'t load messages file');
+        process.exit(0);
+    }
+
+    //parse messages file
+    messages = JSON.parse(fs.readFileSync(config['messages']));
+
+    //messages file version check
+    if(messages['version'] != config['version']) {
+        console.error('[Error - Config] Config version doesn\'t match messages file version');
+        process.exit(0);
+    }
+
+    if(debug) console.log('[Log - Config] '+messages['reload_config']['success']);
+
+    if(success){
+        //restart all proccesses
+        connectDB();
+        if(config['discord']['enabled']) DiscordBot();
+        if(config['player']['enabled']) newBot();
+    }
+    return success;
 }
 
 //debug mode enabled/disabled log
@@ -206,7 +140,9 @@ function escapeRegExp(string) {
     return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 function replaceAll(str, find, replace) {
-    return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+    if(str != null){
+        return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+    }
 }
 function randomInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -344,11 +280,10 @@ function newBot(){
                 bot.chat(messages['minecraft_bot']['chats']['command_invalid']);
             } else if (admin && command == 'reloadonlineconfig' || admin && command == 'restartconfig'){
                 bot.chat("Reloading Bot Config");
-                var reload = new Promise(resolve => (parse(config['onlineConfig'])));
-                if(reload){
+                if(parse(config['onlineConfig'])){
                     bot.chat(messages['reload_config']['success']);
                 } else{
-                    bot.chat(messages['reload_config']['success']);
+                    bot.chat(messages['reload_config']['failed']);
                 }
             } else if (admin && command == 'restartbot' || admin && command == 'reloadbot'){
                 bot.chat(messages['minecraft_bot']['chats']['command_restarting']);
@@ -368,7 +303,7 @@ function newBot(){
             }
 
         } else{
-            if (debug) console.log('[Log - Mincraft Bot] Player chat recieved from '+username+' > '+message);
+            if (debug && config['debug']['minecraft_chats']) console.log('[Log - Mincraft Bot] Player chat recieved from '+username+' > '+message);
 
             let reply = null;
 
@@ -411,9 +346,9 @@ function newBot(){
             reply = replaceAll(reply, "%player%", username);
             reply = replaceAll(reply, "%player_lowercase%", username.toLowerCase());
             reply = replaceAll(reply, "%player_uppercase%", username.toUpperCase());
-            reply = replaceAll(reply, "%bot%", botName);
-            reply = replaceAll(reply, "%bot_lowercase%", botName.toLowerCase());
-            reply = replaceAll(reply, "%bot_uppercase%", botName.toUpperCase());
+            reply = replaceAll(reply, "%bot%", player);
+            reply = replaceAll(reply, "%bot_lowercase%", player.toLowerCase());
+            reply = replaceAll(reply, "%bot_uppercase%", player.toUpperCase());
 
             //summon reply
             if(reply != null) {
@@ -512,7 +447,7 @@ function newBot(){
         bot.end();
     });
     bot.on('end', () => {
-        if(!connected && !logged) return;
+        if(lasttime < 0) return;
 
         connected = false;
         logged = false;
@@ -573,7 +508,7 @@ function DiscordBot(){
             factslist = JSON.parse(factslist);
         }
 
-        client.on('message', message => {
+        client.on('message', function(message) {
             //disconnect
             if(config['discord']['enabled'] == false){
                 client.destroy();
@@ -693,7 +628,7 @@ function DiscordBot(){
 
             //CMD or STRING parser
             if (!rawMessage.startsWith(config['discord']['command-prefix'])){
-                if(debug) console.log("[Log - Discord Bot] "+messages['discord_bot']['message_sent']+": "+author);
+                if(config['debug']['discord_chats']) console.log("[Log - Discord Bot] "+messages['discord_bot']['message_sent']+": "+author);
                 //discord msg
 
                 if(findName(rawMessage) && removeMensions(lowerMessage) == 'hi' || lowerMessage == 'hi guys'){
@@ -1024,12 +959,11 @@ function DiscordBot(){
                 } else if (command == 'reload') {
                     if(message.member.hasPermission("ADMINISTRATOR")) {
                         message.reply(messages['discord_bot']['reloading']);
-                        let reload = new Promise(resolve => (parse(config['onlineConfig'])));
-
+                        let reload = parse(config['onlineConfig']);
                         if(reload){
-                            message.reply(messages['discord_bot']['chats']['reloaded']);
-                        } else{
-                            message.reply(messages['discord_bot']['chats']['reload_failed']);
+                            message.reply(messages['reload_config']['success']);
+                        } else {
+                            message.reply(messages['reload_config']['failed']);
                         }
                     } else {
                         message.reply(messages['discord_bot']['chats']['command_no_perm']).then(msg => {
@@ -1039,7 +973,7 @@ function DiscordBot(){
                 }
             }
 
-            if(debug) {
+            if(config['debug']['discord_chats']) {
                 console.log("[Log - Discord Bot] "+messages['discord_bot']['message_received']+": "+limitText(message.content));
                 //console.log('[Log - Discord Bot] Raw Message: '+limitText(rawMessage)+'; LowerRemoveMensions: '+limitText(removeMensions(lowerMessage))+'; BotFind: '+limitText(findName(lowerMessage)));
             }

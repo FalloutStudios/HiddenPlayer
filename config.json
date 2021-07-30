@@ -5,7 +5,7 @@
 		"reconnectTimeout": 5000
 	},
 	"player": {
-		"enabled": true,
+		"enabled": false,
 		"name": "HiddenPlayer",
 		"version": null,
 		"message": "hello",
@@ -69,10 +69,12 @@
 	"debug": {
 		"enabled": true,
 		"movements": false,
+		"discord_chats": true,
+		"minecraft_chats": true,
 		"prefix": "Beta",
 		"suffix": ""
 	},
 	"messages": "assets/messages.json",
-	"onlineConfig": "http://localhost/config.json",
+	"responses": "assets/response.json",
 	"version": "1.5.8"
 }
