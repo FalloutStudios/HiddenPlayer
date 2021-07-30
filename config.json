@@ -38,7 +38,7 @@
 		"send_bot_messages": true,
 		"spam": {
 			"enabled": true,
-			"player_ping": false,
+			"player_ping": true,
 			"max": 30,
 			"disabled_channels": []
 		},
@@ -76,5 +76,5 @@
 	},
 	"messages": "assets/messages.json",
 	"responses": "assets/response.json",
-	"version": "1.5.8"
+	"version": "1.5.9"
 }
