@@ -34,19 +34,28 @@ let db_user = config['database']['user'];
 let db_pass = config['database']['pass'];
 let db_name = config['database']['database'];
 
-//messages file
+//messages and response files
 //messages null check
 if (config['messages'] == null) {
     console.error('[Error - Config] Can\'t load messages file');
     process.exit(0);
 }
+if (config['responses'] == null) {
+    console.error('[Error - Config] Can\'t load response messages file');
+    process.exit(0);
+}
 
-//parse messages file
+//parse messages and response files
 let messages = JSON.parse(fs.readFileSync(config['messages']));
+let messageResponseFile = JSON.parse(fs.readFileSync(config['responses']));
 
-//messages file version check
+//messages and reponse files version check
 if(messages['version'] != config['version']) {
     console.error('[Error - Config] Config version doesn\'t match messages file version');
+    process.exit(0);
+}
+if(messageResponseFile['version'] != config['version']) {
+    console.error('[Error - Config] Config version doesn\'t match response messages file version');
     process.exit(0);
 }
 
@@ -89,10 +98,6 @@ function parse (url = null){
         success = true;
     }
 
-    console.log();
-    console.log();
-    console.log();
-
     //change config contents
     config = body_config;
 
@@ -106,19 +111,28 @@ function parse (url = null){
     db_pass = config['database']['pass'];
     db_name = config['database']['database'];
 
-    //messages file
+    //messages and response files
     //messages null check
     if (config['messages'] == null) {
         console.error('[Error - Config] Can\'t load messages file');
         process.exit(0);
     }
+    if (config['responses'] == null) {
+        console.error('[Error - Config] Can\'t load response messages file');
+        process.exit(0);
+    }
 
-    //parse messages file
+    //parse messages and response files
     messages = JSON.parse(fs.readFileSync(config['messages']));
+    messageResponseFile = JSON.parse(fs.readFileSync(config['responses']));
 
-    //messages file version check
+    //messages and reponse files version check
     if(messages['version'] != config['version']) {
         console.error('[Error - Config] Config version doesn\'t match messages file version');
+        process.exit(0);
+    }
+    if(messageResponseFile['version'] != config['version']) {
+        console.error('[Error - Config] Config version doesn\'t match response messages file version');
         process.exit(0);
     }
 
@@ -142,23 +156,32 @@ if(debug) console.log('[Log - Debug Mode] '+messages['logging']['enabled']);
 if(!debug) console.log('[Log - Debug Mode] '+messages['logging']['disabled']);
 
 //Global functions
+//excape regex in string
 function escapeRegExp(string) {
     return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
+
+//replace all from a string
 function replaceAll(str, find, replace) {
     if(str != null){
         return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
     }
 }
+
+//get random
 function randomInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+//limit string lenght to 100
 function limitText(text = null){
 	if(text != null && text.length >= 100){
 		text = text.substr(0,100) + "...";
 	}
 	return text;
 }
+
+//find property value from an object
 function findValueOfProperty(obj, propertyName){
     let reg = new RegExp(propertyName, "i"); // "i" to make it case insensitive
     return Object.keys(obj).reduce((result, key) => {
@@ -167,6 +190,7 @@ function findValueOfProperty(obj, propertyName){
     }, []);
 }
 
+//trim some unicodes from stirng
 function trimUnicode(text) {
     if(text != null){
         text = text.trim();
@@ -181,6 +205,33 @@ function trimUnicode(text) {
 
         return text;
     }
+}
+
+//get random response to a message
+function customResponse(message = null, get = true, source = "minecraft") {
+    if(message != null){
+        message = replaceAll(trimUnicode(message).toLowerCase(), config['player']['name'].toLowerCase(), "").trim();
+
+        if(Object.keys(messageResponseFile[source]).includes(message)){
+
+            if(typeof messageResponseFile[source][message] == 'object' && messageResponseFile[source][message].length > 0 || typeof messageResponseFile[source][message] == 'string' &&  messageResponseFile[message] != ''){
+                
+                let response = null;
+
+                if(get == false) return true;
+
+                if(typeof messageResponseFile[source][message] == 'object') {
+                    response = messageResponseFile[source][message][Math.floor(Math.random() * Object.keys(messageResponseFile[source][message]).length)];
+                } else if (typeof messageResponseFile[source][message] == 'string') {
+                    response = messageResponseFile[source][message];
+                }
+                
+                return response;
+            }
+        }
+    }
+
+    return false;
 }
 
 //Main Functions
@@ -391,9 +442,6 @@ function newBot(){
             lmsg = message.toLowerCase();
             lrmsg = removeMensions.toLowerCase();
 
-            //random int
-            let randommizer = randomInteger(0,5);
-
             //bot reply
             if(lmsg == player.toLowerCase() + ' hi'|| lmsg == 'hi ' + player.toLowerCase() || lrmsg == 'hi guys' || lrmsg == 'hi bot' || lrmsg == 'bot hi'){
                 reply = messages['minecraft_bot']['response']['hi'];
@@ -409,6 +457,8 @@ function newBot(){
                 reply = messages['minecraft_bot']['response']['spy'];
             } else if (lmsg.indexOf("kill "+player) > -1){
                 reply = messages['minecraft_bot']['response']['kill'];
+            } else if (customResponse(lmsg, false)){
+                reply = customResponse(lmsg, true);
             }
 
             //reply placeholders
@@ -770,10 +820,18 @@ function DiscordBot(){
             //return if the author is the bot
             if(author.bot) return;
 
-            //CMD or STRING parser
+            //CMD or STRING check
             if (!rawMessage.startsWith(config['discord']['command-prefix'])){
                 if(config['debug']['discord_chats']) console.log("[Log - Discord Bot] "+messages['discord_bot']['message_sent']+": "+author);
                 //discord msg
+
+                console.log();
+                console.log();
+                console.log(customResponse(rawMessage, false, "discord"));
+                console.log(customResponse(rawMessage, true, "discord"));
+                console.log(Object.keys(messageResponseFile['discord']).includes(rawMessage));
+                console.log();
+                console.log();
 
                 if(findName(rawMessage) && removeMensions(lowerMessage) == 'hi' || lowerMessage == 'hi guys'){
                     
@@ -937,6 +995,14 @@ function DiscordBot(){
                             .setDescription('`Source: '+source+'`');
                         message.channel.send(embed);
                     }
+                } else if (customResponse(rawMessage, false, "discord")) {
+                    let reply = customResponse(rawMessage, true, "discord");
+
+                    reply = replaceAll(reply, "%botname%", botName);
+                    reply = replaceAll(reply, "%author%", author);
+                    reply = replaceAll(reply, "%author_ping%", mension);
+
+                    message.channel.send(reply);
                 } else if(findName(rawMessage) || taggedUser == botUser_id) {
                     message.react('854320612565450762');
                 }

@@ -1,37 +1,19 @@
 {   
     "minecraft": {
-        "+hi+": [
-            "Hello, %author%",
-            "Hellooooo %author% :smilly:",
-            "Hello %author%"
+        "hello bitch": [
+            "bruh %player%"
         ],
-        "+hello+": [
-            "Hi %author%",
-            "Hi, %author%"
-        ],
-        "+im new": [
-            "Hello %author%",
-            "Welcome %author%!",
-            "Hi new"
-        ],
-        "kill+": [
-            "No plsssss!",
-            "Don't kill me! brehh",
-            "please no I'm innocent!",
-            "breh why I'll kill you on my next update! lul",
-            "wth pls noooo!"
-        ],
-        "what is bot": "Bot is a computer software that performs task like humans :)",
-        "+are you a spy": [
-            "NOOOOOOOOOOOOOOoooo!",
-            "Ofc... No -_-",
-            "Breh! nah!",
-            "Why'd you ask?",
-            "A big no",
-            "modbot is the spy not me lul"
+        "hello bitches": [
+            "%player% WHAAAAAAAAAAAAAAAAT!"
         ]
     },
     "discord": {
-
-    }
+        "eeeee": [
+            "breh",
+            "eee",
+            "hello e"
+        ],
+        "yoobreh": "brehhhh"
+    },
+    "version": "1.5.12"
 }

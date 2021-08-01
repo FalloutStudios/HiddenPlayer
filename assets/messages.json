@@ -63,5 +63,5 @@
         "connected": "Database connected!",
         "connection_logged": "MySQL connection logged!"
     },
-    "version": "1.5.11"
+    "version": "1.5.12"
 }
