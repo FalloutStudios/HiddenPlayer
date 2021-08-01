@@ -73,12 +73,12 @@
 	"debug": {
 		"enabled": true,
 		"movements": false,
-		"discord_chats": true,
+		"discord_chats": false,
 		"minecraft_chats": true,
 		"prefix": "",
 		"suffix": ""
 	},
 	"messages": "assets/messages.json",
 	"responses": "assets/response.json",
-	"version": "1.5.10"
+	"version": "1.5.11"
 }

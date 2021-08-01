@@ -18,7 +18,7 @@ const mysql = require('mysql');
 
 //Discord
 const Discord = require('discord.js');
-const DiscordInteractions = require("discord-slash-commands-client");
+// const DiscordInteractions = require("discord-slash-commands-client");  Disable temporarily
 
 //configuration file
 let conf = fs.readFileSync('config.json');
@@ -135,7 +135,7 @@ function parse (url = null){
 
 //Create discord client
 const client = new Discord.Client();
-client.interactions = new DiscordInteractions.Client(config['discord']['token'], config['discord']['user_id']);
+// client.interactions = new DiscordInteractions.Client(config['discord']['token'], config['discord']['user_id']);
 
 //debug mode enabled/disabled log
 if(debug) console.log('[Log - Debug Mode] '+messages['logging']['enabled']);
@@ -334,7 +334,7 @@ function newBot(){
             if(command == ''){
                 //invalid command: null
                 bot.chat(messages['minecraft_bot']['chats']['command_invalid']);
-            } else if (admin && command == 'reloadonlineconfig' || admin && command == 'restartconfig'){
+            } else if (admin && command == 'reloadconfig' || admin && command == 'reload' || admin && command == 'restartconfig'){
                 //reload config
                 bot.chat("Reloading Bot Config");
 
@@ -648,14 +648,6 @@ function DiscordBot(){
             factslist = fs.readFileSync(config['discord']['facts']['src']);
             factslist = JSON.parse(factslist);
         }
-
-        //create commands
-        client.interactions.createCommand({
-            name: "example",
-            description: "description for this command",
-        })
-        .catch(console.error("-"))
-        .then(console.log("+"));
 
         //on message
         client.on('message', function(message) {
@@ -1148,11 +1140,6 @@ function DiscordBot(){
                 console.log("[Log - Discord Bot] "+messages['discord_bot']['message_received']+": "+limitText(message.content));
                 //console.log('[Log - Discord Bot] Raw Message: '+limitText(rawMessage)+'; LowerRemoveMensions: '+limitText(removeMensions(lowerMessage))+'; BotFind: '+limitText(findName(lowerMessage)));
             }
-        });
-
-        //on command interact
-        client.on("interactionCreate", (interaction) => {
-            console.log(interaction);
         });
     });
 }
