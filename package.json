@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "config": "^3.3.3",
+    "discord-slash-commands-client": "^1.2.1",
     "discord.js": "^12.5.3",
     "fs": "0.0.1-security",
     "mineflayer": "^2.37.1",

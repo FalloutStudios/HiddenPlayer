@@ -18,9 +18,7 @@ const mysql = require('mysql');
 
 //Discord
 const Discord = require('discord.js');
-
-//Create discord client
-let client = new Discord.Client();
+const DiscordInteractions = require("discord-slash-commands-client");
 
 //configuration file
 let conf = fs.readFileSync('config.json');
@@ -57,6 +55,10 @@ const configVersion = config['version'];
 
 //Discord connected false
 var discordConnected = false;
+
+//Minecraft bot connected false
+var MinecraftConnected = false;
+
 //Database connected null
 var conn = null;
 
@@ -130,6 +132,10 @@ function parse (url = null){
     }
     return success;
 }
+
+//Create discord client
+const client = new Discord.Client();
+client.interactions = new DiscordInteractions.Client(config['discord']['token'], config['discord']['user_id']);
 
 //debug mode enabled/disabled log
 if(debug) console.log('[Log - Debug Mode] '+messages['logging']['enabled']);
@@ -242,6 +248,11 @@ function newBot(){
         process.exit(0);        
     }
 
+    //check if minecraft bot already connected
+    if(MinecraftConnected) {
+        console.log('[Error - Minecraft Bot] '+messages['minecraft_bot']['already_connected']);
+        return;
+    }
     //summon bot
     var bot = mineflayer.createBot({
         host: ip,
@@ -266,6 +277,9 @@ function newBot(){
         if(config['autosave']['enbled']){
             saveAll();
         }
+
+        //set connection status
+        MinecraftConnected = true;
     });
 
     //every respawn
@@ -356,7 +370,7 @@ function newBot(){
                 bot.chat(messages['minecraft_bot']['chats']['command_failed']);
             } else{
                 //invalid command
-                bot.chat(messages['minecraft_bot']['chats']['invalid']);
+                bot.chat(messages['minecraft_bot']['chats']['command_invalid']);
             }
 
         } else{
@@ -543,7 +557,7 @@ function newBot(){
     });
 
     //if bot end
-    bot.on('error kicked',function (reason){
+    bot.on('error kicked banned',function (reason){
         if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['disconnected']+': '+reason);
 
         //end bot
@@ -552,13 +566,12 @@ function newBot(){
     });
 
     //reconnect attempt
-    bot.on('end', () => {
-        //check if bot spawned
-        if(lasttime < 0) return;
+    bot.on('end', (reason) => {
 
         //set status to false
         connected = false;
         logged = false;
+        MinecraftConnected = false;
 
         //reconnect timeout
         setTimeout(() => {
@@ -567,7 +580,7 @@ function newBot(){
 
             //request new bot
             newBot();
-            if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['bot_end']);
+            if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['bot_end']+': '+reason);
         }, config['server']['reconnectTimeout']);
     });
 }
@@ -635,6 +648,14 @@ function DiscordBot(){
             factslist = fs.readFileSync(config['discord']['facts']['src']);
             factslist = JSON.parse(factslist);
         }
+
+        //create commands
+        client.interactions.createCommand({
+            name: "example",
+            description: "description for this command",
+        })
+        .catch(console.error("-"))
+        .then(console.log("+"));
 
         //on message
         client.on('message', function(message) {
@@ -877,7 +898,7 @@ function DiscordBot(){
 
                         if (RandomImage != null) {
                             var embed = new Discord.MessageEmbed()
-                                .setColor('#0099ff')
+                                .setColor(config['discord']['embed']['color'])
                                 .setAuthor(phrase, userAvatar)
                                 .setImage(RandomImage);
 
@@ -897,15 +918,33 @@ function DiscordBot(){
                         let msg = Object.keys(motivations)[randomKey];
                         let author = motivations[msg]['author'];
 
+                        if(author == null && author == ''){
+                            author = 'Unknown';
+                        }
 
                         var embed = new Discord.MessageEmbed()
-                            .setColor('#0099ff')
+                            .setColor(config['discord']['embed']['color'])
                             .setTitle(`By: `+author)
                             .setDescription('> '+msg);
                         message.channel.send(embed);
                     }
                 } else if (findName(rawMessage) && removeMensions(lowerMessage).substr(0,11).replace('tell','').replace('me','').trim() == 'random fact') {
-                    
+                    if(config['discord']['facts']['enabled']){
+                        let randomKey = Math.floor(Math.random() * Object.keys(factslist).length);
+
+                        let msg = Object.keys(factslist)[randomKey];
+                        let source = factslist[msg]['source'];
+
+                        if(source == null || source == ''){
+                            source = 'Unknown';
+                        }
+
+                        var embed = new Discord.MessageEmbed()
+                            .setColor(config['discord']['embed']['color'])
+                            .setTitle(msg)
+                            .setDescription('`Source: '+source+'`');
+                        message.channel.send(embed);
+                    }
                 } else if(findName(rawMessage) || taggedUser == botUser_id) {
                     message.react('854320612565450762');
                 }
@@ -930,7 +969,7 @@ function DiscordBot(){
                     
                 } else if (command == 'me') {
                     var embed = new Discord.MessageEmbed()
-                        .setColor('#0099ff')
+                        .setColor(config['discord']['embed']['color'])
                         .setAuthor(author, userAvatar);
                     message.channel.send(embed);
                 } else if (command == 'you') {
@@ -943,7 +982,7 @@ function DiscordBot(){
                         message.channel.send('I need privacy :smirk:');
                     else
                         var embed = new Discord.MessageEmbed()
-                        .setColor('#0099ff')
+                        .setColor(config['discord']['embed']['color'])
                         .setAuthor(botName, botAvatar)
                         .setTimestamp();
                         message.channel.send(embed);
@@ -957,7 +996,7 @@ function DiscordBot(){
                         let content = rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).slice(title.length);
 
                         var embed = new Discord.MessageEmbed()
-                            .setColor('#0099ff')
+                            .setColor(config['discord']['embed']['color'])
                             .setTitle(title)
                             .setAuthor('HiddenPlayer', botAvatar)
                             .setDescription(content)
@@ -1037,7 +1076,7 @@ function DiscordBot(){
                 } else if (command == 'exembed') {
                     if(message.member.hasPermission("ADMINISTRATOR")) {
                         var embed = new Discord.MessageEmbed()
-                            .setColor('#0099ff')
+                            .setColor(config['discord']['embed']['color'])
                             .setTitle('Some title')
                             .setURL('https://discord.js.org/')
                             .setAuthor('Some name', 'https://i.imgur.com/wSTFkRM.png', 'https://discord.js.org')
@@ -1109,6 +1148,11 @@ function DiscordBot(){
                 console.log("[Log - Discord Bot] "+messages['discord_bot']['message_received']+": "+limitText(message.content));
                 //console.log('[Log - Discord Bot] Raw Message: '+limitText(rawMessage)+'; LowerRemoveMensions: '+limitText(removeMensions(lowerMessage))+'; BotFind: '+limitText(findName(lowerMessage)));
             }
+        });
+
+        //on command interact
+        client.on("interactionCreate", (interaction) => {
+            console.log(interaction);
         });
     });
 }

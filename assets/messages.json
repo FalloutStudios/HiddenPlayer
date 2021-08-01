@@ -15,6 +15,7 @@
         "starting": "Creating minecraft bot!",
         "proccessing": "Starting Minecraft bot...",
         "disconnect_bot": "Disconnection Minecraft bot",
+        "already_connected": "Minecraft bot is already connected!",
         "prefix_and_suffix_enabled": "Player Name Prefix and Sufix enabled!",
         "invalid_name": "Invalid name more than 16 or less than 3 characters",
         "invalid_port": "Invalid Port",
@@ -62,5 +63,5 @@
         "connected": "Database connected!",
         "connection_logged": "MySQL connection logged!"
     },
-    "version": "1.5.9"
+    "version": "1.5.10"
 }

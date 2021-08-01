@@ -5,7 +5,7 @@
 		"reconnectTimeout": 5000
 	},
 	"player": {
-		"enabled": false,
+		"enabled": true,
 		"name": "HiddenPlayer",
 		"version": null,
 		"message": "hello",
@@ -32,9 +32,13 @@
 	"discord": {
 		"enabled": true,
 		"token": "ODU0MjMwMzY2MDg4MjAwMjMz.YMg6Bg.qZ5vYtSu327Feue0AKw10QRsWEY",
+		"user_id": "854230366088200233",
 		"prefix": ["hiddenplayer", "hidden", "hd"],
 		"command-prefix": ">",
 		"embed_messages": true,
+		"embed": {
+			"color": "#0099ff"
+		},
 		"send_bot_messages": true,
 		"spam": {
 			"enabled": true,
@@ -71,10 +75,10 @@
 		"movements": false,
 		"discord_chats": true,
 		"minecraft_chats": true,
-		"prefix": "Beta",
+		"prefix": "",
 		"suffix": ""
 	},
 	"messages": "assets/messages.json",
 	"responses": "assets/response.json",
-	"version": "1.5.9"
+	"version": "1.5.10"
 }
