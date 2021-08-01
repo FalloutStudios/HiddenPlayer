@@ -825,14 +825,6 @@ function DiscordBot(){
                 if(config['debug']['discord_chats']) console.log("[Log - Discord Bot] "+messages['discord_bot']['message_sent']+": "+author);
                 //discord msg
 
-                console.log();
-                console.log();
-                console.log(customResponse(rawMessage, false, "discord"));
-                console.log(customResponse(rawMessage, true, "discord"));
-                console.log(Object.keys(messageResponseFile['discord']).includes(rawMessage));
-                console.log();
-                console.log();
-
                 if(findName(rawMessage) && removeMensions(lowerMessage) == 'hi' || lowerMessage == 'hi guys'){
                     
                     if (randomResponse == 0)
