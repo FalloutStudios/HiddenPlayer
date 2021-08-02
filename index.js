@@ -663,11 +663,22 @@ function DiscordBot(){
     if(debug) console.log("[Log - Discord Bot] "+messages['discord_bot']['enabled']);
 
     //on bot ready
-    client.on('ready', () => {
+    client.on('ready', async () => {
         //set bot status to true
         discordConnected = true;
         if(debug) console.log("[Log - Discord Bot] "+messages['discord_bot']['ready']+": "+client.user.tag+"; "+client.user.id);
 
+        if(config['discord']['presence']['enable']){
+            await client.user.setPresence({
+                status: config['discord']['presence']['status'],  //You can show online, idle....
+                activity: {
+                    name: config['discord']['presence']['name'],  //The message shown
+                    type: config['discord']['presence']['type'].toUpperCase(), //PLAYING: WATCHING: LISTENING: STREAMING:
+                    urll: config['discord']['presence']['url']
+                }
+            });
+        }
+        
         //actions list
         let emotes = null;
         let reacts = null;
