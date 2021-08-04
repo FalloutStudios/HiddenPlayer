@@ -104,7 +104,8 @@ Config file explanation: `Don't use this in your config.json (Comments are not a
 
 ## Default config.json
 
-This is the default `config.json` contents:
+This is the default `config.json` contents. You can use this in your `config.json` file
+
 ```json
 {
 	"server": {
@@ -200,5 +201,15 @@ This is the default `config.json` contents:
 	"messages": "assets/messages.json",
 	"responses": "assets/response.json",
 	"version": "1.5.15"
+}
+```
+### Discord not working?
+
+Try Replacing `"token": ...` with your bot's valid client secret: 
+```
+"discord": {
+	...,
+	"token": "Your_discord_bot_token_here", //get your client secret(token) from https://discord.com/developers/applications/BOT_ID/oauth2
+	...
 }
 ```
