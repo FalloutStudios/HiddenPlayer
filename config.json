@@ -1,6 +1,6 @@
 {
 	"server": {
-		"ip": "laggyserverfrom.aternos.me",
+		"ip": "127.0.0.1",
 		"port": 25565,
 		"reconnectTimeout": 5000
 	},
@@ -8,6 +8,10 @@
 		"enabled": true,
 		"name": "HiddenPlayer",
 		"version": null,
+		"countdeaths": {
+			"enabled": true,
+			"src": "assets/deathcount.txt"
+		},
 		"message": "hello",
 		"pvp": {
 			"enabled": true
@@ -30,7 +34,7 @@
 		"GhescaCortes": "admin"
 	},
 	"discord": {
-		"enabled": true,
+		"enabled": false,
 		"token": "ODU0MjMwMzY2MDg4MjAwMjMz.YMg6Bg.qZ5vYtSu327Feue0AKw10QRsWEY",
 		"user_id": "854230366088200233",
 		"presence": {
@@ -82,10 +86,10 @@
 		"movements": false,
 		"discord_chats": true,
 		"minecraft_chats": true,
-		"prefix": "Beta",
+		"prefix": "",
 		"suffix": ""
 	},
 	"messages": "assets/messages.json",
 	"responses": "assets/response.json",
-	"version": "1.5.13"
+	"version": "1.5.15"
 }

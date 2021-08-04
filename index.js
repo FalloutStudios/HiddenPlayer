@@ -71,6 +71,29 @@ var MinecraftConnected = false;
 //Database connected null
 var conn = null;
 
+var fullname = config['debug']['prefix']+config['player']['name']+config['debug']['suffix'];
+//start-up design
+console.log('');
+console.log('');
+
+console.log(' __    __    ________    ________     ________     ______   ______     __');
+console.log('|  |  |  |  |__    __|  |   ___  \\   |   ___  \\   |   ___|  |     \\   |  |');
+console.log('|  |__|  |     |  |     |  |   |  |  |  |   |  |  |  |___   |  |\\  \\  |  |');
+console.log('|   __   |     |  |     |  |   |  |  |  |   |  |  |   ___|  |  | \\  \\ |  |');
+console.log('|  |  |  |   __|  |__   |  |___|  |  |  |___|  |  |  |___   |  |  \\  \\|  |');
+console.log('|__|  |__|  |________|  |________/   |________/   |______|  |__|   \\_____|');
+console.log('');
+
+console.log('============================ '+fullname+' '+configVersion+' ===========================');
+console.log('');
+console.log('');
+console.log('GitHub: https://github.com/GhexterCortes/minecraft-bot');
+console.log('');
+console.log('=========================================================='+loop(fullname.length, '=')+loop(configVersion.length, '='));
+
+console.log('');
+console.log('');
+
 //Parse reloaded config file
 function parse (url = null){
     //success pre variable
@@ -151,6 +174,15 @@ function parse (url = null){
 const client = new Discord.Client();
 // client.interactions = new DiscordInteractions.Client(config['discord']['token'], config['discord']['user_id']);
 
+//loop
+function loop(num = 0, str = ''){
+    var returnVal = '';
+    for (let i = 0; i < num; i++) {
+        returnVal += str;
+    }
+    return returnVal;
+}
+
 //debug mode enabled/disabled log
 if(debug) console.log('[Log - Debug Mode] '+messages['logging']['enabled']);
 if(!debug) console.log('[Log - Debug Mode] '+messages['logging']['disabled']);
@@ -218,7 +250,7 @@ function customResponse(message = null, get = true, source = "minecraft") {
                 
                 let response = null;
 
-                if(get == false) return true;
+                if(!get) return true;
 
                 if(typeof messageResponseFile[source][message] == 'object') {
                     response = messageResponseFile[source][message][Math.floor(Math.random() * Object.keys(messageResponseFile[source][message]).length)];
@@ -319,43 +351,22 @@ function newBot(){
     bot.loadPlugin(pathfinder);
     bot.loadPlugin(pvpBot);
 
+    var deathCount = 0;
 
-    //first spawn
-    bot.once('spawn', () => {
-        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['first_spawn']);
-        
-        //check if auto save is enabled
-        if(config['autosave']['enbled']){
-            saveAll();
+    //check if death counts enabled
+    if(config['player']['countdeaths']['enabled'] && fs.existsSync(config['player']['countdeaths']['src'])) {
+        //read death count file
+        deathCount = parseInt(fs.readFileSync(config['player']['countdeaths']['src'])) || 0;
+
+        //check for valid number
+        if(deathCount == null || typeof deathCount == 'undefined' || isNaN(deathCount)){
+            //set new number when invalid
+            deathCount = 0;
+
+            //write new valid number to the file
+            fs.writeFileSync(config['player']['countdeaths']['src'], deathCount + '');
         }
-
-        //set connection status
-        MinecraftConnected = true;
-    });
-
-    //every respawn
-    bot.on('spawn', () => {
-        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['spawned']);
-
-        //check if connected and logged status is true
-        if(connected == false && logged == false){
-            //set status to true
-            connected = true;
-            logged = true;
-            
-            //chat first message
-            bot.chat(config['player']['message']);
-            if(debug) console.log('[Log - Mincraft Bot] connected = '+connected+'; logged = '+logged);
-        }
-    });
-
-    //respawn
-    bot.on('death',function() {
-        //emit respawn when died
-        bot.emit("respawn");
-
-        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['died']);
-    });
+    }
 
     //on chat
     bot.on('chat', function (username, message){
@@ -408,7 +419,7 @@ function newBot(){
                 //kill player
 
                 //find player name
-                if(bot.players.includes(args[0].trim())){
+                if(bot.players[args[0].trim()]){
                     //execute in-game command
                     bot.chat(`/minecraft:kill `+args[0].trim());
                     bot.chat(username+` killed `+args[0].trim());
@@ -416,7 +427,9 @@ function newBot(){
                     //player not found
                     bot.chat('Player '+args[0].trim()+' not found');
                 }
-            } else if (admin == false){
+            } else if (command == 'deathcount' && config['player']['countdeaths']['enabled']) {
+                bot.chat(`I died `+deathCount.toLocaleString()+` times`);
+            } else if (!admin){
                 //no perms message
                 bot.chat(messages['minecraft_bot']['chats']['command_failed']);
             } else{
@@ -432,15 +445,13 @@ function newBot(){
 
             //trim message
             message = trimUnicode(message);
-            msg = message;
 
             //message without bot's name
-            removeMensions = replaceAll(message,player,"").trim();
-            rmsg = removeMensions;
+            var removeMensions = replaceAll(message,player,"").trim();
 
             //lowercase message
-            lmsg = message.toLowerCase();
-            lrmsg = removeMensions.toLowerCase();
+            var lmsg = message.toLowerCase();
+            var lrmsg = removeMensions.toLowerCase();
 
             //bot reply
             if(lmsg == player.toLowerCase() + ' hi'|| lmsg == 'hi ' + player.toLowerCase() || lrmsg == 'hi guys' || lrmsg == 'hi bot' || lrmsg == 'bot hi'){
@@ -487,6 +498,7 @@ function newBot(){
     let moving = false;
     let jump = false;
     let onPVP = false;
+    let lastaction = actions[Math.floor(Math.random() * actions.length)];
 
     //auto save interval
     function saveAll(){
@@ -502,10 +514,62 @@ function newBot(){
         }, config['autosave']['interval']);
     }
 
+    //first spawn
+    bot.once('spawn', () => {
+        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['first_spawn']);
+        
+        //check if auto save is enabled
+        if(config['autosave']['enbled']){
+            saveAll();
+        }
+
+        //set connection status
+        MinecraftConnected = true;
+    });
+
+    //every respawn
+    bot.on('spawn', () => {
+        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['spawned']);
+
+        //check if connected and logged status is true
+        if(!connected && !logged){
+            //set status to true
+            connected = true;
+            logged = true;
+            
+            //chat first message
+            bot.chat(config['player']['message']);
+            if(debug) console.log('[Log - Mincraft Bot] connected = '+connected+'; logged = '+logged);
+        } else {
+            //set all to default
+            lasttime = -1;
+            bot.pvp.stop();
+            bot.setControlState(lastaction,false);
+            bot.deactivateItem();
+            moving = false;
+        }
+
+        // Hmmmmm... so basically database is useless wtf
+    });
+
+    //respawn
+    bot.on('death',function() {
+        //emit respawn when died
+        bot.emit("respawn");
+
+        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['died']);
+
+        //count every deaths
+        if(config['player']['countdeaths']['enabled']){
+            deathCount++;
+            fs.writeFileSync(config['player']['countdeaths']['src'], deathCount + '');
+        }
+    });
+
     //on ingame time change
     bot.on('time',function (time){
         //check if bot has been disabled
-        if(config['player']['enabled'] == false) {
+        if(!config['player']['enabled']) {
             //disconnect bot
             bot.quit();
             bot.end();
@@ -513,7 +577,7 @@ function newBot(){
         }
 
         //check if bot was logged and connected
-        if(logged != true && connected != true) { return; }
+        if(!logged && !connected) { return; }
 
         //get nearest entity
         entity = bot.nearestEntity();
@@ -626,7 +690,7 @@ function newBot(){
         //reconnect timeout
         setTimeout(() => {
             //check if minecraft player was enabled
-            if(config['player']['enabled'] == false) return;
+            if(!config['player']['enabled']) return;
 
             //request new bot
             newBot();
@@ -650,7 +714,7 @@ function DiscordBot(){
     }
     
     //check if discord bot is enabled
-    if(config['discord']['enabled'] == false){
+    if(!config['discord']['enabled']){
         if(debug) console.log('[Log - Discord Bot] '+messages['discord_bot']['disabled']);
 
         //exit bot
@@ -674,7 +738,7 @@ function DiscordBot(){
                 activity: {
                     name: config['discord']['presence']['name'],  //The message shown
                     type: config['discord']['presence']['type'].toUpperCase(), //PLAYING: WATCHING: LISTENING: STREAMING:
-                    urll: config['discord']['presence']['url']
+                    url: config['discord']['presence']['url']
                 }
             });
         }
@@ -713,7 +777,7 @@ function DiscordBot(){
         //on message
         client.on('message', function(message) {
             //disconnect if bot was disabled
-            if(config['discord']['enabled'] == false){
+            if(!config['discord']['enabled']){
                 client.destroy();
                 return;
             }
@@ -758,18 +822,15 @@ function DiscordBot(){
                 //trim string
                 string = trimUnicode(string.toLowerCase());
 
-                //predeclare found var
-                found = false;
-
                 //start finding
                 for (var i=0; i < config['discord']['prefix'].length; i++) {
                     if (string.indexOf(' '+config['discord']['prefix'][i].toLowerCase()+' ') > -1 || string.startsWith(config['discord']['prefix'][i].toLowerCase()+' ') || config['discord']['prefix'][i].toLowerCase() == string){
-                        return found = true;
+                        return true;
                     }
                 }
 
                 //return result
-                return found;
+                return false;
             }
 
             //remove bot mensions
@@ -797,7 +858,7 @@ function DiscordBot(){
             }
 
             //find action command in message
-            function actionFind (message, get = false){
+            function actionFind (message = '', get = false){
                 //return if null
                 if(message == null) return;
 
@@ -811,7 +872,7 @@ function DiscordBot(){
                 let found = null;
 
                 //get action name is false
-                if(get == false) found = false;
+                if(!get) found = false;
                 
                 //check for action name
                 for (let i=0; i < actions.length; i++) {
@@ -826,7 +887,7 @@ function DiscordBot(){
             }
 
             //random INT response
-            randomResponse = randomInteger(0, 5);
+            var randomResponse = randomInteger(0, 5);
 
             //return if the author is the bot
             if(author.bot) return;
@@ -945,7 +1006,7 @@ function DiscordBot(){
 
                         phrase = phrase.replace(/%author%/g, author).replace(/%victim%/g, taggedUsername);
 
-                        if(selfPing != true){
+                        if(!selfPing){
                             RandomImage = emote['sources'][Math.floor(Math.random() * Object.keys(emote.sources).length)];
                         }
 
@@ -1218,7 +1279,7 @@ function connectDB(){
     if(debug) console.log('[Log - Discord Bot] '+messages['database']['connecting']);
 
     //return if database was disabled
-    if(db_enable == false){
+    if(!db_enable){
         if(debug) console.log('[Log - Discord Bot] '+messages['database']['disabled']);
         return;
     }

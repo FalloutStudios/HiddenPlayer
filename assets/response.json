@@ -1,11 +1,18 @@
 {   
     "minecraft": {
         "hello bitch": [
-            "bruh %player%"
+            "bruh %player%",
+            "%player% bruh",
+            "Amogus",
+            "Hi bitch"
         ],
         "hello bitches": [
-            "%player% WHAAAAAAAAAAAAAAAAT!"
-        ]
+            "%player% WHAAAAAAAAAAAAAAAAT!",
+            "%player% WTF",
+            "LUL",
+            "BREHHHHHH"
+        ],
+        "accept party": "/party accept"
     },
     "discord": {
         "eeeee": [
@@ -15,5 +22,5 @@
         ],
         "yoobreh": "brehhhh"
     },
-    "version": "1.5.13"
+    "version": "1.5.15"
 }
