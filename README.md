@@ -102,7 +102,7 @@ Config file explanation: `Don't use this in your config.json (Comments are not a
 }
 ```
 
-###### Default config.json
+## Default config.json
 
 This is the default `config.json` contents:
 ```json
@@ -143,7 +143,7 @@ This is the default `config.json` contents:
 	},
 	"discord": {
 		"enabled": true,
-		"token": "ODU0MjMwMzY2MDg4MjAwMjMz.YMg6Bg.qZ5vYtSu327Feue0AKw10QRsWEY",
+		"token": "Discord_bot_token_here",
 		"user_id": "854230366088200233",
 		"presence": {
 			"enable": true,
