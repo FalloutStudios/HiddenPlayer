@@ -34,7 +34,7 @@
 		"GhescaCortes": "admin"
 	},
 	"discord": {
-		"enabled": false,
+		"enabled": true,
 		"token": "ODU0MjMwMzY2MDg4MjAwMjMz.YMg6Bg.qZ5vYtSu327Feue0AKw10QRsWEY",
 		"user_id": "854230366088200233",
 		"presence": {
