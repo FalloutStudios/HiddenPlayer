@@ -4,7 +4,7 @@ Simple Minecraft player bot and and Discord bot.
 ## Config.json
 
 Config file explanation: `Don't use this in your config.json (Comments are not allowed)`
-```
+```jsonc
 {
 	"server": {
 		"ip": "127.0.0.1", //server ip
