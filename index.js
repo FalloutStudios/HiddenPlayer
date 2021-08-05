@@ -118,7 +118,7 @@ if(config['player']['enabled'] && config['server']['ip'] == null || config['play
 if(config['player']['enabled'] && config['server']['port'] == null || config['player']['enabled'] && config['server']['port'] == ''){
     
     //ask for ip address
-    config['server']['port'] == prompt("Enter Server Port >>> ");
+    config['server']['port'] == parseInt(prompt("Enter Server Port >>> "));
 }
 
 //Parse reloaded config file
@@ -613,7 +613,7 @@ function newBot(){
         if(entity != null && entity.position != null && entity.isValid && entity.type == 'mob' || entity != null && entity.position != null && entity.isValid && entity.type == 'player') bot.lookAt(entity.position.offset(0, 1.6, 0));
 
         //hit hostile mobs
-        if(pvpBot){
+        if(config['player']['pvp']['enabled']){
             //check entity type
             if(entity && entity.kind && entity.isValid && entity.type == 'mob' && entity.kind.toLowerCase() == 'hostile mobs'){
                 onPVP = true;
