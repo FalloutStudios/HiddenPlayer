@@ -41,11 +41,11 @@ let db_name = config['database']['database'];
 //messages and response files
 //messages null check
 if (config['messages'] == null) {
-    console.error('[Error - Config] Can\'t load messages file');
+    console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Can\'t load messages file');
     process.exit(0);
 }
 if (config['responses'] == null) {
-    console.error('[Error - Config] Can\'t load response messages file');
+    console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Can\'t load response messages file');
     process.exit(0);
 }
 
@@ -55,11 +55,11 @@ let messageResponseFile = JSON.parse(fs.readFileSync(config['responses']));
 
 //messages and reponse files version check
 if(messages['version'] != config['version']) {
-    console.error('[Error - Config] Config version doesn\'t match messages file version');
+    console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Config version doesn\'t match messages file version');
     process.exit(0);
 }
 if(messageResponseFile['version'] != config['version']) {
-    console.error('[Error - Config] Config version doesn\'t match response messages file version');
+    console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Config version doesn\'t match response messages file version');
     process.exit(0);
 }
 
@@ -142,7 +142,7 @@ function parse (url = null){
 
     //throw error when versions doesn't match
     if(configVersion != confV) {
-        console.error('[Error - Config] '+messages['reload_config']['different_versions']);
+        console.error('\x1b[31m%s\x1b[0m', '[Error - Config] '+messages['reload_config']['different_versions']);
         return success;
     } else{
         success = true;
@@ -164,11 +164,11 @@ function parse (url = null){
     //messages and response files
     //messages null check
     if (config['messages'] == null) {
-        console.error('[Error - Config] Can\'t load messages file');
+        console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Can\'t load messages file');
         process.exit(0);
     }
     if (config['responses'] == null) {
-        console.error('[Error - Config] Can\'t load response messages file');
+        console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Can\'t load response messages file');
         process.exit(0);
     }
 
@@ -178,11 +178,11 @@ function parse (url = null){
 
     //messages and reponse files version check
     if(messages['version'] != config['version']) {
-        console.error('[Error - Config] Config version doesn\'t match messages file version');
+        console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Config version doesn\'t match messages file version');
         process.exit(0);
     }
     if(messageResponseFile['version'] != config['version']) {
-        console.error('[Error - Config] Config version doesn\'t match response messages file version');
+        console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Config version doesn\'t match response messages file version');
         process.exit(0);
     }
 
@@ -343,7 +343,7 @@ function newBot(){
     
         //check name lenght
         if(player.length > 16 || player.length < 3){
-            console.error('[Error - Mincraft Bot] '+messages['minecraft_bot']['invalid_name']+': '+player.length); 
+            console.error('\x1b[31m%s\x1b[0m', '[Error - Mincraft Bot] '+messages['minecraft_bot']['invalid_name']+': '+player.length); 
             process.exit();
         }
     }
@@ -354,7 +354,7 @@ function newBot(){
 
     //validate port
     if (typeof port != 'null' && isNaN(port) || typeof port != 'undefined' && isNaN(port)) { 
-        console.error('[Error - Mincraft Bot] '+messages['minecraft_bot']['invalid_port']+': '+port); 
+        console.error('\x1b[31m%s\x1b[0m', '[Error - Mincraft Bot] '+messages['minecraft_bot']['invalid_port']+': '+port); 
         process.exit(0);        
     }
 
@@ -1323,7 +1323,7 @@ function connectDB(){
     conn.connect(function(error) {
         //on error return
         if (error) {
-            console.error('[Error - Database] '+messages['database']['connect_failed']);
+            console.error('\x1b[31m%s\x1b[0m', '[Error - Database] '+messages['database']['connect_failed']);
             return;
         }
 
