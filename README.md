@@ -98,7 +98,7 @@ Config file explanation: `Don't use this in your config.json (Comments are not a
 	},
 	"messages": "assets/messages.json", //messages source file
 	"responses": "assets/response.json", //message response source file
-	"version": "1.5.16" //config version (Don't change)
+	"version": "1.5.17" //config version (Don't change)
 }
 ```
 
@@ -200,7 +200,7 @@ This is the default `config.json` contents. You can use this in your `config.jso
 	},
 	"messages": "assets/messages.json",
 	"responses": "assets/response.json",
-	"version": "1.5.16"
+	"version": "1.5.17"
 }
 ```
 ### Discord not working?
