@@ -20,6 +20,7 @@
     "mineflayer-pvp": "^1.0.2",
     "mysql": "^2.18.1",
     "prismarine-viewer": "^1.19.3",
+    "prompt-sync": "^4.2.0",
     "request": "^2.88.2",
     "ws": "^8.0.0"
   }

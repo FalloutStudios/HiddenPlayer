@@ -7,6 +7,10 @@ const cmd = require('mineflayer-cmd').plugin;
 const { pathfinder, Movements, goals } = require('mineflayer-pathfinder');
 const pvpBot = require('mineflayer-pvp').plugin;
 
+//read user input
+const prompt = require("prompt-sync")();
+
+
 //Fs
 const fs = require('fs');
 
@@ -70,6 +74,13 @@ var MinecraftConnected = false;
 
 //Database connected null
 var conn = null;
+
+//get inline playername when config playername is null
+if(config['player']['name'] == null || config['player']['name'] == ''){
+
+    //ask for playername
+    config['player']['name'] = prompt("Enter Player Name >>> ");
+}
 
 var fullname = config['debug']['prefix']+config['player']['name']+config['debug']['suffix'];
 //start-up design
