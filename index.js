@@ -75,14 +75,6 @@ var MinecraftConnected = false;
 //Database connected null
 var conn = null;
 
-//get inline playername when config playername is null
-if(config['player']['name'] == null || config['player']['name'] == ''){
-
-    //ask for playername
-    config['player']['name'] = prompt("Enter Player Name >>> ");
-}
-
-var fullname = config['debug']['prefix']+config['player']['name']+config['debug']['suffix'];
 //start-up design
 console.log('');
 console.log('');
@@ -94,6 +86,16 @@ console.log('|   __   |     |  |     |  |   |  |  |  |   |  |  |   ___|  |  | \\
 console.log('|  |  |  |   __|  |__   |  |___|  |  |  |___|  |  |  |___   |  |  \\  \\|  |');
 console.log('|__|  |__|  |________|  |________/   |________/   |______|  |__|   \\_____|');
 console.log('');
+
+//get inline playername when config playername is null
+if(config['player']['name'] == null || config['player']['name'] == ''){
+
+    //ask for playername
+    config['player']['name'] = prompt("Enter Player Name >>> ");
+}
+
+//set mincraft player fullname
+var fullname = config['debug']['prefix']+config['player']['name']+config['debug']['suffix'];
 
 console.log('============================ '+fullname+' '+configVersion+' ===========================');
 console.log('');
