@@ -1,12 +1,12 @@
 {
 	"server": {
-		"ip": "localhost",
-		"port": 25565,
+		"ip": null,
+		"port": null,
 		"reconnectTimeout": 5000
 	},
 	"player": {
 		"enabled": true,
-		"name": "HiddenPlayer",
+		"name": null,
 		"version": null,
 		"countdeaths": {
 			"enabled": true,
@@ -91,5 +91,5 @@
 	},
 	"messages": "assets/messages.json",
 	"responses": "assets/response.json",
-	"version": "1.5.15"
+	"version": "1.5.17"
 }

@@ -107,6 +107,20 @@ console.log('=========================================================='+loop(fu
 console.log('');
 console.log('');
 
+//get inline server ip when config server ip is null
+if(config['player']['enabled'] && config['server']['ip'] == null || config['player']['enabled'] && config['server']['ip'] == ''){
+    
+    //ask for ip address
+    config['server']['ip'] == prompt("Enter Server IP (Don't include Port) >>> ");
+}
+
+//get inline server port when config server port is null
+if(config['player']['enabled'] && config['server']['port'] == null || config['player']['enabled'] && config['server']['port'] == ''){
+    
+    //ask for ip address
+    config['server']['port'] == prompt("Enter Server Port >>> ");
+}
+
 //Parse reloaded config file
 function parse (url = null){
     //success pre variable
@@ -280,7 +294,6 @@ function customResponse(message = null, get = true, source = "minecraft") {
 }
 
 //Main Functions
-
 //Minecraft bot function
 function newBot(){
     //movements
@@ -334,6 +347,7 @@ function newBot(){
             process.exit();
         }
     }
+
     //make bot
     let port = parseInt(config['server']['port']);
     let ip = config['server']['ip'];
