@@ -13,7 +13,7 @@ Config file explanation: `Don't use this in your config.json (Comments are not a
 	},
 	"player": {
 		"enabled": true, //enable Minecraft bot
-		"name": "HiddenPlayer", //Minecraft bot name
+		"name": null, //Minecraft bot name (if null console will ask for name)
 		"version": null, //Minecraft version
 		"countdeaths": {
 			"enabled": true, //Count deaths
@@ -98,7 +98,7 @@ Config file explanation: `Don't use this in your config.json (Comments are not a
 	},
 	"messages": "assets/messages.json", //messages source file
 	"responses": "assets/response.json", //message response source file
-	"version": "1.5.15" //config version (Don't change)
+	"version": "1.5.16" //config version (Don't change)
 }
 ```
 
@@ -115,7 +115,7 @@ This is the default `config.json` contents. You can use this in your `config.jso
 	},
 	"player": {
 		"enabled": true,
-		"name": "HiddenPlayer",
+		"name": null,
 		"version": null,
 		"countdeaths": {
 			"enabled": true,
@@ -200,7 +200,7 @@ This is the default `config.json` contents. You can use this in your `config.jso
 	},
 	"messages": "assets/messages.json",
 	"responses": "assets/response.json",
-	"version": "1.5.15"
+	"version": "1.5.16"
 }
 ```
 ### Discord not working?
