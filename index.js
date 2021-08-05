@@ -118,7 +118,7 @@ if(config['player']['enabled'] && config['server']['ip'] == null || config['play
 if(config['player']['enabled'] && config['server']['port'] == null || config['player']['enabled'] && config['server']['port'] == ''){
     
     //ask for ip address
-    config['server']['port'] == parseInt(prompt("Enter Server Port >>> "));
+    config['server']['port'] = prompt("Enter Server Port >>> ");
 }
 
 //Parse reloaded config file
@@ -349,11 +349,11 @@ function newBot(){
     }
 
     //make bot
-    let port = parseInt(config['server']['port']);
+    let port = parseInt(config['server']['port'], 10);
     let ip = config['server']['ip'];
 
     //validate port
-    if (typeof port != 'null' && isNaN(port) || typeof port != 'undefined' && isNaN(port)) { 
+    if (typeof port != 'null' && isNaN(port) || typeof port != 'undefined' && isNaN(port) || port > 65535 || port < 1) { 
         console.error('\x1b[31m%s\x1b[0m', '[Error - Mincraft Bot] '+messages['minecraft_bot']['invalid_port']+': '+port); 
         process.exit(0);        
     }
