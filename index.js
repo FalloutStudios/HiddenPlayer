@@ -105,7 +105,7 @@ if(config['player']['enabled'] && config['server']['ip'] == null || config['play
 if(config['player']['enabled'] && config['server']['port'] == null || config['player']['enabled'] && config['server']['port'] == ''){
     
     //ask for ip address
-    config['server']['port'] = prompt("Enter Server Port >>> ");
+    config['server']['port'] = prompt("Enter Server Port (Enter to use default) >>> ");
 }
 
 //set mincraft player fullname
