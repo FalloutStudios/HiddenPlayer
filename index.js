@@ -76,8 +76,8 @@ var MinecraftConnected = false;
 var conn = null;
 
 //start-up design
-console.log('');
-console.log('');
+console.log();
+console.log();
 
 console.log(' __    __    ________    ________     ________     ______   ______     __');
 console.log('|  |  |  |  |__    __|  |   ___  \\   |   ___  \\   |   ___|  |     \\   |  |');
@@ -85,7 +85,7 @@ console.log('|  |__|  |     |  |     |  |   |  |  |  |   |  |  |  |___   |  |\\ 
 console.log('|   __   |     |  |     |  |   |  |  |  |   |  |  |   ___|  |  | \\  \\ |  |');
 console.log('|  |  |  |   __|  |__   |  |___|  |  |  |___|  |  |  |___   |  |  \\  \\|  |');
 console.log('|__|  |__|  |________|  |________/   |________/   |______|  |__|   \\_____|');
-console.log('');
+console.log();
 
 //get inline playername when config playername is null
 if(config['player']['name'] == null || config['player']['name'] == ''){
@@ -98,14 +98,14 @@ if(config['player']['name'] == null || config['player']['name'] == ''){
 var fullname = config['debug']['prefix']+config['player']['name']+config['debug']['suffix'];
 
 console.log('============================ '+fullname+' '+configVersion+' ===========================');
-console.log('');
-console.log('');
+console.log();
+console.log();
 console.log('GitHub: https://github.com/GhexterCortes/minecraft-bot');
-console.log('');
+console.log();
 console.log('=========================================================='+loop(fullname.length, '=')+loop(configVersion.length, '='));
 
-console.log('');
-console.log('');
+console.log();
+console.log();
 
 //get inline server ip when config server ip is null
 if(config['player']['enabled'] && config['server']['ip'] == null || config['player']['enabled'] && config['server']['ip'] == ''){
@@ -133,7 +133,7 @@ function parse (url = null){
     var body_config = JSON.parse(body_conf);
 
     if(debug) {
-        console.log('[Log - Config] '+messages['reload_config']);
+        console.log('\x1b[32m%s\x1b[0m','[Log - Config] '+messages['reload_config']);
         console.log(body_config);
     }
 
@@ -186,7 +186,7 @@ function parse (url = null){
         process.exit(0);
     }
 
-    if(debug) console.log('[Log - Config] '+messages['reload_config']['success']);
+    if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Config] '+messages['reload_config']['success']);
 
     if(success){
         //restart all proccesses
@@ -201,6 +201,11 @@ function parse (url = null){
 const client = new Discord.Client();
 // client.interactions = new DiscordInteractions.Client(config['discord']['token'], config['discord']['user_id']);
 
+//debug mode enabled/disabled log
+if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Debug Mode] '+messages['logging']['enabled']);
+if(!debug) console.log('\x1b[32m%s\x1b[0m','[Log - Debug Mode] '+messages['logging']['disabled']);
+
+//Global functions
 //loop
 function loop(num = 0, str = ''){
     var returnVal = '';
@@ -209,12 +214,6 @@ function loop(num = 0, str = ''){
     }
     return returnVal;
 }
-
-//debug mode enabled/disabled log
-if(debug) console.log('[Log - Debug Mode] '+messages['logging']['enabled']);
-if(!debug) console.log('[Log - Debug Mode] '+messages['logging']['disabled']);
-
-//Global functions
 //excape regex in string
 function escapeRegExp(string) {
     return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
@@ -307,11 +306,11 @@ function newBot(){
     let entity = null;
     let target = null;
 
-    if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['starting']);
+    if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['starting']);
 
     //get connected and logged status
     if(connected && logged) {
-        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['disconnected_bot']);
+        if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['disconnected_bot']);
 
         //set all status to false
         connected = false;
@@ -325,11 +324,11 @@ function newBot(){
     }
 
     if(!config['player']['enabled']){
-        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['disabled']);
+        if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['disabled']);
         return;
     }
 
-    if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['proccessing']);
+    if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['proccessing']);
     
     //get playername
     let player = config['player']['name'];
@@ -339,7 +338,7 @@ function newBot(){
         //join prefix and suffix to name
         player = config['debug']['prefix'] + player + config['debug']['suffix'];
     
-        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['prefix_and_suffix_enabled']);
+        if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['prefix_and_suffix_enabled']);
     
         //check name lenght
         if(player.length > 16 || player.length < 3){
@@ -417,7 +416,7 @@ function newBot(){
             let args = message.slice(1).trim().split(/ +/);
             let command = args.shift().toLowerCase();
 
-            if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['command_execute']+': '+command);
+            if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['command_execute']+': '+command);
             
             //commands
             if(command == ''){
@@ -465,7 +464,7 @@ function newBot(){
             }
 
         } else{
-            if (debug && config['debug']['minecraft_chats']) console.log('[Log - Mincraft Bot] Player chat recieved from '+username+' > '+message);
+            if (debug && config['debug']['minecraft_chats']) console.log('[Log - Mincraft Bot] Player chat received from '+username+' > '+message);
 
             //reply var declaration
             let reply = null;
@@ -532,7 +531,7 @@ function newBot(){
         if (!bot) return;
         if (!config['player']['enabled']) return;
 
-        if(debug) console.log("[Log - Mincraft Bot] "+messages['minecraft_bot']['saved']);
+        if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Mincraft Bot] "+messages['minecraft_bot']['saved']);
 
         if(logged && connected) bot.chat(`/minecraft:save-all`);
 
@@ -543,7 +542,7 @@ function newBot(){
 
     //first spawn
     bot.once('spawn', () => {
-        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['first_spawn']);
+        if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['first_spawn']);
         
         //check if auto save is enabled
         if(config['autosave']['enbled']){
@@ -556,7 +555,7 @@ function newBot(){
 
     //every respawn
     bot.on('spawn', () => {
-        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['spawned']);
+        if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['spawned']);
 
         //check if connected and logged status is true
         if(!connected && !logged){
@@ -566,7 +565,7 @@ function newBot(){
             
             //chat first message
             bot.chat(config['player']['message']);
-            if(debug) console.log('[Log - Mincraft Bot] connected = '+connected+'; logged = '+logged);
+            if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] connected = '+connected+'; logged = '+logged);
         } else {
             //set all to default
             lasttime = -1;
@@ -584,7 +583,7 @@ function newBot(){
         //emit respawn when died
         bot.emit("respawn");
 
-        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['died']);
+        if(debug) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['died']);
 
         //count every deaths
         if(config['player']['countdeaths']['enabled']){
@@ -634,7 +633,7 @@ function newBot(){
         if (lasttime < 0) {
             //set last time
             lasttime = bot.time.age;
-            if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['set_last_time']);
+            if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['set_last_time']);
         } else{
             //count movement interval
             let randomadd = Math.random() * maxrandom * 50;
@@ -655,7 +654,7 @@ function newBot(){
 
                     //set moving to false
                     moving = false;
-                    if(debug && config['debug']['movements']) console.log('[Log - Mincraft Bot] age = '+bot.time.age+'; moving = '+moving);
+                    if(debug && config['debug']['movements']) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] age = '+bot.time.age+'; moving = '+moving);
                 } else{
                     //add last action
                     lastaction = actions[Math.floor(Math.random() * actions.length)];
@@ -671,7 +670,7 @@ function newBot(){
 
                     //activate current item
                     bot.activateItem();
-                    if(debug && config['debug']['movements']) console.log('[Log - Mincraft Bot] age = '+bot.time.age+'; moving = '+moving);
+                    if(debug && config['debug']['movements']) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] age = '+bot.time.age+'; moving = '+moving);
                 }
             }
 
@@ -699,7 +698,7 @@ function newBot(){
 
     //if bot end
     bot.on('error kicked banned',function (reason){
-        if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['disconnected']+': '+reason);
+        if(debug) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['disconnected']+': '+reason);
 
         //end bot
         bot.quit();
@@ -721,7 +720,7 @@ function newBot(){
 
             //request new bot
             newBot();
-            if(debug) console.log('[Log - Mincraft Bot] '+messages['minecraft_bot']['bot_end']+': '+reason);
+            if(debug) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['bot_end']+': '+reason);
         }, config['server']['reconnectTimeout']);
     });
 }
@@ -742,7 +741,7 @@ function DiscordBot(){
     
     //check if discord bot is enabled
     if(!config['discord']['enabled']){
-        if(debug) console.log('[Log - Discord Bot] '+messages['discord_bot']['disabled']);
+        if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Discord Bot] '+messages['discord_bot']['disabled']);
 
         //exit bot
         return;
@@ -751,13 +750,13 @@ function DiscordBot(){
     //set bot token
     client.login(config['discord']['token']);
     
-    if(debug) console.log("[Log - Discord Bot] "+messages['discord_bot']['enabled']);
+    if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Discord Bot] "+messages['discord_bot']['enabled']);
 
     //on bot ready
     client.on('ready', async () => {
         //set bot status to true
         discordConnected = true;
-        if(debug) console.log("[Log - Discord Bot] "+messages['discord_bot']['ready']+": "+client.user.tag+"; "+client.user.id);
+        if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Discord Bot] "+messages['discord_bot']['ready']+": "+client.user.tag+"; "+client.user.id);
 
         if(config['discord']['presence']['enable']){
             await client.user.setPresence({
@@ -1102,7 +1101,7 @@ function DiscordBot(){
                 let args = rawMessage.slice(config['discord']['command-prefix'].length).trim().split(/ +/);
                 let command = args.shift().toLowerCase();
 
-                if(debug) console.log("[Log - Discord Bot] "+messages['discord_bot']['command_execute']+": "+command+" by "+author);
+                if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Discord Bot] "+messages['discord_bot']['command_execute']+": "+command+" by "+author);
 
                 //commands
                 if (command == 'help'){
@@ -1254,21 +1253,21 @@ function DiscordBot(){
                             emotes = fs.readFileSync(config['discord']['emotes']['src']);
                             emotes = JSON.parse(emotes);
 
-                            if(debug) console.log('[Log] '+messages['discord_bot']['reload_complete']+': Emotes');
+                            if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Discord Bot] '+messages['discord_bot']['reload_complete']+': Emotes');
                         }
                 
                         if(config['discord']['react']['enabled']){
                             reacts = fs.readFileSync(config['discord']['react']['src']);
                             reacts = JSON.parse(reacts);
 
-                            if(debug) console.log('[Log - Discord Bot] '+messages['discord_bot']['reload_complete']+': Reacts');
+                            if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Discord Bot] '+messages['discord_bot']['reload_complete']+': Reacts');
                         }
                 
                         if(config['discord']['motivate']['enabled']){
                             motivations = fs.readFileSync(config['discord']['motivate']['src']);
                             motivations = JSON.parse(motivations);
 
-                            if(debug) console.log('[Log - Discord Bot] '+messages['discord_bot']['reload_complete']+': Motivations');
+                            if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Discord Bot] '+messages['discord_bot']['reload_complete']+': Motivations');
                         }
                         message.channel.send(messages['discord_bot']['reload_complete']+': Assets');
                     } else {
@@ -1295,7 +1294,6 @@ function DiscordBot(){
 
             if(config['debug']['discord_chats']) {
                 console.log("[Log - Discord Bot] "+messages['discord_bot']['message_received']+": "+limitText(message.content));
-                //console.log('[Log - Discord Bot] Raw Message: '+limitText(rawMessage)+'; LowerRemoveMensions: '+limitText(removeMensions(lowerMessage))+'; BotFind: '+limitText(findName(lowerMessage)));
             }
         });
     });
@@ -1303,11 +1301,11 @@ function DiscordBot(){
 
 //Database function
 function connectDB(){
-    if(debug) console.log('[Log - Discord Bot] '+messages['database']['connecting']);
+    if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Discord Bot] '+messages['database']['connecting']);
 
     //return if database was disabled
     if(!db_enable){
-        if(debug) console.log('[Log - Discord Bot] '+messages['database']['disabled']);
+        if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Discord Bot] '+messages['database']['disabled']);
         return;
     }
 
@@ -1327,11 +1325,11 @@ function connectDB(){
             return;
         }
 
-        if(debug) console.log('[Log - Database] '+messages['database']['connected']+' name: '+db_name+'; host: '+db_host+'; pass: '+db_pass+'; user: '+db_user);
+        if(debug) console.log('\x1b[32m%s\x1b[0m', '[Log - Database] '+messages['database']['connected']+' name: '+db_name+'; host: '+db_host+'; pass: '+db_pass+'; user: '+db_user);
 
         //log connection
         conn.query("INSERT INTO `connection` VALUES('','"+Date.now()+"')", function(){
-            if(debug) console.log('[Log - Database] '+messages['database']['connection_logged']);
+            if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Database] '+messages['database']['connection_logged']);
         });
     });
 }
