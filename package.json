@@ -23,5 +23,18 @@
     "prompt-sync": "^4.2.0",
     "request": "^2.88.2",
     "ws": "^8.0.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GhexterCortes/minecraft-bot.git"
+  },
+  "keywords": [
+    "minecraft",
+    "bot"
+  ],
+  "bugs": {
+    "url": "https://github.com/GhexterCortes/minecraft-bot/issues"
+  },
+  "homepage": "https://github.com/GhexterCortes/minecraft-bot#readme"
 }
