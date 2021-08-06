@@ -94,19 +94,6 @@ if(config['player']['name'] == null || config['player']['name'] == ''){
     config['player']['name'] = prompt("Enter Player Name >>> ");
 }
 
-//set mincraft player fullname
-var fullname = config['debug']['prefix']+config['player']['name']+config['debug']['suffix'];
-
-console.log('============================ '+fullname+' '+configVersion+' ===========================');
-console.log();
-console.log();
-console.log('GitHub: https://github.com/GhexterCortes/minecraft-bot');
-console.log();
-console.log('=========================================================='+loop(fullname.length, '=')+loop(configVersion.length, '='));
-
-console.log();
-console.log();
-
 //get inline server ip when config server ip is null
 if(config['player']['enabled'] && config['server']['ip'] == null || config['player']['enabled'] && config['server']['ip'] == ''){
     
@@ -120,6 +107,19 @@ if(config['player']['enabled'] && config['server']['port'] == null || config['pl
     //ask for ip address
     config['server']['port'] = prompt("Enter Server Port >>> ");
 }
+
+//set mincraft player fullname
+var fullname = config['debug']['prefix']+config['player']['name']+config['debug']['suffix'];
+
+console.log('============================ '+fullname+' '+configVersion+' ===========================');
+console.log();
+console.log();
+console.log('GitHub: https://github.com/GhexterCortes/minecraft-bot');
+console.log();
+console.log('=========================================================='+loop(fullname.length, '=')+loop(configVersion.length, '='));
+
+console.log();
+console.log();
 
 //Parse reloaded config file
 function parse (url = null){
@@ -341,7 +341,7 @@ function newBot(){
         if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['prefix_and_suffix_enabled']);
     
         //check name lenght
-        if(player.length > 16 || player.length < 3){
+        if(player == '' || player == null || player.length > 16 || player.length < 3){
             console.error('\x1b[31m%s\x1b[0m', '[Error - Mincraft Bot] '+messages['minecraft_bot']['invalid_name']+': '+player.length); 
             process.exit();
         }
@@ -352,9 +352,19 @@ function newBot(){
     let ip = config['server']['ip'];
 
     //validate port
-    if (typeof port != 'null' && isNaN(port) || typeof port != 'undefined' && isNaN(port) || port > 65535 || port < 1) { 
+    if (isNaN(port) || typeof port != 'undefined' && isNaN(port) || port > 65535 || port < 1) { 
         console.error('\x1b[31m%s\x1b[0m', '[Error - Mincraft Bot] '+messages['minecraft_bot']['invalid_port']+': '+port); 
         process.exit(0);        
+    }
+
+    //set localhost as ip if ip is null
+    if(typeof ip == 'null' || ip == ''){
+        ip = 'localhost';
+    }
+
+    //set default port if port is null
+    if(typeof port == 'null'){
+        port = 25565;
     }
 
     //check if minecraft bot already connected
@@ -1135,6 +1145,18 @@ function DiscordBot(){
                         .setTimestamp();
                         message.channel.send(embed);
 
+                } else if (command == 'deathcount' && config['discord']['deathcount'] && fs.existsSync(config['player']['countdeaths']['src'])) {
+                    let readDeathcountFile = parseInt(fs.readFileSync(config['player']['countdeaths']['src']));
+                    let count = 0;
+                    if(typeof readDeathcountFile == 'null' || typeof readDeathcountFile == 'undefined' || isNaN(readDeathcountFile)){
+                        fs.writeFileSync(config['player']['countdeaths']['src'], '0');
+                    } else {
+                        count = readDeathcountFile.toLocaleString();
+                    }
+
+                    console.log(readDeathcountFile);
+
+                    message.channel.send(replaceAll(messages['discord_bot']['deathcount'], "%count%", count));
                 } else if (command == 'embed' && config['discord']['embed_messages']) {
                     if(message.member.hasPermission("ADMINISTRATOR")) {
                         message.delete();
