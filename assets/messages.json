@@ -46,7 +46,7 @@
         "disabled": "Discord bot was disabled!",
         "enabled": "Discord bot enabled!",
         "ready": "Discord bot ready",
-        "message_sent": "Message from",
+        "message_sent": "Discord Message from",
         "message_received": "Discord Message",
         "command_execute": "Executed Discord bot command",
         "reloading": "Reloading config files...",
