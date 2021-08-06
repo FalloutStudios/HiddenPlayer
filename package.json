@@ -1,13 +1,13 @@
 {
-  "name": "afkbot",
-  "version": "1.0.0",
-  "description": "",
+  "name": "hiddenplayer",
+  "version": "1.5.17",
+  "description": "A simple minecraft bot with discord bot",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
-  "author": "MannuG",
-  "license": "ISC",
+  "author": "GhexterCortes",
+  "license": "GPL-3.0",
   "dependencies": {
     "config": "^3.3.3",
     "discord-slash-commands-client": "^1.2.1",
