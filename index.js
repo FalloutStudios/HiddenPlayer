@@ -88,7 +88,7 @@ console.log('|__|  |__|  |________|  |________/   |________/   |______|  |__|   
 console.log();
 
 //get inline playername when config playername is null
-if(config['player']['name'] == null || config['player']['name'] == ''){
+if(config['player']['enabled'] && config['player']['name'] == null || config['player']['enabled'] && config['player']['name'] == ''){
 
     //ask for playername
     config['player']['name'] = prompt("Enter Player Name >>> ");
@@ -116,15 +116,30 @@ if(config['player']['enabled'] && config['server']['port'] == null || config['pl
 //set mincraft player fullname
 var fullname = config['debug']['prefix']+config['player']['name']+config['debug']['suffix'];
 
-console.log('============================ '+fullname+' '+configVersion+' ===========================');
+//add whitespace to look pretty
+if(fullname != ''){
+    fullname += ' ';
+}
+
+console.log('============================ '+fullname+configVersion+' ===========================');
 console.log();
 console.log();
 console.log('GitHub: https://github.com/GhexterCortes/minecraft-bot');
 console.log();
-console.log('=========================================================='+loop(fullname.length, '=')+loop(configVersion.length, '='));
+console.log('========================================================='+loop(fullname.length, '=')+loop(configVersion.length, '='));
 
 console.log();
 console.log();
+
+//disable functions if null in config
+//disable minecraft player if name is null
+if(config['player']['name'] == null){
+    config['player']['enabled'] = false;
+}
+//disable discord if token is null
+if(config['discord']['token'] == null){
+    config['discord']['enabled'] = false;
+}
 
 //Parse reloaded config file
 function parse (url = null){
@@ -192,6 +207,16 @@ function parse (url = null){
     }
 
     if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Config] '+messages['reload_config']['success']);
+
+    //disable functions if null in config
+    //disable minecraft player if name is null
+    if(config['player']['name'] == null){
+        config['player']['enabled'] = false;
+    }
+    //disable discord if token is null
+    if(config['discord']['token'] == null){
+        config['discord']['enabled'] = false;
+    }
 
     if(success){
         //restart all proccesses
@@ -273,7 +298,11 @@ function trimUnicode(text) {
 //get random response to a message
 function customResponse(message = null, get = true, source = "minecraft") {
     if(message != null){
-        message = replaceAll(trimUnicode(message).toLowerCase(), config['player']['name'].toLowerCase(), "").trim();
+        message = trimUnicode(message).toLowerCase();
+
+        if(config['player']['name'] != null){
+            message = replaceAll(message, config['player']['name'].toLowerCase(), "").trim();
+        }
 
         if(Object.keys(messageResponseFile[source]).includes(message)){
 
