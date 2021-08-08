@@ -1,6 +1,8 @@
 # HiddenPlayer Bot
 Simple Minecraft player bot and and Discord bot.
 
+### Development closed!
+
 ## Config.json
 
 Config file explanation: `Don't use this in your config.json (Comments are not allowed)`
