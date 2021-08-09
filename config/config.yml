@@ -99,21 +99,21 @@ discord:
   # Enable random quotes message call
   motivate:
     enabled: false
-    src: assets/motivate.json
+    src: config/motivate.yml
   
   # Enable random facts message call
   facts:
     enabled: false
-    src: assets/facts.json
+    src: config/facts.yml
   # Enable random gifs emote message call
   emotes:
     enabled: true
-    src: assets/emotes.json
+    src: config/emotes.yml
 
   # Enable random reaction gifs message call
   react:
     enabled: true
-    src: assets/reacts.json
+    src: config/reacts.yml
 
 # Database Configuration (Still unused)
 database:
