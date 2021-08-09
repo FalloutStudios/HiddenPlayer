@@ -135,7 +135,7 @@ console.log();
 
 //disable functions if null in config
 //disable minecraft player if name is null
-if(config['player']['name'] == null){
+if(config['player']['name'] == null || config['player']['name'] == ''){
     config['player']['enabled'] = false;
 }
 //disable discord if token is null
@@ -212,7 +212,7 @@ function parse (url = null){
 
     //disable functions if null in config
     //disable minecraft player if name is null
-    if(config['player']['name'] == null){
+    if(config['player']['name'] == null || config['player']['name'] == ''){
         config['player']['enabled'] = false;
     }
     //disable discord if token is null
