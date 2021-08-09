@@ -1,0 +1,10 @@
+# Custom mincraft message response
+minecraft:
+  hello bitch: hello too mf
+
+# Custom discord message response
+discord:
+  hiddenplayer: fr
+
+# Config version (Please don't modify)
+version: 1.5.18 

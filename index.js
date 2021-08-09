@@ -10,6 +10,8 @@ const pvpBot = require('mineflayer-pvp').plugin;
 //read user input
 const prompt = require("prompt-sync")();
 
+//yaml parser
+const yml = require('yaml');
 
 //Fs
 const fs = require('fs');
@@ -25,8 +27,8 @@ const Discord = require('discord.js');
 // const DiscordInteractions = require("discord-slash-commands-client");  Disable temporarily
 
 //configuration file
-let conf = fs.readFileSync('config.json');
-let config = JSON.parse(conf);
+let conf = fs.readFileSync('config/config.yml', 'utf8');
+let config = yml.parse(conf);
 
 //debug enabled/disabled
 let debug = config['debug']['enabled'];
@@ -40,7 +42,7 @@ let db_name = config['database']['database'];
 
 //messages and response files
 //messages null check
-if (config['messages'] == null) {
+if (config['language'] == null) {
     console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Can\'t load messages file');
     process.exit(0);
 }
@@ -50,8 +52,8 @@ if (config['responses'] == null) {
 }
 
 //parse messages and response files
-let messages = JSON.parse(fs.readFileSync(config['messages']));
-let messageResponseFile = JSON.parse(fs.readFileSync(config['responses']));
+let messages = yml.parse(fs.readFileSync(config['language'], 'utf8'));
+let messageResponseFile = yml.parse(fs.readFileSync(config['responses'], 'utf8'));
 
 //messages and reponse files version check
 if(messages['version'] != config['version']) {
@@ -98,7 +100,7 @@ if(config['player']['enabled'] && config['player']['name'] == null || config['pl
 if(config['player']['enabled'] && config['server']['ip'] == null || config['player']['enabled'] && config['server']['ip'] == ''){
     
     //ask for ip address
-    config['server']['ip'] == prompt("Enter Server IP (Don't include Port) >>> ");
+    config['server']['ip'] = prompt("Enter Server IP (Don't include Port) >>> ");
 }
 
 //get inline server port when config server port is null
@@ -147,10 +149,10 @@ function parse (url = null){
     var success = false;
 
     //parse default config
-    var body_conf = fs.readFileSync('config.json');
+    var body_conf = fs.readFileSync('config/config.yml', 'utf8');
 
     //parse JSON
-    var body_config = JSON.parse(body_conf);
+    var body_config = yml.parse(body_conf);
 
     if(debug) {
         console.log('\x1b[32m%s\x1b[0m','[Log - Config] '+messages['reload_config']);
@@ -183,7 +185,7 @@ function parse (url = null){
 
     //messages and response files
     //messages null check
-    if (config['messages'] == null) {
+    if (config['language'] == null) {
         console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Can\'t load messages file');
         process.exit(0);
     }
@@ -193,8 +195,8 @@ function parse (url = null){
     }
 
     //parse messages and response files
-    messages = JSON.parse(fs.readFileSync(config['messages']));
-    messageResponseFile = JSON.parse(fs.readFileSync(config['responses']));
+    messages = yml.parse(fs.readFileSync(config['language'], 'utf-8'));
+    messageResponseFile = yml.parse(fs.readFileSync(config['responses'], 'utf8'));
 
     //messages and reponse files version check
     if(messages['version'] != config['version']) {
@@ -229,7 +231,6 @@ function parse (url = null){
 
 //Create discord client
 const client = new Discord.Client();
-// client.interactions = new DiscordInteractions.Client(config['discord']['token'], config['discord']['user_id']);
 
 //debug mode enabled/disabled log
 if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Debug Mode] '+messages['logging']['enabled']);
@@ -385,20 +386,20 @@ function newBot(){
     let port = parseInt(config['server']['port'], 10);
     let ip = config['server']['ip'];
 
-    //validate port
-    if (isNaN(port) || typeof port != 'undefined' && isNaN(port) || port > 65535 || port < 1) { 
-        console.error('\x1b[31m%s\x1b[0m', '[Error - Mincraft Bot] '+messages['minecraft_bot']['invalid_port']+': '+port); 
-        process.exit(0);        
-    }
-
     //set localhost as ip if ip is null
-    if(typeof ip == 'null' || ip == ''){
+    if(ip == null || ip == ''){
         ip = 'localhost';
     }
 
     //set default port if port is null
-    if(typeof port == 'null'){
+    if(port == null || isNaN(port)){
         port = 25565;
+    }
+
+    //validate port
+    if (isNaN(port) || typeof port != 'undefined' && isNaN(port) || port > 65535 || port < 1) { 
+        console.error('\x1b[31m%s\x1b[0m', '[Error - Mincraft Bot] '+messages['minecraft_bot']['invalid_port']+': '+port); 
+        process.exit(0);        
     }
 
     //check if minecraft bot already connected
@@ -822,26 +823,26 @@ function DiscordBot(){
         //get action files content
         if(config['discord']['emotes']['enabled']){
             //get emotes json file
-            emotes = fs.readFileSync(config['discord']['emotes']['src']);
-            emotes = JSON.parse(emotes);
+            emotes = fs.readFileSync(config['discord']['emotes']['src'], 'utf8');
+            emotes = yml.parse(emotes);
         }
 
         if(config['discord']['react']['enabled']){
             //get react json file
-            reacts = fs.readFileSync(config['discord']['react']['src']);
-            reacts = JSON.parse(reacts);
+            reacts = fs.readFileSync(config['discord']['react']['src'], 'utf8');
+            reacts = yml.parse(reacts);
         }
 
         if(config['discord']['motivate']['enabled']){
             //get motivate json file
-            motivations = fs.readFileSync(config['discord']['motivate']['src']);
-            motivations = JSON.parse(motivations);
+            motivations = fs.readFileSync(config['discord']['motivate']['src'], 'utf8');
+            motivations = yml.parse(motivations);
         }
 
         if(config['discord']['facts']['enabled']){
             //get factslist json file
-            factslist = fs.readFileSync(config['discord']['facts']['src']);
-            factslist = JSON.parse(factslist);
+            factslist = fs.readFileSync(config['discord']['facts']['src'], 'utf8');
+            factslist = yml.parse(factslist);
         }
 
         //on message
@@ -1191,7 +1192,7 @@ function DiscordBot(){
                     console.log(readDeathcountFile);
 
                     message.channel.send(replaceAll(messages['discord_bot']['deathcount'], "%count%", count));
-                } else if (command == 'embed' && config['discord']['embed_messages']) {
+                } else if (command == 'embed' && config['discord']['embed']['enabled']) {
                     if(message.member.hasPermission("ADMINISTRATOR")) {
                         message.delete();
 
@@ -1211,7 +1212,7 @@ function DiscordBot(){
                             setTimeout(() => { msg.delete(); message.delete() }, 5000);
                         });
                     }
-                } else if (command == 'send' && config['discord']['send_bot_messages']) {
+                } else if (command == 'send' && config['discord']['send-command']) {
                     if(message.member.hasPermission("ADMINISTRATOR")) {
                         message.delete();
                         message.channel.send(rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).trim());
@@ -1306,22 +1307,22 @@ function DiscordBot(){
                     if(message.member.hasPermission("ADMINISTRATOR")) {
                         message.reply(`Reloading assets`);
                         if(config['discord']['emotes']['enabled']){
-                            emotes = fs.readFileSync(config['discord']['emotes']['src']);
-                            emotes = JSON.parse(emotes);
+                            emotes = fs.readFileSync(config['discord']['emotes']['src'], 'utf8');
+                            emotes = yml.parse(emotes);
 
                             if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Discord Bot] '+messages['discord_bot']['reload_complete']+': Emotes');
                         }
                 
                         if(config['discord']['react']['enabled']){
-                            reacts = fs.readFileSync(config['discord']['react']['src']);
-                            reacts = JSON.parse(reacts);
+                            reacts = fs.readFileSync(config['discord']['react']['src'], 'utf8');
+                            reacts = yml.parse(reacts);
 
                             if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Discord Bot] '+messages['discord_bot']['reload_complete']+': Reacts');
                         }
                 
                         if(config['discord']['motivate']['enabled']){
-                            motivations = fs.readFileSync(config['discord']['motivate']['src']);
-                            motivations = JSON.parse(motivations);
+                            motivations = fs.readFileSync(config['discord']['motivate']['src'], 'utf8');
+                            motivations = yml.parse(motivations);
 
                             if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Discord Bot] '+messages['discord_bot']['reload_complete']+': Motivations');
                         }

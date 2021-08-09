@@ -1,0 +1,139 @@
+# Server Information
+server:
+  # Server IP address without port (Ask if empty)
+  ip:
+  
+  # Server port (Ask if empty)
+  port:
+  
+  # Reconnect interval timout when player disconnects
+  reconnectTimeout: 5000
+
+# Player Config
+player:
+  # Enable Player
+  enabled: true
+  
+  # Player Name (Ask if empty)
+  name:
+  
+  # Minecraft version (Supported latest version when empty)
+  version:
+
+  # Log death counts
+  countdeaths:
+    enabled: true # Enable death count logging
+    src: assets/deathcount.txt # Source file
+  
+  message: hello # Message on join
+  
+  # Attack hostile mobs
+  pvp:
+    enabled: false # Enable hostile mobs attack
+  
+    # Some bot commands
+  commands:
+    kill: true # Enable !kill <PlayerName>
+    reload: true # Enable !reload
+    restart: true # Enable !restart
+
+# Player chat delay
+chat:
+  chatDelay: 500
+
+# Enable Game autosave (OP permission required)
+autosave:
+  enabled: false # Enable autosave
+  interval: 60000 # Autosave interval
+
+# Admins for Player commands
+staffs:
+  GhexterCortes: admin
+  GhescaCortes: admin
+
+# Discord Configuration
+discord:
+  # Enable discord bot
+  enabled: true
+  
+  # Discord bot token
+  token: ODU0MjMwMzY2MDg4MjAwMjMz.YMg6Bg.qZ5vYtSu327Feue0AKw10QRsWEY
+  
+  # Discord bot status
+  presence:
+    enable: true # Enable Discord bot status
+    status: online # Bot status ( online, idle, dnd )
+    type: PLAYING # Bot activity ( PLAYING, LISTENING, WATCHING )
+    name: Minecraft # Bot activity name
+    url: # Bot activity url
+  
+  # Bot on message call prefixes
+  prefix:
+  - hiddenplayer
+  - hidden
+  - hd
+  
+  command-prefix: ">" # Bot command prefix
+  
+  # Embed Command
+  embed:
+    enabled: true # Enable Embed
+    color: "#0099ff" # Embed Color
+  
+  # Enable !send command
+  send-command: true
+  
+  # Enable !spam (count) <Message> command
+  spam:
+    enabled: true # Enable spam command
+    player_ping: true # Allow pings in spam messages
+    max: 30 # Spam limit 
+
+    # Disabled channels
+    disabled_channels: [] 
+  
+  # Show player death count on Discord via command !deathcount
+  deathcount:
+    enabled: true
+  
+  # Enable random quotes message call
+  motivate:
+    enabled: false
+    src: assets/motivate.json
+  
+  # Enable random facts message call
+  facts:
+    enabled: false
+    src: assets/facts.json
+  # Enable random gifs emote message call
+  emotes:
+    enabled: true
+    src: assets/emotes.json
+
+  # Enable random reaction gifs message call
+  react:
+    enabled: true
+    src: assets/reacts.json
+
+# Database Configuration (Still unused)
+database:
+  enabled: false # Database enabled
+  host: 127.0.0.1 # Database host
+  user: root # Database username
+  pass: '' # Database password
+  database: bot # Database name
+
+# Debugging log
+debug:
+  enabled: true  # Enable logs
+  movements: false # Log player movements
+  discord_chats: true # Show discord chats
+  minecraft_chats: true # Show in-game chats
+  prefix: '' # Debug mode playername prefix
+  suffix: '' # Debug mode playername suffix
+
+language: config/language.yml # Language file 
+responses: config/response.yml # Custom reponse file
+
+# Config version (Please don't modify)
+version: 1.5.18
