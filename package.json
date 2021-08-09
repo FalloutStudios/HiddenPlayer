@@ -1,5 +1,5 @@
 {
-  "name": "hiddenplayer",
+  "name": "hiddenplayer-bot",
   "version": "1.5.17",
   "description": "A simple minecraft bot with discord bot",
   "main": "index.js",
@@ -22,7 +22,8 @@
     "prismarine-viewer": "^1.19.3",
     "prompt-sync": "^4.2.0",
     "request": "^2.88.2",
-    "ws": "^8.0.0"
+    "ws": "^8.0.0",
+    "yaml": "2.0.0-7"
   },
   "devDependencies": {},
   "repository": {
