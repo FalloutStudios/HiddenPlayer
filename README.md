@@ -1,217 +1,155 @@
 # HiddenPlayer Bot
 Simple Minecraft player bot and and Discord bot.
 
-### Development closed!
+## config/config.yml
 
-## Config.json
+This is the default `config.yml` contents.
 
-Config file explanation: `Don't use this in your config.json (Comments are not allowed)`
-```jsonc
-{
-	"server": {
-		"ip": "127.0.0.1", //server ip
-		"port": 25565, //server port
-		"reconnectTimeout": 5000 //reconnect delay timeout
-	},
-	"player": {
-		"enabled": true, //enable Minecraft bot
-		"name": null, //Minecraft bot name (if null console will ask for name)
-		"version": null, //Minecraft version
-		"countdeaths": {
-			"enabled": true, //Count deaths
-			"src": "assets/deathcount.txt" //death count fole source (.txt)
-		},
-		"message": "hello", //On join message
-		"pvp": {
-			"enabled": true //Fight hostile mobs
-		},
-		"commands": {
-			"kill": true, //enable !kill command
-			"reload": true, //enable !reload command
-			"restart": true //enable !restartbot command
-		}
-	},
-	"chat": {
-		"chatDelay": 500 //chat response delay
-	},
-	"autosave": {
-		"enabled": false, //enable autosave game 
-		"interval": 60000 //save-all command interval
-	},
-	"staffs": {
-		"GhexterCortes": "admin", //admin
-		"GhescaCortes": "admin"  //admin
-	},
-	"discord": {
-		"enabled": true, //enable discord bot
-		"token": "BOT_KEY_HERE", //bot key
-		"user_id": "854230366088200233", //bot user_id
-		"presence": {
-			"enable": true, //enable bot presence
-			"status": "online", //status ONLINE, IDLE, DND (Do not disturb)
-			"type": "PLAYING", //type PLAYING, LISTENING, WATCHING
-			"name": "Minecraft", //name any
-			"url": null //url any
-		},
-		"prefix": ["hiddenplayer", "hidden", "hd"], //discord message call prefix
-		"command-prefix": ">", //discord command prefix
-		"embed_messages": true, //enable >embed command
-		"embed": {
-			"color": "#0099ff" //embed theme color
-		},
-		"send_bot_messages": true, //enable >send command
-		"spam": {
-			"enabled": true, //enable >spam command
-			"player_ping": true, //allow pings on >spam command
-			"max": 30, //max spam rate
-			"disabled_channels": [] //disable channels for >spam command
-		},
-		"motivate": {
-			"enabled": true, //enable motivate quotes
-			"src": "assets/motivate.json" //motivate quotes source
-		},
-		"emotes": {
-			"enabled": true, //enable emotes
-			"src": "assets/emotes.json" //emotes source
-		},
-		"react": {
-			"enabled": true, //enable reacts
-			"src": "assets/reacts.json" //reacts source
-		},
-		"facts": {
-			"enabled": true, //enable facts
-			"src": "assets/facts.json" //facts source
-		}
-	},
-	"database": {
-		"enabled": true, //enable database
-		"host": "127.0.0.1", //database host
-		"user": "root", //databse username
-		"pass": "", //database password
-		"database": "bot" //database name
-	},
-	"debug": {
-		"enabled": true, //enable debug logs
-		"movements": false, //enable movement logs
-		"discord_chats": true, //show discord chats
-		"minecraft_chats": true, //show minecraft chats
-		"prefix": "", //debug mode Mincraft bot prefix
-		"suffix": "" //debug mode Minecraft bot suffix
-	},
-	"messages": "assets/messages.json", //messages source file
-	"responses": "assets/response.json", //message response source file
-	"version": "1.5.17" //config version (Don't change)
-}
-```
+```yml
+# Server Information
+server:
+  # Server IP address without port (Ask if empty)
+  ip:
+  
+  # Server port (Ask if empty)
+  port:
+  
+  # Reconnect interval timout when player disconnects
+  reconnectTimeout: 5000
 
-## Default config.json
+# Player Config
+player:
+  # Enable Player
+  enabled: true
+  
+  # Player Name (Ask if empty)
+  name:
+  
+  # Minecraft version (Supported latest version when empty)
+  version:
 
-This is the default `config.json` contents. You can use this in your `config.json` file
+  # Log death counts
+  countdeaths:
+    enabled: true # Enable death count logging
+    src: assets/deathcount.txt # Source file
+  
+  message: hello # Message on join
+  
+  # Attack hostile mobs
+  pvp:
+    enabled: false # Enable hostile mobs attack
+  
+    # Some bot commands
+  commands:
+    kill: true # Enable !kill <PlayerName>
+    reload: true # Enable !reload
+    restart: true # Enable !restart
 
-```json
-{
-	"server": {
-		"ip": "127.0.0.1",
-		"port": 25565,
-		"reconnectTimeout": 5000
-	},
-	"player": {
-		"enabled": true,
-		"name": null,
-		"version": null,
-		"countdeaths": {
-			"enabled": true,
-			"src": "assets/deathcount.txt"
-		},
-		"message": "hello",
-		"pvp": {
-			"enabled": true
-		},
-		"commands": {
-			"kill": true,
-			"reload": true,
-			"restart": true
-		}
-	},
-	"chat": {
-		"chatDelay": 500
-	},
-	"autosave": {
-		"enabled": false,
-		"interval": 60000
-	},
-	"staffs": {
-		"GhexterCortes": "admin",
-		"GhescaCortes": "admin"
-	},
-	"discord": {
-		"enabled": true,
-		"token": "Discord_bot_token_here",
-		"user_id": "854230366088200233",
-		"presence": {
-			"enable": true,
-			"status": "online",
-			"type": "PLAYING",
-			"name": "Minecraft",
-			"url": null
-		},
-		"prefix": ["hiddenplayer", "hidden", "hd"],
-		"command-prefix": ">",
-		"embed_messages": true,
-		"embed": {
-			"color": "#0099ff"
-		},
-		"send_bot_messages": true,
-		"spam": {
-			"enabled": true,
-			"player_ping": true,
-			"max": 30,
-			"disabled_channels": []
-		},
-		"motivate": {
-			"enabled": true,
-			"src": "assets/motivate.json"
-		},
-		"emotes": {
-			"enabled": true,
-			"src": "assets/emotes.json"
-		},
-		"react": {
-			"enabled": true,
-			"src": "assets/reacts.json"
-		},
-		"facts": {
-			"enabled": true,
-			"src": "assets/facts.json"
-		}
-	},
-	"database": {
-		"enabled": true,
-		"host": "127.0.0.1",
-		"user": "root",
-		"pass": "",
-		"database": "bot"
-	},
-	"debug": {
-		"enabled": true,
-		"movements": false,
-		"discord_chats": true,
-		"minecraft_chats": true,
-		"prefix": "",
-		"suffix": ""
-	},
-	"messages": "assets/messages.json",
-	"responses": "assets/response.json",
-	"version": "1.5.17"
-}
+# Player chat delay
+chat:
+  chatDelay: 500
+
+# Enable Game autosave (OP permission required)
+autosave:
+  enabled: false # Enable autosave
+  interval: 60000 # Autosave interval
+
+# Admins for Player commands
+staffs:
+  GhexterCortes: admin
+  GhescaCortes: admin
+
+# Discord Configuration
+discord:
+  # Enable discord bot
+  enabled: true
+  
+  # Discord bot token
+  token: ODU0MjMwMzY2MDg4MjAwMjMz.YMg6Bg.qZ5vYtSu327Feue0AKw10QRsWEY
+  
+  # Discord bot status
+  presence:
+    enable: true # Enable Discord bot status
+    status: online # Bot status ( online, idle, dnd )
+    type: PLAYING # Bot activity ( PLAYING, LISTENING, WATCHING )
+    name: Minecraft # Bot activity name
+    url: # Bot activity url
+  
+  # Bot on message call prefixes
+  prefix:
+  - hiddenplayer
+  - hidden
+  - hd
+  
+  command-prefix: ">" # Bot command prefix
+  
+  # Embed Command
+  embed:
+    enabled: true # Enable Embed
+    color: "#0099ff" # Embed Color
+  
+  # Enable !send command
+  send-command: true
+  
+  # Enable !spam (count) <Message> command
+  spam:
+    enabled: true # Enable spam command
+    player_ping: true # Allow pings in spam messages
+    max: 30 # Spam limit 
+
+    # Disabled channels
+    disabled_channels: [] 
+  
+  # Show player death count on Discord via command !deathcount
+  deathcount:
+    enabled: true
+  
+  # Enable random quotes message call
+  motivate:
+    enabled: false
+    src: assets/motivate.json
+  
+  # Enable random facts message call
+  facts:
+    enabled: false
+    src: assets/facts.json
+  # Enable random gifs emote message call
+  emotes:
+    enabled: true
+    src: assets/emotes.json
+
+  # Enable random reaction gifs message call
+  react:
+    enabled: true
+    src: assets/reacts.json
+
+# Database Configuration (Still unused)
+database:
+  enabled: false # Database enabled
+  host: 127.0.0.1 # Database host
+  user: root # Database username
+  pass: '' # Database password
+  database: bot # Database name
+
+# Debugging log
+debug:
+  enabled: true  # Enable logs
+  movements: false # Log player movements
+  discord_chats: true # Show discord chats
+  minecraft_chats: true # Show in-game chats
+  prefix: '' # Debug mode playername prefix
+  suffix: '' # Debug mode playername suffix
+
+language: config/language.yml # Language file 
+responses: config/response.yml # Custom reponse file
+
+# Config version (Please don't modify)
+version: 1.5.18
 ```
 ### Discord not working?
 
-Try Replacing `"token": ...` with your bot's valid client secret: 
-```
-"discord": {
-	...,
-	"token": "Your_discord_bot_token_here", //get your client secret(token) from https://discord.com/developers/applications/BOT_ID/oauth2
-	...
-}
+Try Replacing `token: ...` with your bot's valid client secret: 
+```yml
+discord:
+  token: # Discord bot client secret
 ```
