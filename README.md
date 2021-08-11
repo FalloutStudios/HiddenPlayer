@@ -148,8 +148,8 @@ version: 1.5.18
 ```
 ### Discord not working?
 
-Try Replacing `token: ...` with your bot's valid client secret: 
+Try Replacing `token: ...` with your bot's valid client token: 
 ```yml
 discord:
-  token: # Discord bot client secret
+  token: # Discord bot client token
 ```
