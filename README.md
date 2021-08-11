@@ -1,6 +1,8 @@
 # HiddenPlayer Bot
 Simple Minecraft player bot and and Discord bot.
 
+This is my practice project sorry for low quality code lol.
+
 ## config/config.yml
 
 This is the default `config.yml` contents.
