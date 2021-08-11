@@ -895,7 +895,7 @@ function DiscordBot(){
 
                 //start finding
                 for (var i=0; i < config['discord']['prefix'].length; i++) {
-                    if (string.indexOf(' '+config['discord']['prefix'][i].toLowerCase()+' ') > -1 || string.startsWith(config['discord']['prefix'][i].toLowerCase()+' ') || config['discord']['prefix'][i].toLowerCase() == string){
+                    if (string.indexOf(' '+config['discord']['prefix'][i].toLowerCase()+' ') > -1 || string.startsWith(config['discord']['prefix'][i].toLowerCase()+' ') || string.endsWith(' '+config['discord']['prefix'][i].toLowerCase()) || config['discord']['prefix'][i].toLowerCase() == string){
                         return true;
                     }
                 }
