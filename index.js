@@ -24,7 +24,6 @@ const mysql = require('mysql');
 
 //Discord
 const Discord = require('discord.js');
-// const DiscordInteractions = require("discord-slash-commands-client");  Disable temporarily
 
 //configuration file
 let conf = fs.readFileSync('config/config.yml', 'utf8');
