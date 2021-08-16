@@ -90,6 +90,7 @@ discord:
     max: 30 # Spam limit 
 
     # Disabled channels
+    # make sure the disabled channel id is between single quotes [ ' ]
     disabled_channels: [] 
   
   # Show player death count on Discord via command !deathcount
