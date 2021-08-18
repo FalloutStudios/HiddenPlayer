@@ -1,6 +1,10 @@
 # HiddenPlayer Bot
 Simple Minecraft player bot and and Discord bot.
 
+Pre-requirement:
+- [x] Node.js
+If you haven't `node.js` installed yet you can download it here: https://nodejs.org/
+
 This is my practice project sorry for low quality code lol.
 
 ## config/config.yml
