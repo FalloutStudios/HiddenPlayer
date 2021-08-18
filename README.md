@@ -33,7 +33,7 @@ player:
   # Log death counts
   countdeaths:
     enabled: true # Enable death count logging
-    src: assets/deathcount.txt # Source file
+    src: config/deathcount.txt # Source file
   
   message: hello # Message on join
   
@@ -43,7 +43,7 @@ player:
   
     # Some bot commands
   commands:
-    kill: true # Enable !kill <PlayerName>
+    kill: false # Enable !kill <PlayerName>
     reload: true # Enable !reload
     restart: true # Enable !restart
 
@@ -57,9 +57,7 @@ autosave:
   interval: 60000 # Autosave interval
 
 # Admins for Player commands
-staffs:
-  GhexterCortes: admin
-  GhescaCortes: admin
+staffs: 
 
 # Discord Configuration
 discord:
@@ -67,7 +65,7 @@ discord:
   enabled: true
   
   # Discord bot token
-  token: ODU0MjMwMzY2MDg4MjAwMjMz.YMg6Bg.qZ5vYtSu327Feue0AKw10QRsWEY
+  token: 
   
   # Discord bot status
   presence:
@@ -75,7 +73,7 @@ discord:
     status: online # Bot status ( online, idle, dnd )
     type: PLAYING # Bot activity ( PLAYING, LISTENING, WATCHING )
     name: Minecraft # Bot activity name
-    url: # Bot activity url
+    url: https://minecraft.net # Bot activity url
   
   # Bot on message call prefixes
   prefix:
@@ -97,33 +95,35 @@ discord:
   spam:
     enabled: true # Enable spam command
     player_ping: true # Allow pings in spam messages
-    max: 30 # Spam limit 
+    max: 100 # Spam limit 
 
     # Disabled channels
-    disabled_channels: [] 
+    # make sure the disabled channel id is between single quotes [ ' ]
+    disabled_channels:
+    
   
   # Show player death count on Discord via command !deathcount
   deathcount:
-    enabled: true
+    enabled: false
   
   # Enable random quotes message call
   motivate:
     enabled: false
-    src: assets/motivate.json
+    src: config/motivate.yml
   
   # Enable random facts message call
   facts:
     enabled: false
-    src: assets/facts.json
+    src: config/facts.yml
   # Enable random gifs emote message call
   emotes:
     enabled: true
-    src: assets/emotes.json
+    src: config/emotes.yml
 
   # Enable random reaction gifs message call
   react:
     enabled: true
-    src: assets/reacts.json
+    src: config/reacts.yml
 
 # Database Configuration (Still unused)
 database:
