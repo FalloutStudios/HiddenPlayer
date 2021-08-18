@@ -26,7 +26,8 @@ const mysql = require('mysql');
 const Discord = require('discord.js');
 
 //configuration file
-let conf = fs.readFileSync('config/config.yml', 'utf8');
+const configlocation = 'config/config.yml';
+let conf = fs.readFileSync(configlocation, 'utf8');
 let config = yml.parse(conf);
 
 //debug enabled/disabled
@@ -148,7 +149,7 @@ function parse (url = null){
     var success = false;
 
     //parse default config
-    var body_conf = fs.readFileSync('config/config.yml', 'utf8');
+    var body_conf = fs.readFileSync(configlocation, 'utf8');
 
     //parse JSON
     var body_config = yml.parse(body_conf);
@@ -1246,8 +1247,8 @@ function DiscordBot(){
                             if(!disabled_channels.includes(channelID)){
                                 if(msg != null && msg != ''){
                                     if(!config['discord']['spam']['player_ping'] && !message.mentions.users.size && !message.mentions.roles.size  && !message.mentions.everyone || config['discord']['spam']['player_ping']){
-                                        for (let spam = 0; spam < count; spam++) {
-                                            message.channel.send(`\`spam:\` `+msg);
+                                        for (let i=0; i < count; i++){
+                                            message.channel.send('`spam:` '+msg);
                                         }
                                     } else{
                                         message.reply(`Pings are disabled in spam command :no_entry_sign:`).then(msg => {
