@@ -5,6 +5,7 @@ minecraft:
 # Custom discord message response
 discord:
   hiddenplayer: fr
+  ping: ['lul fr','breh','pingg']
 
 # Config version (Please don't modify)
 version: 1.5.18 
