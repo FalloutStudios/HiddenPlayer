@@ -6,6 +6,8 @@ Pre-requirement:
 
 If you haven't `node.js` installed yet you can download it here: https://nodejs.org/
 
+
+
 This is my practice project sorry for low quality code lol.
 
 ## config/config.yml
