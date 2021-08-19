@@ -35,6 +35,11 @@ player:
   # Minecraft version (Supported latest version when empty)
   version:
 
+  # Web viewer
+  Viewer:
+    enabled: true
+    port: 300
+
   # Log death counts
   countdeaths:
     enabled: true # Enable death count logging
@@ -63,6 +68,7 @@ autosave:
 
 # Admins for Player commands
 staffs: 
+  GhexterCortes: admin
 
 # Discord Configuration
 discord:
@@ -75,8 +81,8 @@ discord:
   # Discord bot status
   presence:
     enable: true # Enable Discord bot status
-    status: online # Bot status ( online, idle, dnd )
-    type: PLAYING # Bot activity ( PLAYING, LISTENING, WATCHING )
+    status: dnd # Bot status ( online, idle, dnd )
+    type: PLAYING # Bot activity ( PLAYING, LISTENING, WATCHING, STREAMING )
     name: Minecraft # Bot activity name
     url: https://minecraft.net # Bot activity url
   
@@ -104,8 +110,7 @@ discord:
 
     # Disabled channels
     # make sure the disabled channel id is between single quotes [ ' ]
-    disabled_channels:
-    
+    disabled_channels: []
   
   # Show player death count on Discord via command !deathcount
   deathcount:
@@ -151,7 +156,7 @@ language: config/language.yml # Language file
 responses: config/response.yml # Custom reponse file
 
 # Config version (Please don't modify)
-version: 1.5.18
+version: 1.5.19
 ```
 ### Discord not working?
 
