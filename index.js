@@ -894,7 +894,7 @@ function DiscordBot(){
 
             //Has admin permission
             let AdminPerms = false;
-            if(message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES, true)) AdminPerms = true;
+            if(message.member && message.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR)) AdminPerms = true;
             
 
             //bot utility functions
