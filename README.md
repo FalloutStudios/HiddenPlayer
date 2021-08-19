@@ -4,7 +4,7 @@ Simple Minecraft player bot and and Discord bot.
 Pre-requirement:
 - [x] Node.js
 
-If you haven't `node.js` installed yet you can download it here (Download the **Recommended for most users**): https://nodejs.org/
+If you haven't `node.js` installed yet you can download it here (**requires Node 16.6 or higher**): https://nodejs.org/
 
 This is my practice project sorry for low quality code lol.
 
