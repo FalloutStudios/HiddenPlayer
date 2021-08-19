@@ -10,8 +10,7 @@
   "license": "GPL-3.0",
   "dependencies": {
     "config": "^3.3.3",
-    "discord-slash-commands-client": "^1.2.1",
-    "discord.js": "^12.5.3",
+    "discord.js": "^13.1.0",
     "fs": "0.0.1-security",
     "mineflayer": "^2.41.0",
     "mineflayer-blockfinder": "0.0.7",
@@ -25,7 +24,6 @@
     "ws": "^8.0.0",
     "yaml": "2.0.0-7"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/GhexterCortes/minecraft-bot.git"

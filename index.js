@@ -230,7 +230,16 @@ function parse (url = null){
 }
 
 //Create discord client
-const client = new Discord.Client();
+const client = new Discord.Client({ 
+    intents: [
+        Discord.Intents.FLAGS.GUILDS,
+        Discord.Intents.FLAGS.GUILD_INTEGRATIONS,
+        Discord.Intents.FLAGS.GUILD_BANS,
+        Discord.Intents.FLAGS.GUILD_MEMBERS,
+        Discord.Intents.FLAGS.GUILD_MESSAGES,
+        Discord.Intents.FLAGS.GUILD_PRESENCES
+    ]
+});
 
 //debug mode enabled/disabled log
 if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Debug Mode] '+messages['logging']['enabled']);
@@ -798,7 +807,7 @@ function DiscordBot(){
     if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Discord Bot] "+messages['discord_bot']['enabled']);
 
     //on bot ready
-    client.on('ready', async () => {
+    client.once('ready', async () => {
         //set bot status to true
         discordConnected = true;
         if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Discord Bot] "+messages['discord_bot']['ready']+": "+client.user.tag+"; "+client.user.id);
@@ -806,11 +815,11 @@ function DiscordBot(){
         if(config['discord']['presence']['enable']){
             await client.user.setPresence({
                 status: config['discord']['presence']['status'],  //You can show online, idle....
-                activity: {
+                activities: [{
                     name: config['discord']['presence']['name'],  //The message shown
                     type: config['discord']['presence']['type'].toUpperCase(), //PLAYING: WATCHING: LISTENING: STREAMING:
                     url: config['discord']['presence']['url']
-                }
+                }]
             });
         }
         
@@ -882,6 +891,9 @@ function DiscordBot(){
 
             let channelName = message.channel.name;
             let channelID = message.channel.id;
+
+            //Has admin permission
+            let AdminPerms = message.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR);
             
 
             //bot utility functions
@@ -960,7 +972,7 @@ function DiscordBot(){
             //random INT response
             var randomResponse = randomInteger(0, 5);
 
-            //return if the author is the bot
+            //return if the author is bot
             if(author.bot) return;
 
             //CMD or STRING check
@@ -1087,7 +1099,7 @@ function DiscordBot(){
                                 .setAuthor(phrase, userAvatar)
                                 .setImage(RandomImage);
 
-                            message.channel.send(embed);
+                            message.channel.send({ embeds: [embed] });
                             return;
                         }
                         message.channel.send(phrase);
@@ -1111,7 +1123,7 @@ function DiscordBot(){
                             .setColor(config['discord']['embed']['color'])
                             .setTitle(`By: `+author)
                             .setDescription('> '+msg);
-                        message.channel.send(embed);
+                        message.channel.send({ embeds: [embed] });
                     }
                 } else if (findName(rawMessage) && removeMensions(lowerMessage).substr(0,11).replace('tell','').replace('me','').trim() == 'random fact') {
                     if(config['discord']['facts']['enabled']){
@@ -1128,7 +1140,7 @@ function DiscordBot(){
                             .setColor(config['discord']['embed']['color'])
                             .setTitle(msg)
                             .setDescription('`Source: '+source+'`');
-                        message.channel.send(embed);
+                        message.channel.send({ embeds: [embed] });
                     }
                 } else if (customResponse(rawMessage, false, "discord")) {
                     let reply = customResponse(rawMessage, true, "discord");
@@ -1164,7 +1176,7 @@ function DiscordBot(){
                     var embed = new Discord.MessageEmbed()
                         .setColor(config['discord']['embed']['color'])
                         .setAuthor(author, userAvatar);
-                    message.channel.send(embed);
+                    message.channel.send({ embeds: [embed] });
                 } else if (command == 'you') {
 
                     if(randomResponse == 0)
@@ -1175,10 +1187,10 @@ function DiscordBot(){
                         message.channel.send('I need privacy :smirk:');
                     else
                         var embed = new Discord.MessageEmbed()
-                        .setColor(config['discord']['embed']['color'])
-                        .setAuthor(botName, botAvatar)
-                        .setTimestamp();
-                        message.channel.send(embed);
+                            .setColor(config['discord']['embed']['color'])
+                            .setAuthor(botName, botAvatar)
+                            .setTimestamp();
+                        message.channel.send({ embeds: [embed] });
 
                 } else if (command == 'deathcount' && config['discord']['deathcount'] && fs.existsSync(config['player']['countdeaths']['src'])) {
                     let readDeathcountFile = parseInt(fs.readFileSync(config['player']['countdeaths']['src']));
@@ -1193,7 +1205,7 @@ function DiscordBot(){
 
                     message.channel.send(replaceAll(messages['discord_bot']['deathcount'], "%count%", count));
                 } else if (command == 'embed' && config['discord']['embed']['enabled']) {
-                    if(message.member.hasPermission("ADMINISTRATOR")) {
+                    if(AdminPerms) {
                         message.delete();
 
                         let title = rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).split(" ",1)[0];
@@ -1206,14 +1218,14 @@ function DiscordBot(){
                             .setAuthor('HiddenPlayer', botAvatar)
                             .setDescription(content)
                             .setTimestamp()
-                        message.channel.send(embed);
+                        message.channel.send({ embeds: [embed] });
                     } else {
                         message.reply(messages['discord_bot']['chats']['command_no_perm']).then(msg => {
                             setTimeout(() => { msg.delete(); message.delete() }, 5000);
                         });
                     }
                 } else if (command == 'send' && config['discord']['send-command']) {
-                    if(message.member.hasPermission("ADMINISTRATOR")) {
+                    if(AdminPerms) {
                         message.delete();
                         message.channel.send(rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).trim());
                     } else {
@@ -1226,7 +1238,7 @@ function DiscordBot(){
                     let count = 10;
                     let msg = '';
 
-                    if(message.member.hasPermission("ADMINISTRATOR")) {
+                    if(AdminPerms) {
                         for (let i = 0; i < args.length; i++) {
                             msg += ' '+args[i];
                         }
@@ -1279,7 +1291,7 @@ function DiscordBot(){
                 } else if (command == 'smap') {
                     message.reply("Did you mean `>spam` :thinking:");
                 } else if (command == 'exembed') {
-                    if(message.member.hasPermission("ADMINISTRATOR")) {
+                    if(AdminPerms) {
                         var embed = new Discord.MessageEmbed()
                             .setColor(config['discord']['embed']['color'])
                             .setTitle('Some title')
@@ -1297,14 +1309,14 @@ function DiscordBot(){
                             .setImage('https://i.imgur.com/wSTFkRM.png')
                             .setTimestamp()
                             .setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');
-                        message.channel.send(embed);
+                        message.channel.send({ embeds: [embed] });
                     } else {
                         message.reply(messages['discord_bot']['chats']['command_no_perm']).then(msg => {
                             setTimeout(() => { msg.delete(); message.delete() }, 5000);
                         });
                     }
                 } else if (command == 'reloadall' || command == 'reloadassets') {
-                    if(message.member.hasPermission("ADMINISTRATOR")) {
+                    if(AdminPerms) {
                         message.reply(`Reloading assets`);
                         if(config['discord']['emotes']['enabled']){
                             emotes = fs.readFileSync(config['discord']['emotes']['src'], 'utf8');
@@ -1333,7 +1345,7 @@ function DiscordBot(){
                         });
                     }
                 } else if (command == 'reload') {
-                    if(message.member.hasPermission("ADMINISTRATOR")) {
+                    if(AdminPerms) {
                         message.reply(messages['discord_bot']['reloading']);
                         let reload = parse(config['onlineConfig']);
                         if(reload){

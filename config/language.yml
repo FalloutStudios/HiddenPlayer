@@ -45,6 +45,7 @@ discord_bot:
   message_received: Discord Message
   command_execute: Executed Discord bot command
   reloading: Reloading config files...
+  reload_complete: Reload Successful
   deathcount: I died %count% in game <:HiddenPlayer:854320612565450762>
   chats:
     command_no_perm: You don't have permission to do that
@@ -58,4 +59,4 @@ database:
   connection_logged: MySQL connection logged!
 
 # Config version (Please don't modify)
-version: 1.5.18 
+version: 1.5.19
