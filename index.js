@@ -893,7 +893,7 @@ function DiscordBot(){
             let channelID = message.channel.id;
 
             //Has admin permission
-            let AdminPerms = message.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR);
+            let AdminPerms = message.author.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR);
             
 
             //bot utility functions
