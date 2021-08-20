@@ -9,7 +9,6 @@
   "author": "GhexterCortes",
   "license": "GPL-3.0",
   "dependencies": {
-    "@discordjs/builders": "^0.5.0",
     "config": "^3.3.3",
     "discord.js": "^13.1.0",
     "fs": "0.0.1-security",

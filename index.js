@@ -24,7 +24,6 @@ const mysql = require('mysql');
 
 //Discord
 const Discord = require('discord.js');
-const DiscordCommands = require('@discordjs/builders');
 
 //configuration file
 const configlocation = 'config/config.yml';
@@ -813,7 +812,7 @@ function DiscordBot(){
         discordConnected = true;
         if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Discord Bot] "+messages['discord_bot']['ready']+": "+client.user.tag+"; "+client.user.id);
 
-        let inviteURL = 'Bot Invite Link: https://discord.com/api/oauth2/authorize?client_id='+client.user.id+'&permissions=8&scope=bot%20applications.commands';
+        let inviteURL = 'Bot Invite Link: https://discord.com/api/oauth2/authorize?client_id='+client.user.id+'&permissions=8&scope=bot';
 
         console.log();
         console.log(loop(inviteURL.length, '='));
@@ -1373,21 +1372,6 @@ function DiscordBot(){
 
             if(config['debug']['discord_chats']) {
                 console.log("[Log - Discord Bot] "+messages['discord_bot']['message_received']+": "+limitText(message.content));
-            }
-        });
-
-        //on interaction
-        client.on('interactionCreate', async interaction => {
-            if (!interaction.isCommand()) return;
-        
-            const { commandName } = interaction;
-        
-            if (commandName === 'ping') {
-                await interaction.reply('Pong!');
-            } else if (commandName === 'beep') {
-                await interaction.reply('Boop!');
-            } else if (commandName === 'example'){
-                await interaction.reply('Hello!');
             }
         });
     });
