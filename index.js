@@ -480,7 +480,7 @@ function newBot(){
             if(command == ''){
                 //invalid command: null
                 bot.chat(messages['minecraft_bot']['chats']['command_invalid']);
-            } else if (admin && command == 'reloadconfig' && config['player']['command']['reload'] || admin && command == 'reload' || admin && command == 'restartconfig' && config['player']['command']['reload']){
+            } else if (admin && command == 'reloadconfig' && config['player']['commands']['reload'] || admin && command == 'reload' || admin && command == 'restartconfig' && config['player']['commands']['reload']){
                 //reload config
                 bot.chat("Reloading Bot Config");
                 
@@ -495,14 +495,14 @@ function newBot(){
                     //reload failed
                     bot.chat(messages['reload_config']['failed']);
                 }
-            } else if (admin && command == 'restartbot' && config['player']['command']['restart'] || admin && command == 'reloadbot'&& config['player']['command']['restart']){
+            } else if (admin && command == 'restartbot' && config['player']['commands']['restart'] || admin && command == 'reloadbot'&& config['player']['commands']['restart']){
                 //restart mineflayer bot
                 bot.chat(messages['minecraft_bot']['chats']['command_restarting']);
 
                 //quit and restart
                 bot.quit();
                 bot.end();
-            } else if (admin && command == 'kill' && config['player']['command']['kill']) {
+            } else if (admin && command == 'kill' && config['player']['commands']['kill']) {
                 //kill player
 
                 //find player name
@@ -618,6 +618,13 @@ function newBot(){
     bot.on('spawn', () => {
         if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['spawned']);
 
+        //set all to default
+        lasttime = -1;
+        bot.pvp.stop();
+        bot.setControlState(lastaction,false);
+        bot.deactivateItem();
+        moving = false;
+
         //check if connected and logged status is true
         if(!connected && !logged){
             //set status to true
@@ -628,12 +635,7 @@ function newBot(){
             bot.chat(config['player']['message']);
             if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] connected = '+connected+'; logged = '+logged);
         }
-        //set all to default
-        lasttime = -1;
-        bot.pvp.stop();
-        bot.setControlState(lastaction,false);
-        bot.deactivateItem();
-        moving = false;
+        
         // Hmmmmm... so basically database is useless wtf
     });
 
