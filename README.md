@@ -16,10 +16,10 @@ This is the default `config.yml` contents.
 # Server Information
 server:
   # Server IP address without port (Ask if empty)
-  ip:
+  ip: play.ourmcworld.ml
   
   # Server port (Ask if empty)
-  port:
+  port: 39703
   
   # Reconnect interval timout when player disconnects
   reconnectTimeout: 5000
@@ -30,14 +30,15 @@ player:
   enabled: true
   
   # Player Name (Ask if empty)
-  name:
+  name: HiddenPlayer
   
-  # Minecraft version (Supported latest version when empty)
+  # Minecraft version (Will use supported latest version when empty)
   version:
 
   # Web viewer
+  # Still not implemented
   Viewer:
-    enabled: true
+    enabled: false
     port: 300
 
   # Log death counts
@@ -45,11 +46,11 @@ player:
     enabled: true # Enable death count logging
     src: config/deathcount.txt # Source file
   
-  message: hello # Message on join
+  message: 'hello' # Message on join
   
   # Attack hostile mobs
   pvp:
-    enabled: false # Enable hostile mobs attack
+    enabled: true # Enable mobs attack
   
     # Some bot commands
   commands:
@@ -156,7 +157,7 @@ language: config/language.yml # Language file
 responses: config/response.yml # Custom reponse file
 
 # Config version (Please don't modify)
-version: 1.5.19
+version: 1.8.0
 ```
 ### Discord not working?
 
