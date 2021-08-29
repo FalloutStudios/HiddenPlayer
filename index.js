@@ -1073,15 +1073,6 @@ function DiscordBot(){
                     } else{
                         message.channel.send('It\'s empty you know :confused:');
                     }
-                } else if (removeMensions(lowerMessage).indexOf('im') > -1 && removeMensions(lowerMessage).indexOf('sick') > -1 && removeMensions(lowerMessage).indexOf('not') < 0) {
-                    
-                    if(randomResponse == 0)
-                        message.reply('Get rest :thumbsup:');
-                    else if (randomResponse == 1)
-                        message.reply('Stay Healthy and get rest :)');
-                    else
-                        message.reply('Stay safe <3');
-
                 } else if (findName(rawMessage) && actionFind(lowerMessage) && config['discord']['emotes']['enabled']) {
                     if(message.mentions.users.size){
                         let emoteName = actionFind(lowerMessage, true);
