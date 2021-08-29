@@ -579,13 +579,13 @@ function newBot(){
     });
 
     //movement variables
-    let lasttime = -1;
-    let moveinterval = 5;
-    let maxrandom = 5;
-    let moving = false;
-    let jump = false;
-    let onPVP = false;
-    let lastaction = actions[Math.floor(Math.random() * actions.length)];
+    var lasttime = -1;
+    var moveinterval = 5;
+    var maxrandom = 5;
+    var moving = false;
+    var jump = true;
+    var onPVP = false;
+    var lastaction = null;
 
     //auto save interval
     function saveAll(){
@@ -618,23 +618,25 @@ function newBot(){
     bot.on('spawn', () => {
         if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['spawned']);
 
+        //check if connected and logged status is true
+        if(!connected && !logged){
+            //chat first message
+            bot.chat(config['player']['message']);
+            
+            //set status to true
+            setTimeout(() => {
+                connected = true;
+                logged = true;
+            }, 500);
+
+            if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] connected = '+connected+'; logged = '+logged);
+        }
         //set all to default
         lasttime = -1;
         bot.pvp.stop();
-        bot.setControlState(lastaction,false);
+        if (lastaction != null) bot.setControlState(lastaction,false);
         bot.deactivateItem();
         moving = false;
-
-        //check if connected and logged status is true
-        if(!connected && !logged){
-            //set status to true
-            connected = true;
-            logged = true;
-            
-            //chat first message
-            bot.chat(config['player']['message']);
-            if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] connected = '+connected+'; logged = '+logged);
-        }
         
         // Hmmmmm... so basically database is useless wtf
     });
@@ -694,6 +696,11 @@ function newBot(){
         if (lasttime < 0) {
             //set last time
             lasttime = bot.time.age;
+
+            //jump
+            bot.setControlState('jump', true);
+            bot.setControlState('jump', false);
+
             if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['set_last_time']);
         } else{
             //count movement interval
@@ -715,7 +722,6 @@ function newBot(){
 
                     //set moving to false
                     moving = false;
-                    if(debug && config['debug']['movements']) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] age = '+bot.time.age+'; moving = '+moving);
                 } else{
                     //add last action
                     lastaction = actions[Math.floor(Math.random() * actions.length)];
@@ -731,8 +737,9 @@ function newBot(){
 
                     //activate current item
                     bot.activateItem();
-                    if(debug && config['debug']['movements']) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] age = '+bot.time.age+'; moving = '+moving);
                 }
+
+                if(debug && config['debug']['movements']) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] age = '+bot.time.age+'; lasttime: '+lasttime+'; interval: '+interval+'; lastaction: '+lastaction+'; moving = '+moving+'; pvp = '+onPVP);
             }
 
             //bot jump
@@ -758,7 +765,7 @@ function newBot(){
     });
 
     //if bot end
-    bot.on('error kicked banned',function (reason){
+    bot.on('error kicked banned disconnect',function (reason){
         if(debug) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['disconnected']+': '+reason);
 
         //end bot
