@@ -601,25 +601,22 @@ function newBot(){
         }, config['autosave']['interval']);
     }
 
-    //first spawn
-    bot.once('spawn', () => {
-        if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['first_spawn']);
-        
-        //check if auto save is enabled
-        if(config['autosave']['enbled']){
-            saveAll();
-        }
-
-        //set connection status
-        MinecraftConnected = true;
-    });
-
     //every respawn
     bot.on('spawn', () => {
         if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['spawned']);
 
         //check if connected and logged status is true
         if(!connected && !logged){
+            if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['first_spawn']);
+            
+            //check if auto save is enabled
+            if(config['autosave']['enbled']){
+                saveAll();
+            }
+
+            //set connection status
+            MinecraftConnected = true;
+
             //chat first message
             bot.chat(config['player']['message']);
             
@@ -696,10 +693,6 @@ function newBot(){
         if (lasttime < 0) {
             //set last time
             lasttime = bot.time.age;
-
-            //jump
-            bot.setControlState('jump', true);
-            bot.setControlState('jump', false);
 
             if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['set_last_time']);
         } else{
