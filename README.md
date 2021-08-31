@@ -46,7 +46,7 @@ player:
     enabled: true # Enable death count logging
     src: config/deathcount.txt # Source file
   
-  message: 'hello' # Message on join
+  message: '/login hello' # Message on join
   
   # Attack hostile mobs
   pvp:
@@ -68,8 +68,7 @@ autosave:
   interval: 60000 # Autosave interval
 
 # Admins for Player commands
-staffs: 
-  GhexterCortes: admin
+staffs: []
 
 # Discord Configuration
 discord:
@@ -77,7 +76,7 @@ discord:
   enabled: true
   
   # Discord bot token
-  token: 
+  token:
   
   # Discord bot status
   presence:
@@ -110,7 +109,7 @@ discord:
     max: 100 # Spam limit 
 
     # Disabled channels
-    # make sure the disabled channel id is between single quotes [ ' ]
+    # make sure the disabled channel id is valid
     disabled_channels: []
   
   # Show player death count on Discord via command !deathcount
@@ -136,6 +135,13 @@ discord:
     enabled: true
     src: config/reacts.yml
 
+  # Ignored channels
+  # make sure the disabled channel id is valid
+  ignored_channels: []
+
+  # make ignored channels to channel whitelist
+  ignored_to_whitelist: false
+
 # Database Configuration (Still unused)
 database:
   enabled: false # Database enabled
@@ -147,7 +153,7 @@ database:
 # Debugging log
 debug:
   enabled: true  # Enable logs
-  movements: false # Log player movements
+  movements: true # Log player movements
   discord_chats: true # Show discord chats
   minecraft_chats: true # Show in-game chats
   prefix: '' # Debug mode playername prefix
@@ -157,7 +163,7 @@ language: config/language.yml # Language file
 responses: config/response.yml # Custom reponse file
 
 # Config version (Please don't modify)
-version: 1.8.0
+version: 1.8.3
 ```
 ### Discord not working?
 
