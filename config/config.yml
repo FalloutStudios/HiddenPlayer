@@ -37,23 +37,23 @@ player:
   pvp:
     enabled: true # Enable mobs attack
   
-    # Some bot commands
+  # Some bot commands
   commands:
     kill: false # Enable !kill <PlayerName>
     reload: true # Enable !reload
     restart: true # Enable !restart
+  
+    # Admins for Player commands
+  admin: []
 
-# Player chat delay
-chat:
+  # Player chat delay
   chatDelay: 500
 
-# Enable Game autosave (OP permission required)
-autosave:
-  enabled: false # Enable autosave
-  interval: 60000 # Autosave interval
+  # Enable Game autosave (OP permission required)
+  autosave:
+    enabled: false # Enable autosave
+    interval: 60000 # Autosave interval
 
-# Admins for Player commands
-staffs: []
 
 # Discord Configuration
 discord:
