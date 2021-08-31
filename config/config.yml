@@ -61,7 +61,7 @@ discord:
   enabled: true
   
   # Discord bot token
-  token: ODU0MjMwMzY2MDg4MjAwMjMz.YMg6Bg.QhvWAoosVrnl_8HCxVKGz4Ae6tg
+  token:
   
   # Discord bot status
   presence:
