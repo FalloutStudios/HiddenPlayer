@@ -989,7 +989,17 @@ function DiscordBot(){
             var randomResponse = randomInteger(0, 5);
 
             //return if the author is bot
-            if(author.bot) return;
+            if(author.bot || botUser_id == user_id) return;
+
+            //ignored channels
+            var ignored_channels = config.discord.ignored_channels;
+            var ignored_to_whitelist = config.discord.ignored_to_whitelist;
+
+            if(ignored_to_whitelist == true){
+                if(!ignored_channels.includes(channelID.toString())) return; 
+            } else{
+                if(ignored_channels.includes(channelID.toString())) return; 
+            }
 
             //CMD or STRING check
             if (!rawMessage.startsWith(config['discord']['command-prefix'])){
@@ -1263,7 +1273,7 @@ function DiscordBot(){
                         msg = msg.trim();
 
                         if (count > 0 && count <= config['discord']['spam']['max']){
-                            if(!disabled_channels.includes(channelID)){
+                            if(!disabled_channels.includes(channelID.toString())){
                                 if(msg != null && msg != ''){
                                     if(!config['discord']['spam']['player_ping'] && !message.mentions.users.size && !message.mentions.roles.size  && !message.mentions.everyone || config['discord']['spam']['player_ping']){
                                         for (let i=0; i < count; i++){
