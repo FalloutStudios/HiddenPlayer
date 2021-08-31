@@ -1,12 +1,8 @@
 # Custom mincraft message response
 minecraft:
-  hello bitch: hello too mf
-  test: test!
 
 # Custom discord message response
 discord:
-  hiddenplayer: fr
-  ping: ['lul fr','breh','pingg']
 
 # Config version (Please don't modify)
-version: 1.8.0
+version: 1.8.3
