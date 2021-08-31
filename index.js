@@ -461,7 +461,7 @@ function newBot(){
         if(username == player || username == 'you') { return; }
 
         //check for admin perms
-        if(config['staffs'][username] != undefined && config['staffs'][username] == 'admin') { 
+        if(config['player']['admin'].includes(username.toString())) { 
             admin = true; 
             console.log('[Log - Mincraft Bot] '+username+' is an admin'); 
         } else{ 
@@ -573,7 +573,7 @@ function newBot(){
                 setTimeout(() => {
                     //execute reply
                     bot.chat(reply);
-                }, config['chat']['chatDelay']);
+                }, config['player']['chatDelay']);
             }
         }
     });
@@ -598,7 +598,7 @@ function newBot(){
 
         setTimeout(() => {
             saveAll();
-        }, config['autosave']['interval']);
+        }, config['player']['autosave']['interval']);
     }
 
     //every respawn
@@ -610,7 +610,7 @@ function newBot(){
             if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['first_spawn']);
             
             //check if auto save is enabled
-            if(config['autosave']['enbled']){
+            if(config['player']['autosave']['enbled']){
                 saveAll();
             }
 
