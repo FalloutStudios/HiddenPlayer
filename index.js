@@ -995,6 +995,13 @@ function DiscordBot(){
             var ignored_channels = config.discord.ignored_channels;
             var ignored_to_whitelist = config.discord.ignored_to_whitelist;
 
+            //ignored users
+            var ignored_users = config.discord.ignored_users;
+
+            //Check player ignore list
+            if(ignored_users.includes(user_id.toString())) return;
+
+            //Check discord ignore list
             if(ignored_to_whitelist == true){
                 if(!ignored_channels.includes(channelID.toString())) return; 
             } else{
