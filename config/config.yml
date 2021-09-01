@@ -121,11 +121,15 @@ discord:
     src: config/reacts.yml
 
   # Ignored channels
-  # make sure the disabled channel id is valid
+  # make sure the ignored channel id is valid
   ignored_channels: []
 
   # make ignored channels to channel whitelist
   ignored_to_whitelist: false
+
+  # Ignored users
+  # make sure the ignored user id is valid
+  ignored_users: []
 
 # Database Configuration (Still unused)
 database:
@@ -148,4 +152,4 @@ language: config/language.yml # Language file
 responses: config/response.yml # Custom reponse file
 
 # Config version (Please don't modify)
-version: 1.8.3
+version: 1.8.4
