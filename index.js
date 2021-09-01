@@ -992,20 +992,21 @@ function DiscordBot(){
             if(author.bot || botUser_id == user_id) return;
 
             //ignored channels
-            var ignored_channels = config.discord.ignored_channels;
-            var ignored_to_whitelist = config.discord.ignored_to_whitelist;
+            var ignored_channels = config['discord']['ignored_channels'];
+            var ignored_to_whitelist = config['discord']['ignored_to_whitelist'];
 
             //ignored users
-            var ignored_users = config.discord.ignored_users;
+            var ignored_users = config['discord']['ignored_users'];
 
             //Check player ignore list
-            if(ignored_users.includes(user_id.toString())) return;
+            if(ignored_users.includes(user_id.toString()) && ignored_users.length > 0) return;
 
             //Check discord ignore list
-            if(ignored_to_whitelist == true){
-                if(!ignored_channels.includes(channelID.toString())) return; 
-            } else{
-                if(ignored_channels.includes(channelID.toString())) return; 
+            if(ignored_channels.length > 0){
+                if(ignored_to_whitelist == true)
+                    if(!ignored_channels.includes(channelID.toString())) return; 
+                else
+                    if(ignored_channels.includes(channelID.toString())) return; 
             }
 
             //CMD or STRING check
