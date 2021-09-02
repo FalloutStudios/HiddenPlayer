@@ -39,12 +39,11 @@ player:
   
   # Some bot commands
   commands:
-    kill: false # Enable !kill <PlayerName>
     reload: true # Enable !reload
     restart: true # Enable !restart
   
     # Admins for Player commands
-  admin: []
+  admin: ['GhexterCortes']
 
   # Player chat delay
   chatDelay: 500
@@ -54,14 +53,14 @@ player:
     enabled: false # Enable autosave
     interval: 60000 # Autosave interval
 
-
+    
 # Discord Configuration
 discord:
   # Enable discord bot
   enabled: true
   
   # Discord bot token
-  token:
+  token: 
   
   # Discord bot status
   presence:
@@ -75,7 +74,6 @@ discord:
   prefix:
   - hiddenplayer
   - hidden
-  - hd
   
   command-prefix: ">" # Bot command prefix
   
@@ -142,7 +140,7 @@ database:
 # Debugging log
 debug:
   enabled: true  # Enable logs
-  movements: true # Log player movements
+  movements: false # Log player movements
   discord_chats: true # Show discord chats
   minecraft_chats: true # Show in-game chats
   prefix: '' # Debug mode playername prefix
