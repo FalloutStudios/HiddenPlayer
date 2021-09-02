@@ -5,7 +5,7 @@ Simple Minecraft player bot and and Discord bot.
 - Using this bot may violate some server hosting Terms of Service and EULA.
 - Use this bot only on your own server `Use it on other server at your own risk`
 
-Pre-requirement:
+### Requirement
 - [x] Node.js
 
 If you haven't `node.js` installed yet you can download it here (**requires Node 16.6 or higher**): https://nodejs.org/
@@ -56,31 +56,30 @@ player:
   pvp:
     enabled: true # Enable mobs attack
   
-    # Some bot commands
+  # Some bot commands
   commands:
-    kill: false # Enable !kill <PlayerName>
     reload: true # Enable !reload
     restart: true # Enable !restart
+  
+    # Admins for Player commands
+  admin: ['GhexterCortes']
 
-# Player chat delay
-chat:
+  # Player chat delay
   chatDelay: 500
 
-# Enable Game autosave (OP permission required)
-autosave:
-  enabled: false # Enable autosave
-  interval: 60000 # Autosave interval
+  # Enable Game autosave (OP permission required)
+  autosave:
+    enabled: false # Enable autosave
+    interval: 60000 # Autosave interval
 
-# Admins for Player commands
-staffs: []
-
+    
 # Discord Configuration
 discord:
   # Enable discord bot
   enabled: true
   
   # Discord bot token
-  token:
+  token: 
   
   # Discord bot status
   presence:
@@ -94,7 +93,6 @@ discord:
   prefix:
   - hiddenplayer
   - hidden
-  - hd
   
   command-prefix: ">" # Bot command prefix
   
@@ -140,11 +138,15 @@ discord:
     src: config/reacts.yml
 
   # Ignored channels
-  # make sure the disabled channel id is valid
+  # make sure the ignored channel id is valid
   ignored_channels: []
 
   # make ignored channels to channel whitelist
   ignored_to_whitelist: false
+
+  # Ignored users
+  # make sure the ignored user id is valid
+  ignored_users: []
 
 # Database Configuration (Still unused)
 database:
@@ -157,7 +159,7 @@ database:
 # Debugging log
 debug:
   enabled: true  # Enable logs
-  movements: true # Log player movements
+  movements: false # Log player movements
   discord_chats: true # Show discord chats
   minecraft_chats: true # Show in-game chats
   prefix: '' # Debug mode playername prefix
@@ -167,7 +169,7 @@ language: config/language.yml # Language file
 responses: config/response.yml # Custom reponse file
 
 # Config version (Please don't modify)
-version: 1.8.3
+version: 1.8.4
 ```
 ### Discord not working?
 
