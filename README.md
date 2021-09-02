@@ -1,6 +1,10 @@
 # HiddenPlayer Bot
 Simple Minecraft player bot and and Discord bot.
 
+### WARNING! 
+- Using this bot may violate some server hosting Terms of Service and EULA.
+- Use this bot only on your own server `Use it on other server at your own risk`
+
 Pre-requirement:
 - [x] Node.js
 
