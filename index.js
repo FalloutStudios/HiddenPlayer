@@ -126,7 +126,7 @@ if(fullname != ''){
 console.log('============================ '+fullname+configVersion+' ===========================');
 console.log();
 console.log();
-console.log('GitHub: https://github.com/GhexterCortes/minecraft-bot');
+console.log('GitHub: https://github.com/FalloutStudios/minecraft-bot');
 console.log();
 console.log('========================================================='+loop(fullname.length, '=')+loop(configVersion.length, '='));
 
@@ -472,7 +472,7 @@ function newBot(){
         if(message.substr(0,1) == '!'){
             //split command and args
             let args = message.slice(1).trim().split(/ +/);
-            let command = args.trim().shift().toLowerCase();
+            let command = args.shift().toLowerCase().trim();
 
             if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['command_execute']+': '+command);
             
@@ -616,6 +616,7 @@ function newBot(){
 
             if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] connected = '+connected+'; logged = '+logged);
         }
+
         //set all to default
         lasttime = -1;
         bot.pvp.stop();
@@ -1167,7 +1168,7 @@ function DiscordBot(){
             } else {
                 //get command name and args
                 let args = rawMessage.slice(config['discord']['command-prefix'].length).trim().split(/ +/);
-                let command = args.trim().shift().toLowerCase();
+                let command = args.shift().toLowerCase().trim();
 
                 if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Discord Bot] "+messages['discord_bot']['command_execute']+": "+command+" by "+author);
 
@@ -1183,6 +1184,14 @@ function DiscordBot(){
                     else
                         message.channel.send('I don\'t help anyone :expressionless:');
                     
+                } else if (command == 'version' && config['discord']['version-command']) {
+                    var embed = new Discord.MessageEmbed()
+                        .setColor(config['discord']['embed']['color'])
+                        .setAuthor(botName, botAvatar)
+                        .setTitle('Version')
+                        .setDescription(config['version'])
+                        .setTimestamp();
+                    message.reply({ embeds: [embed] });
                 } else if (command == 'me') {
                     var embed = new Discord.MessageEmbed()
                         .setColor(config['discord']['embed']['color'])
