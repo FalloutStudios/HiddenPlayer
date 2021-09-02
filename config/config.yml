@@ -43,7 +43,7 @@ player:
     restart: true # Enable !restart
   
     # Admins for Player commands
-  admin: ['GhexterCortes']
+  admin: []
 
   # Player chat delay
   chatDelay: 500
@@ -60,7 +60,7 @@ discord:
   enabled: true
   
   # Discord bot token
-  token: 
+  token:
   
   # Discord bot status
   presence:
@@ -76,6 +76,9 @@ discord:
   - hidden
   
   command-prefix: ">" # Bot command prefix
+
+  # Allow version commad
+  version-command: true
   
   # Embed Command
   embed:
@@ -140,7 +143,7 @@ database:
 # Debugging log
 debug:
   enabled: true  # Enable logs
-  movements: false # Log player movements
+  movements: true # Log player movements
   discord_chats: true # Show discord chats
   minecraft_chats: true # Show in-game chats
   prefix: '' # Debug mode playername prefix
