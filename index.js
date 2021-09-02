@@ -472,7 +472,7 @@ function newBot(){
         if(message.substr(0,1) == '!'){
             //split command and args
             let args = message.slice(1).trim().split(/ +/);
-            let command = args.shift().toLowerCase();
+            let command = args.trim().shift().toLowerCase();
 
             if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['command_execute']+': '+command);
             
@@ -502,18 +502,6 @@ function newBot(){
                 //quit and restart
                 bot.quit();
                 bot.end();
-            } else if (admin && command == 'kill' && config['player']['commands']['kill']) {
-                //kill player
-
-                //find player name
-                if(bot.players[args[0].trim()]){
-                    //execute in-game command
-                    bot.chat(`/minecraft:kill `+args[0].trim());
-                    bot.chat(username+` killed `+args[0].trim());
-                } else{
-                    //player not found
-                    bot.chat('Player '+args[0].trim()+' not found');
-                }
             } else if (command == 'deathcount' && config['player']['countdeaths']['enabled']) {
                 bot.chat(`I died `+deathCount.toLocaleString()+` times`);
             } else if (!admin){
@@ -1179,7 +1167,7 @@ function DiscordBot(){
             } else {
                 //get command name and args
                 let args = rawMessage.slice(config['discord']['command-prefix'].length).trim().split(/ +/);
-                let command = args.shift().toLowerCase();
+                let command = args.trim().shift().toLowerCase();
 
                 if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Discord Bot] "+messages['discord_bot']['command_execute']+": "+command+" by "+author);
 
