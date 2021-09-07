@@ -1,6 +1,6 @@
 {
   "name": "hiddenplayer-bot",
-  "version": "1.8.3",
+  "version": "1.8.4",
   "description": "A simple minecraft bot with discord bot",
   "main": "index.js",
   "scripts": {
