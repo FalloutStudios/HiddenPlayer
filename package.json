@@ -4,7 +4,8 @@
   "description": "A simple minecraft bot with discord bot",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "node index.js"
   },
   "author": "GhexterCortes",
   "license": "GPL-3.0",
