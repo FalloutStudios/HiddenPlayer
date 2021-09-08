@@ -1,4 +1,4 @@
-# HiddenPlayer Bot
+# HiddenPlayer Bot [![Build Status](https://app.travis-ci.com/FalloutStudios/Grigora.svg?branch=master)](https://app.travis-ci.com/FalloutStudios/Grigora)
 Simple Minecraft player bot and and Discord bot.
 
 ### WARNING! 
