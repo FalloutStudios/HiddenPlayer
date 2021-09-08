@@ -105,5 +105,4 @@ dist
 
 # Human generated
 .github/
-.travis.yml
 LICENSE
