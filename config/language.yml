@@ -61,4 +61,4 @@ database:
   connection_logged: MySQL connection logged!
 
 # Config version (Please don't modify)
-version: 1.8.4
+version: 1.8.5
