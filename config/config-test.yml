@@ -15,7 +15,7 @@ player:
   enabled: true
   
   # Player Name (Ask if empty)
-  name: GhexterCortes
+  name: ThisIsTravis
   
   # Minecraft version (Will use supported latest version when empty)
   version:
