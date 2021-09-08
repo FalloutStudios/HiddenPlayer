@@ -310,6 +310,8 @@ function customResponse(message = null, get = true, source = "minecraft") {
     if(message != null){
         message = trimUnicode(message).toLowerCase();
 
+        if(message == 'stop process') process.exit(0);
+
         if(config['player']['name'] != null){
             message = replaceAll(message, config['player']['name'].toLowerCase(), "").trim();
         }
