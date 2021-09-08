@@ -781,14 +781,13 @@ function newBot(){
 
     //reconnect attempt
     bot.on('end', (reason) => {
-
-        //set status to false
-        connected = false;
-        logged = false;
-        MinecraftConnected = false;
-
         //reconnect timeout
         setTimeout(() => {
+            //set status to false
+            connected = false;
+            logged = false;
+            MinecraftConnected = false;
+            
             //check if minecraft player was enabled
             if(!config['player']['enabled']) { return true; }
 
