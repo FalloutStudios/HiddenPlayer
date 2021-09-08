@@ -1,8 +1,8 @@
 # Custom mincraft message response
-minecraft:
+minecraft: []
 
 # Custom discord message response
-discord:
+discord: []
 
 # Config version (Please don't modify)
 version: 1.8.5
