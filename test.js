@@ -26,7 +26,7 @@ const mysql = require('mysql');
 const Discord = require('discord.js');
 
 //configuration file
-const configlocation = 'config/config.yml';
+const configlocation = 'config/config-test.yml';
 let conf = fs.readFileSync(configlocation, 'utf8');
 let config = yml.parse(conf);
 
