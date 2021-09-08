@@ -385,7 +385,7 @@ function newBot(){
         if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['prefix_and_suffix_enabled']);
     
         //check name lenght
-        if(player == '' || player == null || player.length > 16 || player.length < 3){
+        if(player == '' || player == null || player.length > 16 || player.length < 4){
             console.error('\x1b[31m%s\x1b[0m', '[Error - Mincraft Bot] '+messages['minecraft_bot']['invalid_name']+': '+player.length); 
             process.exit();
         }
