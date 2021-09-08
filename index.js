@@ -126,7 +126,7 @@ if(fullname != ''){
 console.log('============================ '+fullname+configVersion+' ===========================');
 console.log();
 console.log();
-console.log('GitHub: https://github.com/GhexterCortes/minecraft-bot');
+console.log('GitHub: https://github.com/FalloutStudios/minecraft-bot');
 console.log();
 console.log('========================================================='+loop(fullname.length, '=')+loop(configVersion.length, '='));
 
@@ -320,7 +320,7 @@ function customResponse(message = null, get = true, source = "minecraft") {
                 
                 let response = null;
 
-                if(!get) return true;
+                if(!get) { return true; }
 
                 if(typeof messageResponseFile[source][message] == 'object') {
                     response = messageResponseFile[source][message][Math.floor(Math.random() * Object.keys(messageResponseFile[source][message]).length)];
@@ -369,7 +369,7 @@ function newBot(){
 
     if(!config['player']['enabled']){
         if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['disabled']);
-        return;
+        return true;
     }
 
     if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['proccessing']);
@@ -414,7 +414,7 @@ function newBot(){
     //check if minecraft bot already connected
     if(MinecraftConnected) {
         console.log('[Error - Minecraft Bot] '+messages['minecraft_bot']['already_connected']);
-        return;
+        return true;
     }
     //summon bot
     var bot = mineflayer.createBot({
@@ -458,7 +458,7 @@ function newBot(){
         let admin = false;
 
         //check if player is the bot
-        if(username == player || username == 'you') { return; }
+        if(username == player || username == 'you') { return true; }
 
         //check for admin perms
         if(config['player']['admin'].includes(username.toString())) { 
@@ -472,7 +472,7 @@ function newBot(){
         if(message.substr(0,1) == '!'){
             //split command and args
             let args = message.slice(1).trim().split(/ +/);
-            let command = args.shift().toLowerCase();
+            let command = args.shift().toLowerCase().trim();
 
             if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['command_execute']+': '+command);
             
@@ -502,18 +502,6 @@ function newBot(){
                 //quit and restart
                 bot.quit();
                 bot.end();
-            } else if (admin && command == 'kill' && config['player']['commands']['kill']) {
-                //kill player
-
-                //find player name
-                if(bot.players[args[0].trim()]){
-                    //execute in-game command
-                    bot.chat(`/minecraft:kill `+args[0].trim());
-                    bot.chat(username+` killed `+args[0].trim());
-                } else{
-                    //player not found
-                    bot.chat('Player '+args[0].trim()+' not found');
-                }
             } else if (command == 'deathcount' && config['player']['countdeaths']['enabled']) {
                 bot.chat(`I died `+deathCount.toLocaleString()+` times`);
             } else if (!admin){
@@ -589,8 +577,8 @@ function newBot(){
 
     //auto save interval
     function saveAll(){
-        if (!bot) return;
-        if (!config['player']['enabled']) return;
+        if (!bot) { return true; }
+        if (!config['player']['enabled']) { return true; }
 
         if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Mincraft Bot] "+messages['minecraft_bot']['saved']);
 
@@ -628,6 +616,7 @@ function newBot(){
 
             if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] connected = '+connected+'; logged = '+logged);
         }
+
         //set all to default
         lasttime = -1;
         bot.pvp.stop();
@@ -659,16 +648,14 @@ function newBot(){
             //disconnect bot
             bot.quit();
             bot.end();
-            return;
+            return true;
         }
 
         //check if bot was logged and connected
-        if(!logged && !connected) { return; }
+        if(!logged && !connected) { return true; }
 
         //get nearest entity
         entity = bot.nearestEntity();
-
-        console.log(entity);
         
         //filter entities
         if(entity != null && entity.position != null && entity.isValid && entity.type == 'mob' || entity != null && entity.position != null && entity.isValid && entity.type == 'player') bot.lookAt(entity.position.offset(0, 1.6, 0));
@@ -705,7 +692,7 @@ function newBot(){
             //movement age and interval
             if (bot.time.age - lasttime > interval) {
                 //disable on pvp
-                if (onPVP) return;
+                if (onPVP) { return true; }
 
                 //movements
                 if (moving){
@@ -760,7 +747,7 @@ function newBot(){
     });
 
     //if bot end
-    bot.on('disconnect',function (reason){
+    bot.on('disconnect',function (){
         if(debug) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['disconnected']);
 
         //end bot
@@ -770,21 +757,21 @@ function newBot(){
 
     bot.on('error', reason => {
         if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - Minecraft Bot] Connection Error:'+reason);
-        
+
         //end bot
         bot.quit();
         bot.end();
     });
     bot.on('banned', reason => {
         if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - Minecraft Bot] Banned:'+reason);
-        
+
         //end bot
         bot.quit();
         bot.end();
     });
     bot.on('kicked', reason => {
         if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - Minecraft Bot] kicked:'+reason);
-        
+
         //end bot
         bot.quit();
         bot.end();
@@ -792,15 +779,16 @@ function newBot(){
 
     //reconnect attempt
     bot.on('end', (reason) => {
+
+        //set status to false
+        connected = false;
+        logged = false;
+        MinecraftConnected = false;
+
         //reconnect timeout
         setTimeout(() => {
-            //set status to false
-            connected = false;
-            logged = false;
-            MinecraftConnected = false;
-
             //check if minecraft player was enabled
-            if(!config['player']['enabled']) return;
+            if(!config['player']['enabled']) { return true; }
 
             //request new bot
             newBot();
@@ -828,7 +816,7 @@ function DiscordBot(){
         if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Discord Bot] '+messages['discord_bot']['disabled']);
 
         //exit bot
-        return;
+        return true;
     }
 
     //set bot token
@@ -897,7 +885,7 @@ function DiscordBot(){
             //disconnect if bot was disabled
             if(!config['discord']['enabled']){
                 client.destroy();
-                return;
+                return true;
             }
 
             //Message varialbes
@@ -932,14 +920,33 @@ function DiscordBot(){
 
             //Has admin permission
             let AdminPerms = false;
-            if(message.member && message.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR)) { AdminPerms = true; }
+            if(message.member && message.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR)) AdminPerms = true;
             
+            //return if the author is bot
+            if(author.bot || botUser_id == user_id) { return true; }
+
+            //ignored channels
+            var ignored_channels = config['discord']['ignored_channels'];
+            var ignored_to_whitelist = config['discord']['ignored_to_whitelist'];
+
+            //ignored users
+            var ignored_users = config['discord']['ignored_users'];
+
+            //Check discord ignore list
+            if(ignored_to_whitelist && !ignored_channels.includes(channelID.toString())){
+                return true;
+            } else if(!ignored_to_whitelist && ignored_channels.includes(channelID.toString())){
+                return true;
+            }
+
+            //Check player ignore list
+            if(ignored_users.includes(user_id.toString())) { return true; }
 
             //bot utility functions
             //find bot name in message
             function findName (string) {
                 //return if null
-                if(string == null) return;
+                if(string == null) { return true; }
 
                 //trim string
                 string = trimUnicode(string.toLowerCase());
@@ -958,7 +965,7 @@ function DiscordBot(){
             //remove bot mensions
             function removeMensions (string) {
                 //return if null
-                if(string == null) return;
+                if(string == null) { return true; }
 
                 //make lowercase
                 string = string.toLowerCase().trim();
@@ -982,10 +989,10 @@ function DiscordBot(){
             //find action command in message
             function actionFind (message = '', get = false){
                 //return if null
-                if(message == null) return;
+                if(message == null) { return true; }
 
                 //return if bot doesn't mensionned
-                if(!findName(message)) return;
+                if(!findName(message)) { return true; }
 
                 //get all emotes list
                 let actions = Object.keys(emotes);
@@ -1010,27 +1017,6 @@ function DiscordBot(){
 
             //random INT response
             var randomResponse = randomInteger(0, 5);
-
-            //return if the author is bot
-            if(author.bot || botUser_id == user_id) return;
-
-            //ignored channels
-            var ignored_channels = config['discord']['ignored_channels'];
-            var ignored_to_whitelist = config['discord']['ignored_to_whitelist'];
-
-            //ignored users
-            var ignored_users = config['discord']['ignored_users'];
-
-            //Check player ignore list
-            if(ignored_users.includes(user_id.toString()) && ignored_users.length > 0) return;
-
-            //Check discord ignore list
-            if(ignored_channels.length > 0){
-                if(ignored_to_whitelist == true)
-                    if(!ignored_channels.includes(channelID.toString())) return; 
-                else
-                    if(ignored_channels.includes(channelID.toString())) return; 
-            }
 
             //CMD or STRING check
             if (!rawMessage.startsWith(config['discord']['command-prefix'])){
@@ -1148,7 +1134,7 @@ function DiscordBot(){
                                 .setImage(RandomImage);
 
                             message.channel.send({ embeds: [embed] });
-                            return;
+                            return true;
                         }
                         message.channel.send(phrase);
                     } else{
@@ -1204,7 +1190,7 @@ function DiscordBot(){
             } else {
                 //get command name and args
                 let args = rawMessage.slice(config['discord']['command-prefix'].length).trim().split(/ +/);
-                let command = args.shift().toLowerCase();
+                let command = args.shift().toLowerCase().trim();
 
                 if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Discord Bot] "+messages['discord_bot']['command_execute']+": "+command+" by "+author);
 
@@ -1220,6 +1206,14 @@ function DiscordBot(){
                     else
                         message.channel.send('I don\'t help anyone :expressionless:');
                     
+                } else if (command == 'version' && config['discord']['version-command']) {
+                    var embed = new Discord.MessageEmbed()
+                        .setColor(config['discord']['embed']['color'])
+                        .setAuthor(botName, botAvatar)
+                        .setTitle('Version')
+                        .setDescription(config['version'])
+                        .setTimestamp();
+                    message.reply({ embeds: [embed] });
                 } else if (command == 'me') {
                     var embed = new Discord.MessageEmbed()
                         .setColor(config['discord']['embed']['color'])
@@ -1423,7 +1417,7 @@ function connectDB(){
     //return if database was disabled
     if(!db_enable){
         if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Discord Bot] '+messages['database']['disabled']);
-        return;
+        return true;
     }
 
     //execute connection
@@ -1439,7 +1433,7 @@ function connectDB(){
         //on error return
         if (error) {
             console.error('\x1b[31m%s\x1b[0m', '[Error - Database] '+messages['database']['connect_failed']);
-            return;
+            return true;
         }
 
         if(debug) console.log('\x1b[32m%s\x1b[0m', '[Log - Database] '+messages['database']['connected']+' name: '+db_name+'; host: '+db_host+'; pass: '+db_pass+'; user: '+db_user);
