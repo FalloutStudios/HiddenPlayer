@@ -15,7 +15,7 @@ player:
   enabled: true
   
   # Player Name (Ask if empty)
-  name: TravisCI
+  name: GhexterCortes
   
   # Minecraft version (Will use supported latest version when empty)
   version:
@@ -31,7 +31,7 @@ player:
     enabled: true # Enable death count logging
     src: config/deathcount.txt # Source file
   
-  message: '/login hello' # Message on join
+  message: '' # Message on join
   
   # Attack hostile mobs
   pvp:
