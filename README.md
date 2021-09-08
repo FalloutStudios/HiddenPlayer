@@ -169,7 +169,7 @@ language: config/language.yml # Language file
 responses: config/response.yml # Custom reponse file
 
 # Config version (Please don't modify)
-version: 1.8.4
+version: 1.8.5
 ```
 ### Discord not working?
 
