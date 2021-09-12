@@ -1,150 +1,80 @@
 // HiddePlayer GPL-3.0 License
 
 //Packages
-//Mineflayer bot
 const mineflayer = require('mineflayer');
 const cmd = require('mineflayer-cmd').plugin;
 const { pathfinder, Movements, goals } = require('mineflayer-pathfinder');
 const pvpBot = require('mineflayer-pvp').plugin;
-
-//read user input
 const prompt = require("prompt-sync")();
-
-//yaml parser
+const Discord = require('discord.js');
+const commander = require('commander');
 const yml = require('yaml');
-
-//Fs
 const fs = require('fs');
-
-//request
-const request = require("request");
-
-//mysql
 const mysql = require('mysql');
 
-//Discord
-const Discord = require('discord.js');
-
-//configuration file
 const configlocation = 'config/config.yml';
-let conf = fs.readFileSync(configlocation, 'utf8');
-let config = yml.parse(conf);
+let configVersion = null;
+let config = {};
+let debug = false;
+let messages = {};
+let messageResponseFile = {};
+parse();
 
-//debug enabled/disabled
-let debug = config['debug']['enabled'];
+//Check testmode
+testMode();
 
-//databes conf
-let db_enable = config['database']['enabled'];
-let db_host = config['database']['host'];
-let db_user = config['database']['user'];
-let db_pass = config['database']['pass'];
-let db_name = config['database']['database'];
-
-//messages and response files
-//messages null check
-if (config['language'] == null) {
-    console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Can\'t load messages file');
-    process.exit(0);
-}
-if (config['responses'] == null) {
-    console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Can\'t load response messages file');
-    process.exit(0);
-}
-
-//parse messages and response files
-let messages = yml.parse(fs.readFileSync(config['language'], 'utf8'));
-let messageResponseFile = yml.parse(fs.readFileSync(config['responses'], 'utf8'));
-
-//messages and reponse files version check
-if(messages['version'] != config['version']) {
-    console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Config version doesn\'t match messages file version');
-    process.exit(0);
-}
-if(messageResponseFile['version'] != config['version']) {
-    console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Config version doesn\'t match response messages file version');
-    process.exit(0);
-}
-
-//config version
-const configVersion = config['version'];
-
-//Discord connected false
 var discordConnected = false;
-
-//Minecraft bot connected false
 var MinecraftConnected = false;
-
-//Database connected null
 var conn = null;
 
-//start-up design
-console.log();
-console.log();
+// Startup
+startUpScreen();
+inlineInteractions();
 
-console.log(' __    __    ________    ________     ________     ______   ______     __');
-console.log('|  |  |  |  |__    __|  |   ___  \\   |   ___  \\   |   ___|  |     \\   |  |');
-console.log('|  |__|  |     |  |     |  |   |  |  |  |   |  |  |  |___   |  |\\  \\  |  |');
-console.log('|   __   |     |  |     |  |   |  |  |  |   |  |  |   ___|  |  | \\  \\ |  |');
-console.log('|  |  |  |   __|  |__   |  |___|  |  |  |___|  |  |  |___   |  |  \\  \\|  |');
-console.log('|__|  |__|  |________|  |________/   |________/   |______|  |__|   \\_____|');
-console.log();
-
-//get inline playername when config playername is null
-if(config['player']['enabled'] && config['player']['name'] == null || config['player']['enabled'] && config['player']['name'] == ''){
-
-    //ask for playername
-    config['player']['name'] = prompt("Enter Player Name >>> ");
-}
-
-//get inline server ip when config server ip is null
-if(config['player']['enabled'] && config['server']['ip'] == null || config['player']['enabled'] && config['server']['ip'] == ''){
-    
-    //ask for ip address
-    config['server']['ip'] = prompt("Enter Server IP (Don't include Port) >>> ");
-}
-
-//get inline server port when config server port is null
-if(config['player']['enabled'] && config['server']['port'] == null || config['player']['enabled'] && config['server']['port'] == ''){
-    
-    //ask for ip address
-    config['server']['port'] = prompt("Enter Server Port (Enter to use default) >>> ");
-    
-    //make null if NaN
-    if(isNaN(config['server']['port'])){
-        config['server']['port'] = null;
-    }
-}
-
-//set mincraft player fullname
 var fullname = config['debug']['prefix']+config['player']['name']+config['debug']['suffix'];
-
-//add whitespace to look pretty
-if(fullname != ''){
-    fullname += ' ';
-}
-
 console.log('============================ '+fullname+configVersion+' ===========================');
-console.log();
-console.log();
-console.log('GitHub: https://github.com/FalloutStudios/minecraft-bot');
+console.log("\n\n");
+console.log('GitHub: https://github.com/FalloutStudios/HiddenPlayer');
 console.log();
 console.log('========================================================='+loop(fullname.length, '=')+loop(configVersion.length, '='));
+console.log("\n\n");
 
-console.log();
-console.log();
-
-//disable functions if null in config
-//disable minecraft player if name is null
+//disable functions if null
 if(config['player']['name'] == null || config['player']['name'] == ''){
     config['player']['enabled'] = false;
 }
-//disable discord if token is null
 if(config['discord']['token'] == null){
     config['discord']['enabled'] = false;
 }
 
-//Parse reloaded config file
-function parse (){
+//Create discord client
+const client = new Discord.Client({ 
+    intents: [
+        Discord.Intents.FLAGS.GUILDS,
+        Discord.Intents.FLAGS.GUILD_INTEGRATIONS,
+        Discord.Intents.FLAGS.GUILD_BANS,
+        Discord.Intents.FLAGS.GUILD_MEMBERS,
+        Discord.Intents.FLAGS.GUILD_MESSAGES,
+        Discord.Intents.FLAGS.GUILD_PRESENCES
+    ]
+});
+
+//debug mode enabled/disabled log
+if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Debug Mode] '+messages['logging']['enabled']);
+if(!debug) console.log('\x1b[32m%s\x1b[0m','[Log - Debug Mode] '+messages['logging']['disabled']);
+
+//Global functions
+function startUpScreen() {
+    console.log("\n\n");
+    console.log(' __    __    ________    ________     ________     ______   ______     __');
+    console.log('|  |  |  |  |__    __|  |   ___  \\   |   ___  \\   |   ___|  |     \\   |  |');
+    console.log('|  |__|  |     |  |     |  |   |  |  |  |   |  |  |  |___   |  |\\  \\  |  |');
+    console.log('|   __   |     |  |     |  |   |  |  |  |   |  |  |   ___|  |  | \\  \\ |  |');
+    console.log('|  |  |  |   __|  |__   |  |___|  |  |  |___|  |  |  |___   |  |  \\  \\|  |');
+    console.log('|__|  |__|  |________|  |________/   |________/   |______|  |__|   \\_____|');
+    console.log();
+}
+function parse(){
     //success pre variable
     var success = false;
 
@@ -163,10 +93,11 @@ function parse (){
     var confV = body_config['version'];
 
     //throw error when versions doesn't match
-    if(configVersion != confV) {
+    if(configVersion != null && configVersion != confV) {
         console.error('\x1b[31m%s\x1b[0m', '[Error - Config] '+messages['reload_config']['different_versions']);
         return success;
     } else{
+        configVersion = confV;
         success = true;
     }
 
@@ -175,13 +106,6 @@ function parse (){
 
     //debug enabled/disabled
     debug = config['debug']['enabled'];
-
-    //databes conf
-    db_enable = config['database']['enabled'];
-    db_host = config['database']['host'];
-    db_user = config['database']['user'];
-    db_pass = config['database']['pass'];
-    db_name = config['database']['database'];
 
     //messages and response files
     //messages null check
@@ -228,25 +152,42 @@ function parse (){
     }
     return success;
 }
+function testMode(){
+    let program = new commander.Command;
+    
+    program.option('-t, --testmode')
+    program.parse();
 
-//Create discord client
-const client = new Discord.Client({ 
-    intents: [
-        Discord.Intents.FLAGS.GUILDS,
-        Discord.Intents.FLAGS.GUILD_INTEGRATIONS,
-        Discord.Intents.FLAGS.GUILD_BANS,
-        Discord.Intents.FLAGS.GUILD_MEMBERS,
-        Discord.Intents.FLAGS.GUILD_MESSAGES,
-        Discord.Intents.FLAGS.GUILD_PRESENCES
-    ]
-});
+    if(!program.opts().testmode) return;
 
-//debug mode enabled/disabled log
-if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Debug Mode] '+messages['logging']['enabled']);
-if(!debug) console.log('\x1b[32m%s\x1b[0m','[Log - Debug Mode] '+messages['logging']['disabled']);
+    config['server']['ip'] = 'play.ourmcworld.ml';
+    config['server']['port'] = 39703;
+    config['player']['name']= 'hiddenplayer';
 
-//Global functions
-//loop
+    setTimeout(() => {
+        if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - TestMode] Test mode timeout');
+        process.exit(0);
+    }, 300000);
+
+    if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - TestMode] Test mode enabled');
+}
+function inlineInteractions(){
+    if(config['player']['enabled'] && config['player']['name'] == null || config['player']['enabled'] && config['player']['name'] == ''){
+        config['player']['name'] = prompt("Enter Player Name >>> ");
+    }
+
+    if(config['player']['enabled'] && config['server']['ip'] == null || config['player']['enabled'] && config['server']['ip'] == ''){
+        config['server']['ip'] = prompt("Enter Server IP (Don't include Port) >>> ");
+    }
+
+    if(config['player']['enabled'] && config['server']['port'] == null || config['player']['enabled'] && config['server']['port'] == ''){
+        config['server']['port'] = prompt("Enter Server Port (Enter to use default) >>> ");
+        
+        if(isNaN(config['server']['port'])){
+            config['server']['port'] = null;
+        }
+    }
+}
 function loop(num = 0, str = ''){
     var returnVal = '';
     for (let i = 0; i < num; i++) {
@@ -254,32 +195,23 @@ function loop(num = 0, str = ''){
     }
     return returnVal;
 }
-//excape regex in string
 function escapeRegExp(string) {
     return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
-
-//replace all from a string
 function replaceAll(str, find, replace) {
     if(str != null){
         return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
     }
 }
-
-//get random
 function randomInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
-//limit string lenght to 100
 function limitText(text = null){
 	if(text != null && text.length >= 100){
 		text = text.substr(0,100) + "...";
 	}
 	return text;
 }
-
-//find property value from an object
 function findValueOfProperty(obj, propertyName){
     let reg = new RegExp(propertyName, "i"); // "i" to make it case insensitive
     return Object.keys(obj).reduce((result, key) => {
@@ -287,8 +219,6 @@ function findValueOfProperty(obj, propertyName){
         return result;
     }, []);
 }
-
-//trim some unicodes from stirng
 function trimUnicode(text) {
     if(text != null){
         text = text.trim();
@@ -304,8 +234,6 @@ function trimUnicode(text) {
         return text;
     }
 }
-
-//get random response to a message
 function customResponse(message = null, get = true, source = "minecraft") {
     if(message != null){
         message = trimUnicode(message).toLowerCase();
@@ -337,7 +265,6 @@ function customResponse(message = null, get = true, source = "minecraft") {
 }
 
 //Main Functions
-//Minecraft bot function
 function newBot(){
     //movements
     let actions = ['forward', 'back', 'left', 'right'];
@@ -795,8 +722,6 @@ function newBot(){
         }, config['server']['reconnectTimeout']);
     });
 }
-
-//Discord bot function
 function DiscordBot(){
     //check if discord bot was connected
     if(discordConnected){
@@ -1408,23 +1333,22 @@ function DiscordBot(){
         });
     });
 }
-
-//Database function
 function connectDB(){
+    // This part is useless
     if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Discord Bot] '+messages['database']['connecting']);
 
     //return if database was disabled
-    if(!db_enable){
+    if(!config['database']['enabled']){
         if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Discord Bot] '+messages['database']['disabled']);
         return true;
     }
 
     //execute connection
     conn = mysql.createConnection({
-        host: db_host,
-        user: db_user,
-        password: db_pass,
-        database: db_name
+        host: config['database']['host'],
+        user: config['database']['user'],
+        password: config['database']['pass'],
+        database: config['database']['database']
     });
 
     //connect to database
@@ -1443,10 +1367,3 @@ function connectDB(){
         });
     });
 }
-
-//Start all proccess
-if(db_enable) connectDB();
-if(config['discord']['enabled']) DiscordBot();
-if(config['player']['enabled']) newBot();
-
-// if(conn) connection.end();

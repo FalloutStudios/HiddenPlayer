@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "node test.js"
+    "test": "node index.js --testmode"
   },
   "engineStrict": true,
   "engines": {
@@ -32,14 +32,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GhexterCortes/minecraft-bot.git"
+    "url": "git+https://github.com/FalloutStudios/HiddenPlayer.git"
   },
   "keywords": [
     "minecraft",
     "bot"
   ],
   "bugs": {
-    "url": "https://github.com/GhexterCortes/minecraft-bot/issues"
+    "url": "https://github.com/FalloutStudios/HiddenPlayer/issues"
   },
-  "homepage": "https://github.com/GhexterCortes/minecraft-bot#readme"
+  "homepage": "https://github.com/FalloutStudios/HiddenPlayer#readme"
 }
