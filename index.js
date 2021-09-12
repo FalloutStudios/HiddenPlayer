@@ -12,6 +12,17 @@ const yml = require('yaml');
 const fs = require('fs');
 const mysql = require('mysql');
 
+let program = new commander.Command;
+    
+    program
+            .option('--testmode', 'Enable testmode')
+            .option('--minecraft-playername <playername>', 'Player name for testmode Minecraft bot')
+            .option('--minecraft-server-ip <ip>', 'Server IP for testmode server')
+            .option('--minecraft-server-port <port>', 'Server port for testmode server')
+            .option('--discord <token>', 'Testmode discord bot')
+            .option('--testmode-timeout <timeout>', 'Test mode timeout in milliseconds')
+    program.parse();
+
 const configlocation = 'config/config.yml';
 let configVersion = null;
 let config = {};
@@ -19,9 +30,6 @@ let debug = false;
 let messages = {};
 let messageResponseFile = {};
 parse();
-
-//Check testmode
-testMode();
 
 var discordConnected = false;
 var MinecraftConnected = false;
@@ -144,6 +152,9 @@ function parse(){
         config['discord']['enabled'] = false;
     }
 
+    // Testmode
+    testMode();
+
     if(success){
         //restart all proccesses
         connectDB();
@@ -153,21 +164,24 @@ function parse(){
     return success;
 }
 function testMode(){
-    let program = new commander.Command;
-    
-    program.option('-t, --testmode')
-    program.parse();
-
     if(!program.opts().testmode) return;
 
     config['server']['ip'] = 'play.ourmcworld.ml';
     config['server']['port'] = 39703;
     config['player']['name']= 'hiddenplayer';
 
+    let timeout = 300000;
+
+    if(program.opts().minecraftServerIp != null) { config['server']['ip'] = program.opts().minecraftServerIp }
+    if(program.opts().minecraftServerPort != null) { config['server']['port'] = program.opts().minecraftServerPort }
+    if(program.opts().minecraftPlayername != null) { config['player']['name'] = program.opts().minecraftPlayername }
+    if(program.opts().discord != null) { config['discord']['token'] = program.opts().discord }
+    if(program.opts().testmodeTimeout != null) { timeout = parseInt(program.opts().testmodeTimeout, 10) }
+
     setTimeout(() => {
         if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - TestMode] Test mode timeout');
         process.exit(0);
-    }, 300000);
+    }, timeout);
 
     if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - TestMode] Test mode enabled');
 }
@@ -678,30 +692,26 @@ function newBot(){
         if(debug) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['disconnected']);
 
         //end bot
-        bot.quit();
-        bot.end();
+        if (connected) { bot.quit(); bot.end(); }
     });
 
     bot.on('error', reason => {
-        if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - Minecraft Bot] Connection Error:'+reason);
+        if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - Minecraft Bot] Minecraft bot Error'+reason);
 
         //end bot
-        bot.quit();
-        bot.end();
+        if (connected) { bot.quit(); bot.end(); }
     });
     bot.on('banned', reason => {
         if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - Minecraft Bot] Banned:'+reason);
 
         //end bot
-        bot.quit();
-        bot.end();
+        if (connected) { bot.quit(); bot.end(); }
     });
     bot.on('kicked', reason => {
         if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - Minecraft Bot] kicked:'+reason);
 
         //end bot
-        bot.quit();
-        bot.end();
+        if (connected) { bot.quit(); bot.end(); }
     });
 
     //reconnect attempt
