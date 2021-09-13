@@ -176,6 +176,7 @@ function testMode(){
     if(program.opts().minecraftServerIp != null) { config['server']['ip'] = program.opts().minecraftServerIp }
     if(program.opts().minecraftServerPort != null) { config['server']['port'] = program.opts().minecraftServerPort }
     if(program.opts().minecraftPlayername != null) { config['player']['name'] = program.opts().minecraftPlayername }
+    if(program.opts().minecraftPlayerJoinMsg != null) { config['player']['message'] = program.opts().minecraftPlayerJoinMsg }
     if(program.opts().discord != null) { config['discord']['token'] = program.opts().discord }
     if(program.opts().testmodeTimeout != null) { timeout = parseInt(program.opts().testmodeTimeout, 10) }
 
