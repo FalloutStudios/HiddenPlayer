@@ -107,3 +107,4 @@ dist
 .github/
 .travis.yml
 LICENSE
+deathcount.txt
