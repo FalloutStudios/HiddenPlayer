@@ -19,6 +19,7 @@ let program = new commander.Command;
             .option('--minecraft-playername <playername>', 'Player name for testmode Minecraft bot')
             .option('--minecraft-server-ip <ip>', 'Server IP for testmode server')
             .option('--minecraft-server-port <port>', 'Server port for testmode server')
+            .option('--minecraft-player-join-msg <message>', 'test mode on join message')
             .option('--discord <token>', 'Testmode discord bot')
             .option('--testmode-timeout <timeout>', 'Test mode timeout in milliseconds')
     program.parse();
