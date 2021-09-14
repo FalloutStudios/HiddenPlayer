@@ -1,9 +1,8 @@
 reload_config:
-  internal: Config reload internal
-  external: Config reload external
-  success: Config reload success!
-  failed: Config reload failed
-  different_versions: 'Config reload failed: different versions'
+  start: Reading config file...
+  success: Config is ready!
+  failed: Config error!
+  different_versions: 'Config error: different versions'
 logging:
   enabled: Debug mode enabled!
   disabled: Debug mode disabled!

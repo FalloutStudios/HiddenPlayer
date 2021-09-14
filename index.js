@@ -28,17 +28,20 @@ const configlocation = 'config/config.yml';
 let configVersion = null;
 let config = {};
 let debug = false;
-let messages = {};
+let messages = {
+    reload_config: {
+        start: "Reading config file...",
+        success: "Config is ready!",
+        failed: "Config error!",
+        different_versions: "Config error: different versions"
+    }
+};
 let messageResponseFile = {};
 parse();
 
 var discordConnected = false;
 var MinecraftConnected = false;
 var conn = null;
-
-// Startup
-startUpScreen();
-inlineInteractions();
 
 var fullname = config['debug']['prefix']+config['player']['name']+config['debug']['suffix'];
 console.log('============================ '+fullname+configVersion+' ===========================');
@@ -84,6 +87,7 @@ function startUpScreen() {
     console.log();
 }
 function parse(){
+    startUpScreen();
     //success pre variable
     var success = false;
 
@@ -94,7 +98,7 @@ function parse(){
     var body_config = yml.parse(body_conf);
 
     if(debug) {
-        console.log('\x1b[32m%s\x1b[0m','[Log - Config] '+messages['reload_config']);
+        console.log('\x1b[32m%s\x1b[0m','[Log - Config] '+messages['reload_config']['start']);
         console.log(body_config);
     }
 
@@ -153,14 +157,14 @@ function parse(){
         config['discord']['enabled'] = false;
     }
 
-    // Testmode
     testMode();
+    inlineInteractions();
 
     if(success){
         //restart all proccesses
         connectDB();
         if(config['discord']['enabled']) DiscordBot();
-        if(config['player']['enabled']) newBot();
+        if(config['player']['enabled']) newBot(config['player']['name'], config['server']['ip'], config['server']['port'], config['server']['version']);
     }
     return success;
 }
@@ -281,7 +285,7 @@ function customResponse(message = null, get = true, source = "minecraft") {
 }
 
 //Main Functions
-function newBot(){
+function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
     //movements
     let actions = ['forward', 'back', 'left', 'right'];
 
@@ -292,6 +296,9 @@ function newBot(){
     //entities
     let entity = null;
     let target = null;
+
+    //parseint port
+    port = parseInt(port, 10);
 
     if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['starting']);
 
@@ -317,9 +324,6 @@ function newBot(){
 
     if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['proccessing']);
     
-    //get playername
-    let player = config['player']['name'];
-    
     //set bot prefix and suffix
     if(debug && config['debug']['prefix'] != null || debug && config['debug']['suffix'] != null){
         //join prefix and suffix to name
@@ -332,20 +336,6 @@ function newBot(){
             console.error('\x1b[31m%s\x1b[0m', '[Error - Mincraft Bot] '+messages['minecraft_bot']['invalid_name']+': '+player.length); 
             process.exit();
         }
-    }
-
-    //make bot
-    let port = parseInt(config['server']['port'], 10);
-    let ip = config['server']['ip'];
-
-    //set localhost as ip if ip is null
-    if(ip == null || ip == ''){
-        ip = 'localhost';
-    }
-
-    //set default port if port is null
-    if(port == null || isNaN(port)){
-        port = 25565;
     }
 
     //validate port
@@ -364,7 +354,7 @@ function newBot(){
         host: ip,
         port: port,
         username: player,
-        version: config['player']['version']
+        version: version
     });
 
     if(debug) console.log('[Log - Mincraft Bot] IP: '+ip+'; Port: '+port+'; PlayerName: '+player+'; Prefix: '+config['debug']['prefix']+'; suffix: '+config['debug']['suffix']+'; Version: '+config['player']['version']);
@@ -729,7 +719,7 @@ function newBot(){
             if(!config['player']['enabled']) { return true; }
 
             //request new bot
-            newBot();
+            newBot(player, ip, port, version);
             if(debug) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['bot_end']+': '+reason);
         }, config['server']['reconnectTimeout']);
     });
