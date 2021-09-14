@@ -44,11 +44,11 @@ var MinecraftConnected = false;
 var conn = null;
 
 var fullname = config['debug']['prefix']+config['player']['name']+config['debug']['suffix'];
-console.log('============================ '+fullname+configVersion+' ===========================');
+console.log('============================ '+fullname+' '+configVersion+' ===========================');
 console.log("\n\n");
 console.log('GitHub: https://github.com/FalloutStudios/HiddenPlayer');
 console.log();
-console.log('========================================================='+loop(fullname.length, '=')+loop(configVersion.length, '='));
+console.log('=========================================================='+loop(fullname.length, '=')+loop(configVersion.length, '='));
 console.log("\n\n");
 
 //disable functions if null
@@ -117,6 +117,10 @@ function parse(){
     //change config contents
     config = body_config;
 
+    //inline edit config
+    testMode();
+    inlineInteractions();
+
     //debug enabled/disabled
     debug = config['debug']['enabled'];
 
@@ -148,22 +152,17 @@ function parse(){
     if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Config] '+messages['reload_config']['success']);
 
     //disable functions if null in config
-    //disable minecraft player if name is null
     if(config['player']['name'] == null || config['player']['name'] == ''){
         config['player']['enabled'] = false;
     }
-    //disable discord if token is null
     if(config['discord']['token'] == null){
         config['discord']['enabled'] = false;
     }
 
-    testMode();
-    inlineInteractions();
-
     if(success){
         //restart all proccesses
         connectDB();
-        if(config['discord']['enabled']) DiscordBot();
+        if(config['discord']['enabled']) DiscordBot(config['discord']['token']);
         if(config['player']['enabled']) newBot(config['player']['name'], config['server']['ip'], config['server']['port'], config['server']['version']);
     }
     return success;
@@ -724,7 +723,7 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         }, config['server']['reconnectTimeout']);
     });
 }
-function DiscordBot(){
+function DiscordBot(token = null){
     //check if discord bot was connected
     if(discordConnected){
         //get client
@@ -746,7 +745,7 @@ function DiscordBot(){
     }
 
     //set bot token
-    client.login(config['discord']['token']);
+    client.login(token);
     
     if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Discord Bot] "+messages['discord_bot']['enabled']);
 
