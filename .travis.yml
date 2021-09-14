@@ -1,3 +1,9 @@
 language: node_js
+os:
+  - windows
+  - linux
+  - osx
 node_js:
-  - 16
+  - 16.6.0
+addons:
+  artifacts: true
