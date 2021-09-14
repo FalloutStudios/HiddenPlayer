@@ -5,5 +5,3 @@ os:
   - osx
 node_js:
   - 16.6.0
-addons:
-  artifacts: true
