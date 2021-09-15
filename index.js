@@ -216,33 +216,24 @@ function inlineInteractions(){
     }
 }
 function customResponse(message = null, get = true, source = "minecraft") {
-    if(message != null){
-        message = trimUnicode(message).toLowerCase();
+    if(message == null) {return true;}
+    message = trimUnicode(message).toLowerCase();
 
-        if(config['player']['name'] != null){
-            message = replaceAll(message, config['player']['name'].toLowerCase(), "").trim();
-        }
+    if(!Object.keys(messageResponseFile[source]).includes(message)) {return true;}
 
-        if(Object.keys(messageResponseFile[source]).includes(message)){
-
-            if(isArray(messageResponseFile[source][message]) && messageResponseFile[source][message].length > 0 || typeof messageResponseFile[source][message] == 'string' &&  messageResponseFile[message] != ''){
-                
-                let response = null;
-
-                if(!get) { return true; }
-
-                if(isArray(messageResponseFile[source][message])) {
-                    response = messageResponseFile[source][message][Math.floor(Math.random() * Object.keys(messageResponseFile[source][message]).length)];
-                } else if (typeof messageResponseFile[source][message] == 'string') {
-                    response = messageResponseFile[source][message];
-                }
-                
-                return response;
-            }
-        }
+    if(config['player']['name'] != null){
+        message = replaceAll(message, config['player']['name'].toLowerCase(), "").trim();
     }
 
-    return false;
+    if(isArray(messageResponseFile[source][message]) && messageResponseFile[source][message].length > 0 || typeof messageResponseFile[source][message] == 'string' &&  messageResponseFile[message] != ''){
+        if(!get) { return true; }
+
+        if(isArray(messageResponseFile[source][message])) {
+            return messageResponseFile[source][message][Math.floor(Math.random() * Object.keys(messageResponseFile[source][message]).length)];
+        } else if (typeof messageResponseFile[source][message] == 'string') {
+            return messageResponseFile[source][message];
+        }
+    }
 }
 function loop(num = 0, str = ''){
     var returnVal = '';
@@ -266,19 +257,19 @@ function limitText(text = null){
 	return text;
 }
 function trimUnicode(text) {
-    if(text != null){
-        text = text.trim();
-        text = replaceAll(text,"'",'');
-        text = replaceAll(text,".",'');
-        text = replaceAll(text,"/",'');
-        text = replaceAll(text,"\\",'');
-        text = replaceAll(text,",",'');
-        text = replaceAll(text,"  ",' ');
-        text = replaceAll(text,"?",'');
-        text = replaceAll(text,"!",'').trim();
+    if(text == null) {return true;}
+    
+    text = text.trim();
+    text = replaceAll(text,"'",'');
+    text = replaceAll(text,".",'');
+    text = replaceAll(text,"/",'');
+    text = replaceAll(text,"\\",'');
+    text = replaceAll(text,",",'');
+    text = replaceAll(text,"  ",' ');
+    text = replaceAll(text,"?",'');
+    text = replaceAll(text,"!",'').trim();
 
-        return text;
-    }
+    return text;
 }
 function escapeRegExp(string) {
     return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
