@@ -177,12 +177,28 @@ function testMode(){
 
     let timeout = 300000;
 
-    if(program.opts().minecraftServerIp != null) { config['server']['ip'] = program.opts().minecraftServerIp }
-    if(program.opts().minecraftServerPort != null) { config['server']['port'] = program.opts().minecraftServerPort }
-    if(program.opts().minecraftPlayerName != null) { config['player']['name'] = program.opts().minecraftPlayerName }
-    if(program.opts().minecraftPlayerJoinMsg != null) { config['player']['message'] = program.opts().minecraftPlayerJoinMsg }
-    if(program.opts().discord != null) { config['discord']['token'] = program.opts().discord }
-    if(program.opts().testmodeTimeout != null) { timeout = parseInt(program.opts().testmodeTimeout, 10) }
+    switch (true) {
+        case (program.opts().minecraftServerIp != null):
+            config['server']['ip'] = program.opts().minecraftServerIp
+            break;
+        case (program.opts().minecraftServerPort != null):
+            config['server']['port'] = program.opts().minecraftServerPort
+            break;
+        case (program.opts().minecraftPlayerName != null):
+            config['player']['name'] = program.opts().minecraftPlayerName
+            break;        
+        case (program.opts().minecraftPlayerJoinMsg != null):
+            config['player']['message'] = program.opts().minecraftPlayerJoinMsg
+            break;
+        case (program.opts().discord != null):
+            config['discord']['token'] = program.opts().discord
+            break;
+        case (program.opts().testmodeTimeout != null):
+            timeout = parseInt(program.opts().testmodeTimeout, 10)
+            break;        
+        default:
+            break;
+    }
 
     setTimeout(() => {
         if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - TestMode] Test mode timeout');
