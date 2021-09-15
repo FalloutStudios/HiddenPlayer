@@ -295,6 +295,8 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
     var onPVP = false;
     var lastaction = null;
     var deathCount = 0;
+    let mcData = null;
+    let defaultMove = null;
 
     //login
     let logged = false;
@@ -444,12 +446,6 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
                 bot.end();
             } else if (command == 'deathcount' && config['player']['countdeaths']['enabled']) {
                 bot.chat(`I died `+deathCount.toLocaleString()+` times`);
-            } else if (!admin){
-                //no perms message
-                bot.chat(messages['minecraft_bot']['chats']['command_failed']);
-            } else{
-                //invalid command
-                bot.chat(messages['minecraft_bot']['chats']['command_invalid']);
             }
 
         } else{
@@ -513,7 +509,8 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         if(!connected && !logged){
             if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['first_spawn']);
             
-            const mcData = require('minecraft-data')(bot.version);
+            mcData = require('minecraft-data')(bot.version);
+            defaultMove = new Movements(bot, mcData);
 
             if(config['player']['autosave']['enbled']){
                 saveAll();
@@ -589,6 +586,7 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
             }
         }
 
+
         //on time movement
         if (lasttime < 0) {
             //set last time
@@ -596,43 +594,28 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
 
             if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['set_last_time']);
         } else{
-            //count movement interval
             let randomadd = Math.random() * maxrandom * 50;
             let interval = moveinterval * 20 + randomadd;
 
-            //movement age and interval
+            //movements
             if (bot.time.age - lasttime > interval) {
-                //disable on pvp
                 if (onPVP) { return true; }
 
-                //movements
                 if (moving){
-                    //disable current movements
                     bot.setControlState(lastaction,false);
-
-                    //deactivate current item
                     bot.deactivateItem();
 
-                    //set moving to false
                     moving = false;
                 } else{
-                    //add last action
                     lastaction = actions[Math.floor(Math.random() * actions.length)];
-
-                    //enable movement
                     bot.setControlState(lastaction,true);
-                    
-                    //set movement to true
-                    moving = true;
-
-                    //update last time
-                    lasttime = bot.time.age;
-
-                    //activate current item
                     bot.activateItem();
+                    
+                    moving = true;
+                    lasttime = bot.time.age;
                 }
 
-                if(debug && config['debug']['movements']) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] age = '+bot.time.age+'; lasttime: '+lasttime+'; interval: '+interval+'; lastaction: '+lastaction+'; moving = '+moving+'; pvp = '+onPVP);
+                if(debug && config['debug']['movements']) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] age: '+bot.time.age+'; lasttime: '+lasttime+'; interval: '+interval+'; lastaction: '+lastaction+'; follow: '+config['player']['follow']['enabled']+'; moving: '+moving+'; pvp: '+onPVP);
             }
 
             //bot jump
@@ -848,9 +831,7 @@ function DiscordBot(token = null){
             var ignored_users = config['discord']['ignored_users'];
 
             //Check discord ignore list
-            if(ignored_to_whitelist && !ignored_channels.includes(channelID.toString())){
-                return true;
-            } else if(!ignored_to_whitelist && ignored_channels.includes(channelID.toString())){
+            if(ignored_to_whitelist && !ignored_channels.includes(channelID.toString()) || !ignored_to_whitelist && ignored_channels.includes(channelID.toString())){
                 return true;
             }
 
@@ -867,7 +848,7 @@ function DiscordBot(token = null){
                 string = trimUnicode(string.toLowerCase());
 
                 //start finding
-                for (var i=0; i < config['discord']['prefix'].length; i++) {
+                for (const i of config['discord']['prefix'].length) {
                     if (string.indexOf(' '+config['discord']['prefix'][i].toLowerCase()+' ') > -1 || string.startsWith(config['discord']['prefix'][i].toLowerCase()+' ') || string.endsWith(' '+config['discord']['prefix'][i].toLowerCase()) || config['discord']['prefix'][i].toLowerCase() == string){
                         return true;
                     }
@@ -886,7 +867,7 @@ function DiscordBot(token = null){
                 string = string.toLowerCase().trim();
 
                 //start removing name
-                for (var i=0; i < config['discord']['prefix'].length; i++) {
+                for (const i of config['discord']['prefix'].length) {
                     if (string.indexOf(' '+config['discord']['prefix'][i]+' ') > -1 || string.indexOf(config['discord']['prefix'][i]+' ') > -1 || string.indexOf(' '+config['discord']['prefix'][i]) > -1 || string.startsWith(config['discord']['prefix'][i]+' ')){
                         string = replaceAll(string,' '+config['discord']['prefix'][i]+' ','');
                         string = replaceAll(string,config['discord']['prefix'][i]+' ','');
@@ -919,7 +900,7 @@ function DiscordBot(token = null){
                 if(!get) found = false;
                 
                 //check for action name
-                for (let i=0; i < actions.length; i++) {
+                for (const i of actions.length) {
                     if(removeMensions(message).toLowerCase().startsWith(actions[i].toLowerCase())){
                         found = true;
 
@@ -1196,7 +1177,7 @@ function DiscordBot(token = null){
                     let msg = '';
 
                     if(AdminPerms) {
-                        for (let i = 0; i < args.length; i++) {
+                        for (const i of args.length) {
                             msg += ' '+args[i];
                         }
 

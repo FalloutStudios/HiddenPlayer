@@ -36,6 +36,7 @@ player:
   # Attack hostile mobs
   pvp:
     enabled: true # Enable mobs attack
+    mobs: []
 
   # follow entities
   follow:
@@ -108,16 +109,16 @@ discord:
   
   # Show player death count on Discord via command !deathcount
   deathcount:
-    enabled: false
+    enabled: true
   
   # Enable random quotes message call
   motivate:
-    enabled: false
+    enabled: true
     src: config/motivate.yml
   
   # Enable random facts message call
   facts:
-    enabled: false
+    enabled: true
     src: config/facts.yml
   # Enable random gifs emote message call
   emotes:
@@ -151,7 +152,7 @@ database:
 # Debugging log
 debug:
   enabled: true  # Enable logs
-  movements: true # Log player movements
+  movements: false # Log player movements
   discord_chats: true # Show discord chats
   minecraft_chats: true # Show in-game chats
   prefix: '' # Debug mode playername prefix
