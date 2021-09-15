@@ -15,7 +15,7 @@ player:
   enabled: true
   
   # Player Name (Ask if empty)
-  name: HiddenPlayer
+  name: BetaHiddenPlayer
   
   # Minecraft version (Will use supported latest version when empty)
   version:
@@ -36,6 +36,13 @@ player:
   # Attack hostile mobs
   pvp:
     enabled: true # Enable mobs attack
+
+  # follow entities
+  follow:
+    enabled: false # enable follow entities
+    mobs: [] # entities to follow
+
+
   
   # Some bot commands
   commands:
