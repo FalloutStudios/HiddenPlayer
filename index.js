@@ -199,20 +199,20 @@ function testMode(){
     }, timeout);
 }
 function inlineInteractions(){
-    if(config['player']['enabled'] && config['player']['name'] == null || config['player']['enabled'] && config['player']['name'] == ''){
-        config['player']['name'] = prompt("Enter Player Name >>> ");
-    }
-
-    if(config['player']['enabled'] && config['server']['ip'] == null || config['player']['enabled'] && config['server']['ip'] == ''){
-        config['server']['ip'] = prompt("Enter Server IP (Don't include Port) >>> ");
-    }
-
-    if(config['player']['enabled'] && config['server']['port'] == null || config['player']['enabled'] && config['server']['port'] == ''){
-        config['server']['port'] = prompt("Enter Server Port (Enter to use default) >>> ");
+    switch (true){
+        case (config['player']['enabled'] && config['player']['name'] == null || config['player']['enabled'] && config['player']['name'] == ''):
+            config['player']['name'] = prompt("Enter Player Name >>> ");    
+            break;
+        case (config['player']['enabled'] && config['server']['ip'] == null || config['player']['enabled'] && config['server']['ip'] == ''):
+            config['server']['ip'] = prompt("Enter Server IP (Don't include Port) >>> ");
+            break;
+        case (config['player']['enabled'] && config['server']['port'] == null || config['player']['enabled'] && config['server']['port'] == ''):
+            config['server']['port'] = prompt("Enter Server Port (Enter to use default) >>> ");
         
-        if(!isNumber(config['server']['port'])){
-            config['server']['port'] = null;
-        }
+            if(!isNumber(config['server']['port'])){
+                config['server']['port'] = null;
+            }
+        break;
     }
 }
 function customResponse(message = null, get = true, source = "minecraft") {
