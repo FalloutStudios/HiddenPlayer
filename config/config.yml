@@ -20,12 +20,6 @@ player:
   # Minecraft version (Will use supported latest version when empty)
   version:
 
-  # Web viewer
-  # Still not implemented
-  Viewer:
-    enabled: false
-    port: 300
-
   # Log death counts
   countdeaths:
     enabled: true # Enable death count logging
