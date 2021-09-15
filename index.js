@@ -52,13 +52,10 @@ console.log('=========================================================='+loop(fu
 console.log("\n\n");
 
 //disable functions if null
-switch (true){
-    case (config['player']['name'] == null || config['player']['name'] == ''):
-        config['player']['enabled'] = false;
-        break;
-    case (config['discord']['token'] == null):
-        config['discord']['enabled'] = false;
-        break;
+if (config['player']['name'] == null || config['player']['name'] == ''){
+    config['player']['enabled'] = false;
+} else if (config['discord']['token'] == null){
+    config['discord']['enabled'] = false;
 }
 
 //Create discord client
@@ -258,7 +255,6 @@ function limitText(text = null){
 }
 function trimUnicode(text) {
     if(text == null) {return true;}
-    
     text = text.trim();
     text = replaceAll(text,"'",'');
     text = replaceAll(text,".",'');
@@ -419,33 +415,33 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
             if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['command_execute']+': '+command);
             
             //commands
-            switch (true){
-                case (admin && command == 'reloadconfig' && config['player']['commands']['reload'] || admin && command == 'reload' || admin && command == 'restartconfig' && config['player']['commands']['reload']):
-                    //reload config
-                    bot.chat("Reloading Bot Config");
-                    
-                    //reload function
-                    let reloadConfig = parse();
+            if(command == ''){
+                //invalid command: null
+                bot.chat(messages['minecraft_bot']['chats']['command_invalid']);
+            } else if (admin && command == 'reloadconfig' && config['player']['commands']['reload'] || admin && command == 'reload' || admin && command == 'restartconfig' && config['player']['commands']['reload']){
+                //reload config
+                bot.chat("Reloading Bot Config");
+                
+                //reload function
+                let reloadConfig = parse();
 
-                    //parse config
-                    if(reloadConfig){
-                        //reload success
-                        bot.chat(messages['reload_config']['success']);
-                    } else{
-                        //reload failed
-                        bot.chat(messages['reload_config']['failed']);
-                    }
-                    break;
-                case (admin && command == 'restartbot' && config['player']['commands']['restart'] || admin && command == 'reloadbot'&& config['player']['commands']['restart']):
-                    //restart mineflayer bot
-                    bot.chat(messages['minecraft_bot']['chats']['command_restarting']);
+                //parse config
+                if(reloadConfig){
+                    //reload success
+                    bot.chat(messages['reload_config']['success']);
+                } else{
+                    //reload failed
+                    bot.chat(messages['reload_config']['failed']);
+                }
+            } else if (admin && command == 'restartbot' && config['player']['commands']['restart'] || admin && command == 'reloadbot'&& config['player']['commands']['restart']){
+                //restart mineflayer bot
+                bot.chat(messages['minecraft_bot']['chats']['command_restarting']);
 
-                    //quit and restart
-                    bot.quit();
-                    bot.end();
-                    break;
-                case (command == 'deathcount' && config['player']['countdeaths']['enabled']) :
-                    bot.chat(`I died `+deathCount.toLocaleString()+` times`);
+                //quit and restart
+                bot.quit();
+                bot.end();
+            } else if (command == 'deathcount' && config['player']['countdeaths']['enabled']) {
+                bot.chat(`I died `+deathCount.toLocaleString()+` times`);
             }
 
         } else{
@@ -465,32 +461,24 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
             var lrmsg = removeMensions.toLowerCase();
 
             //bot reply
-            switch (true){
-                case (lmsg == player.toLowerCase() + ' hi'|| lmsg == 'hi ' + player.toLowerCase() || lrmsg == 'hi guys' || lrmsg == 'hi bot' || lrmsg == 'bot hi'):
-                    reply = messages['minecraft_bot']['response']['hi'];
-                    break;
-                case (lmsg == player.toLowerCase() + 'hello' || lmsg == 'hello ' + player.toLowerCase() || lrmsg == 'hello guys' || lmsg == player.toLowerCase()):
-                    reply = messages['minecraft_bot']['response']['hello'];
-                    break;
-                case (lrmsg.replace('hello','').replace('hi','').trim() == 'im new' || lrmsg.replace('hello','').replace('hi','').trim() == 'im new here' || lrmsg.replace('hello','').replace('hi','').trim() == 'new here'):
-                    reply = messages['minecraft_bot']['response']['im_new'];
-                    break;
-                case (lmsg.indexOf("who") > -1 && lmsg.indexOf("is") > -1 && lmsg.indexOf(player.toLowerCase()) > -1 || lmsg == 'whos '+player.toLowerCase() || lmsg == player.toLowerCase()+' who are you'):
-                    reply = messages['minecraft_bot']['response']['who'];
-                    break;
-                case (lmsg.indexOf("what") > -1 && lmsg.indexOf("is") > -1 && lmsg.indexOf("bot") > -1 || lmsg.indexOf("what") > -1 && lmsg.indexOf("are") > -1 && lmsg.indexOf("bot") > -1):
-                    reply = messages['minecraft_bot']['response']['what'];
-                    break;
-                case (lrmsg == 'a government spy' && lmsg.indexOf(player.toLowerCase()) > -1):
-                    reply = messages['minecraft_bot']['response']['spy'];
-                    break;
-                case (lmsg.indexOf("kill "+player) > -1):
-                    reply = messages['minecraft_bot']['response']['kill'];
-                    break;
-                case (customResponse(lmsg, false)):
-                    reply = customResponse(lmsg, true);
-                    break;
+            if(lmsg == player.toLowerCase() + ' hi'|| lmsg == 'hi ' + player.toLowerCase() || lrmsg == 'hi guys' || lrmsg == 'hi bot' || lrmsg == 'bot hi'){
+                reply = messages['minecraft_bot']['response']['hi'];
+            } else if (lmsg == player.toLowerCase() + 'hello' || lmsg == 'hello ' + player.toLowerCase() || lrmsg == 'hello guys' || lmsg == player.toLowerCase()){
+                reply = messages['minecraft_bot']['response']['hello'];
+            } else if (lrmsg.replace('hello','').replace('hi','').trim() == 'im new' || lrmsg.replace('hello','').replace('hi','').trim() == 'im new here' || lrmsg.replace('hello','').replace('hi','').trim() == 'new here'){
+                reply = messages['minecraft_bot']['response']['im_new'];
+            } else if (lmsg.indexOf("who") > -1 && lmsg.indexOf("is") > -1 && lmsg.indexOf(player.toLowerCase()) > -1 || lmsg == 'whos '+player.toLowerCase() || lmsg == player.toLowerCase()+' who are you'){
+                reply = messages['minecraft_bot']['response']['who'];
+            } else if (lmsg.indexOf("what") > -1 && lmsg.indexOf("is") > -1 && lmsg.indexOf("bot") > -1 || lmsg.indexOf("what") > -1 && lmsg.indexOf("are") > -1 && lmsg.indexOf("bot") > -1){
+                reply = messages['minecraft_bot']['response']['what'];
+            } else if (lrmsg == 'a government spy' && lmsg.indexOf(player.toLowerCase()) > -1){
+                reply = messages['minecraft_bot']['response']['spy'];
+            } else if (lmsg.indexOf("kill "+player) > -1){
+                reply = messages['minecraft_bot']['response']['kill'];
+            } else if (customResponse(lmsg, false)){
+                reply = customResponse(lmsg, true);
             }
+
             //reply placeholders
             reply = replaceAll(reply, "%player%", username);
             reply = replaceAll(reply, "%player_lowercase%", username.toLowerCase());
@@ -759,29 +747,28 @@ function DiscordBot(token = null){
         let factslist = null;
 
         //get action files content
-        switch (true){
-            case(config['discord']['emotes']['enabled']):
-                //get emotes json file
-                emotes = fs.readFileSync(config['discord']['emotes']['src'], 'utf8');
-                emotes = yml.parse(emotes);
-                break;
+        if(config['discord']['emotes']['enabled']){
+            //get emotes json file
+            emotes = fs.readFileSync(config['discord']['emotes']['src'], 'utf8');
+            emotes = yml.parse(emotes);
+        }
 
-            case(config['discord']['react']['enabled']):
-                //get react json file
-                reacts = fs.readFileSync(config['discord']['react']['src'], 'utf8');
-                reacts = yml.parse(reacts);
-                break;
+        if(config['discord']['react']['enabled']){
+            //get react json file
+            reacts = fs.readFileSync(config['discord']['react']['src'], 'utf8');
+            reacts = yml.parse(reacts);
+        }
 
-            case(config['discord']['motivate']['enabled']):
-                //get motivate json file
-                motivations = fs.readFileSync(config['discord']['motivate']['src'], 'utf8');
-                motivations = yml.parse(motivations);
-                break;
+        if(config['discord']['motivate']['enabled']){
+            //get motivate json file
+            motivations = fs.readFileSync(config['discord']['motivate']['src'], 'utf8');
+            motivations = yml.parse(motivations);
+        }
 
-            case(config['discord']['facts']['enabled']):
-                //get factslist json file
-                factslist = fs.readFileSync(config['discord']['facts']['src'], 'utf8');
-                factslist = yml.parse(factslist);
+        if(config['discord']['facts']['enabled']){
+            //get factslist json file
+            factslist = fs.readFileSync(config['discord']['facts']['src'], 'utf8');
+            factslist = yml.parse(factslist);
         }
 
         //on message
@@ -924,176 +911,170 @@ function DiscordBot(token = null){
             if (!rawMessage.startsWith(config['discord']['command-prefix'])){
                 if(config['debug']['discord_chats']) console.log("[Log - Discord Bot] "+messages['discord_bot']['message_sent']+": "+author);
                 //discord msg
-                switch (true){
-                    case (findName(rawMessage) && removeMensions(lowerMessage) == 'hi' || lowerMessage == 'hi guys'):
+
+                if(findName(rawMessage) && removeMensions(lowerMessage) == 'hi' || lowerMessage == 'hi guys'){
+                    
+                    if (randomResponse == 0)
+                        message.channel.send('Hello, '+mension);
+                    else if (randomResponse == 1)
+                        message.channel.send('Hello, '+mension+'!');
+                    else if (randomResponse == 2)
+                        message.channel.send('Hello, '+mension+' :face_with_hand_over_mouth:');
+                    else if (randomResponse == 3)
+                        message.channel.send('Helloooooooooo '+mension+'!');
+                    else
+                        message.channel.send('Hello, '+mension);
+
+                } else if(findName(rawMessage) && removeMensions(lowerMessage) == 'hello' || lowerMessage.indexOf('im') > -1 && lowerMessage.indexOf('new') > -1 && lowerMessage.length <= 19 || lowerMessage.indexOf('i') > -1 && lowerMessage.indexOf('am') > -1 && lowerMessage.indexOf('new') > -1 && lowerMessage.length <= 21){
+                    if(lowerMessage.indexOf('im') > -1 && lowerMessage.indexOf('new') > -1){
                         
-                        if (randomResponse == 0)
-                            message.channel.send('Hello, '+mension);
+                        if(randomResponse == 0)
+                            message.channel.send('We hope '+mension+' brought us pizza :smiley:');
                         else if (randomResponse == 1)
-                            message.channel.send('Hello, '+mension+'!');
+                            message.channel.send(mension+' is new!');
                         else if (randomResponse == 2)
-                            message.channel.send('Hello, '+mension+' :face_with_hand_over_mouth:');
+                            message.channel.send('Hello '+mension+', Good luck with our communities :)');
                         else if (randomResponse == 3)
-                            message.channel.send('Helloooooooooo '+mension+'!');
+                            message.channel.send('Give '+mension+' some food! :pizza:');
+                        else if (randomResponse == 4)
+                            message.channel.send(mension+' Because you\'re new tell us something secret <:666:853195979461361684>');
                         else
-                            message.channel.send('Hello, '+mension);
-                        break;
-                    case (findName(rawMessage) && removeMensions(lowerMessage) == 'hello' || lowerMessage.indexOf('im') > -1 && lowerMessage.indexOf('new') > -1 && lowerMessage.length <= 19 || lowerMessage.indexOf('i') > -1 && lowerMessage.indexOf('am') > -1 && lowerMessage.indexOf('new') > -1 && lowerMessage.length <= 21):
-                        if(lowerMessage.indexOf('im') > -1 && lowerMessage.indexOf('new') > -1){
-                            
-                            if(randomResponse == 0)
-                                message.channel.send('We hope '+mension+' brought us pizza :smiley:');
-                            else if (randomResponse == 1)
-                                message.channel.send(mension+' is new!');
-                            else if (randomResponse == 2)
-                                message.channel.send('Hello '+mension+', Good luck with our communities :)');
-                            else if (randomResponse == 3)
-                                message.channel.send('Give '+mension+' some food! :pizza:');
-                            else if (randomResponse == 4)
-                                message.channel.send(mension+' Because you\'re new tell us something secret <:666:853195979461361684>');
-                            else
-                                message.channel.send('I think we have a new born baby. '+mension);
-                            
-                        } else{
-                            
-                            if(randomResponse == 0)
-                                message.channel.send('Hi, '+mension);
-                            else if(randomResponse == 1)
-                                message.channel.send('Sup '+mension+'!');
-                            else if(randomResponse == 2)
-                                message.channel.send('Hi, '+mension+':wave:');
-                            else if(randomResponse == 3)
-                                message.channel.send('Ohh! Hi '+mension);
-                            else
-                                message.channel.send('Hi, '+mension);
-                        }
-                        break;
-                    case (findName(rawMessage) && removeMensions(lowerMessage).substr(0, 9) == 'tp me to '):
-                        if(removeMensions(lowerMessage).substr(9) != ''){
-                            if(taggedUser != client.user.id){
-                                if(taggedUser != user_id){
-
-                                    if (!message.mentions.users.size)
-                                        message.channel.send(removeMensions(lowerMessage).substr(9)+' Would you like me to tp '+mension+' to you in real life :smirk:');
-                                    else
-                                        message.channel.send(pinged+' Would you like me to tp '+mension+' to you in real life :smirk:');
+                            message.channel.send('I think we have a new born baby. '+mension);
                         
-                                } else{
+                    } else{
+                        
+                        if(randomResponse == 0)
+                            message.channel.send('Hi, '+mension);
+                        else if(randomResponse == 1)
+                            message.channel.send('Sup '+mension+'!');
+                        else if(randomResponse == 2)
+                            message.channel.send('Hi, '+mension+':wave:');
+                        else if(randomResponse == 3)
+                            message.channel.send('Ohh! Hi '+mension);
+                        else
+                            message.channel.send('Hi, '+mension);
+                    }
+                } else if (findName(rawMessage) && removeMensions(lowerMessage).substr(0, 9) == 'tp me to ') {
+                    if(removeMensions(lowerMessage).substr(9) != ''){
+                        if(taggedUser != client.user.id){
+                            if(taggedUser != user_id){
 
-                                    if (randomResponse == 0)
-                                        message.channel.send('I will not tp '+mension + ' to you because it\'s you :smirk:');
-                                    else if (randomResponse == 1)
-                                        message.channel.send(mension + ' you\'re stupid sometimes');
-                                    else if (randomResponse == 2)
-                                        message.channel.send('something is wrong with '+mension + '\'s head');
-                                    else
-                                        message.channel.send(mension + ' are you ok?');
-
-                                }
+                                if (!message.mentions.users.size)
+                                    message.channel.send(removeMensions(lowerMessage).substr(9)+' Would you like me to tp '+mension+' to you in real life :smirk:');
+                                else
+                                    message.channel.send(pinged+' Would you like me to tp '+mension+' to you in real life :smirk:');
+                    
                             } else{
 
                                 if (randomResponse == 0)
-                                    message.channel.send('It\'s me! but no :)');
+                                    message.channel.send('I will not tp '+mension + ' to you because it\'s you :smirk:');
                                 else if (randomResponse == 1)
-                                    message.channel.send('I don\'t exist physicaly sad :anguished:');
+                                    message.channel.send(mension + ' you\'re stupid sometimes');
+                                else if (randomResponse == 2)
+                                    message.channel.send('something is wrong with '+mension + '\'s head');
                                 else
-                                    message.channel.send('I don\'t want you to see me, I\'m just a hard drive :desktop:');
-                                
+                                    message.channel.send(mension + ' are you ok?');
+
                             }
                         } else{
-                            message.channel.send('It\'s empty you know :confused:');
-                        }
-                        break;
-                    case (findName(rawMessage) && actionFind(lowerMessage) && config['discord']['emotes']['enabled']):
-                        if(message.mentions.users.size){
-                            let emoteName = actionFind(lowerMessage, true);
-                            let emote = emotes[emoteName];
 
-                            let selfPing = false;
-                            if(taggedUser == user_id) selfPing = true;
-
-                            let phrase = null;
-                            let RandomImage = null;
+                            if (randomResponse == 0)
+                                message.channel.send('It\'s me! but no :)');
+                            else if (randomResponse == 1)
+                                message.channel.send('I don\'t exist physicaly sad :anguished:');
+                            else
+                                message.channel.send('I don\'t want you to see me, I\'m just a hard drive :desktop:');
                             
-                            if(selfPing){
-                                if(randomResponse == 0 && emote['selfAllow']){
-                                    phrase = emote['sentences'][Math.floor(Math.random() * Object.keys(emote.sentences).length)];
-                                } else{
-                                    phrase = emote['selfPing'][Math.floor(Math.random() * Object.keys(emote.selfPing).length)];
-                                }
-                            } else{
+                        }
+                    } else{
+                        message.channel.send('It\'s empty you know :confused:');
+                    }
+                } else if (findName(rawMessage) && actionFind(lowerMessage) && config['discord']['emotes']['enabled']) {
+                    if(message.mentions.users.size){
+                        let emoteName = actionFind(lowerMessage, true);
+                        let emote = emotes[emoteName];
+
+                        let selfPing = false;
+                        if(taggedUser == user_id) selfPing = true;
+
+                        let phrase = null;
+                        let RandomImage = null;
+                        
+                        if(selfPing){
+                            if(randomResponse == 0 && emote['selfAllow']){
                                 phrase = emote['sentences'][Math.floor(Math.random() * Object.keys(emote.sentences).length)];
+                            } else{
+                                phrase = emote['selfPing'][Math.floor(Math.random() * Object.keys(emote.selfPing).length)];
                             }
-
-                            phrase = phrase.replace(/%author%/g, author).replace(/%victim%/g, taggedUsername);
-
-                            if(!selfPing){
-                                RandomImage = emote['sources'][Math.floor(Math.random() * Object.keys(emote.sources).length)];
-                            }
-
-                            if (RandomImage != null) {
-                                var embed = new Discord.MessageEmbed()
-                                    .setColor(config['discord']['embed']['color'])
-                                    .setAuthor(phrase, userAvatar)
-                                    .setImage(RandomImage);
-
-                                message.channel.send({ embeds: [embed] });
-                                return true;
-                            }
-                            message.channel.send(phrase);
                         } else{
-                            message.reply(':no_entry_sign: Invalid arguments! type `>help emotes` for help').then(msg => {
-                                setTimeout(() => msg.delete(), 3000)
-                            });
+                            phrase = emote['sentences'][Math.floor(Math.random() * Object.keys(emote.sentences).length)];
                         }
-                        break;
-                    case (findName(rawMessage) && removeMensions(lowerMessage).substr(0,8) == 'motivate' || findName(rawMessage) && removeMensions(lowerMessage).substr(0,11) == 'motivate me' || findName(rawMessage) && removeMensions(lowerMessage).substr(0,10) == 'motivation' || findName(rawMessage) && removeMensions(lowerMessage).substr(0,5) == 'quote' || removeMensions(lowerMessage).substr(0,11) == 'motivate me'):
-                        if(config['discord']['motivate']['enabled']){
-                            let randomKey = Math.floor(Math.random() * Object.keys(motivations).length);
-                            
-                            let msg = Object.keys(motivations)[randomKey];
-                            let author = motivations[msg]['author'];
 
-                            if(author == null && author == ''){
-                                author = 'Unknown';
-                            }
+                        phrase = phrase.replace(/%author%/g, author).replace(/%victim%/g, taggedUsername);
 
+                        if(!selfPing){
+                            RandomImage = emote['sources'][Math.floor(Math.random() * Object.keys(emote.sources).length)];
+                        }
+
+                        if (RandomImage != null) {
                             var embed = new Discord.MessageEmbed()
                                 .setColor(config['discord']['embed']['color'])
-                                .setTitle(`By: `+author)
-                                .setDescription('> '+msg);
+                                .setAuthor(phrase, userAvatar)
+                                .setImage(RandomImage);
+
                             message.channel.send({ embeds: [embed] });
+                            return true;
                         }
-                        break;
-                    case (findName(rawMessage) && removeMensions(lowerMessage).substr(0,11).replace('tell','').replace('me','').trim() == 'random fact'):
-                        if(config['discord']['facts']['enabled']){
-                            let randomKey = Math.floor(Math.random() * Object.keys(factslist).length);
+                        message.channel.send(phrase);
+                    } else{
+                        message.reply(':no_entry_sign: Invalid arguments! type `>help emotes` for help').then(msg => {
+                            setTimeout(() => msg.delete(), 3000)
+                        });
+                    }
+                } else if (findName(rawMessage) && removeMensions(lowerMessage).substr(0,8) == 'motivate' || findName(rawMessage) && removeMensions(lowerMessage).substr(0,11) == 'motivate me' || findName(rawMessage) && removeMensions(lowerMessage).substr(0,10) == 'motivation' || findName(rawMessage) && removeMensions(lowerMessage).substr(0,5) == 'quote' || removeMensions(lowerMessage).substr(0,11) == 'motivate me') {
+                    if(config['discord']['motivate']['enabled']){
+                        let randomKey = Math.floor(Math.random() * Object.keys(motivations).length);
+                        
+                        let msg = Object.keys(motivations)[randomKey];
+                        let author = motivations[msg]['author'];
 
-                            let msg = Object.keys(factslist)[randomKey];
-                            let source = factslist[msg]['source'];
-
-                            if(source == null || source == ''){
-                                source = 'Unknown';
-                            }
-
-                            var embed = new Discord.MessageEmbed()
-                                .setColor(config['discord']['embed']['color'])
-                                .setTitle(msg)
-                                .setDescription('`Source: '+source+'`');
-                            message.channel.send({ embeds: [embed] });
+                        if(author == null && author == ''){
+                            author = 'Unknown';
                         }
-                        break;
-                    case (customResponse(rawMessage, false, "discord")):
-                        let reply = customResponse(rawMessage, true, "discord"):
 
-                        reply = replaceAll(reply, "%botname%", botName);
-                        reply = replaceAll(reply, "%author%", author);
-                        reply = replaceAll(reply, "%author_ping%", mension);
+                        var embed = new Discord.MessageEmbed()
+                            .setColor(config['discord']['embed']['color'])
+                            .setTitle(`By: `+author)
+                            .setDescription('> '+msg);
+                        message.channel.send({ embeds: [embed] });
+                    }
+                } else if (findName(rawMessage) && removeMensions(lowerMessage).substr(0,11).replace('tell','').replace('me','').trim() == 'random fact') {
+                    if(config['discord']['facts']['enabled']){
+                        let randomKey = Math.floor(Math.random() * Object.keys(factslist).length);
 
-                        message.channel.send(reply);
-                        break;
-                    case (findName(rawMessage) || taggedUser == botUser_id):
-                        message.react('854320612565450762');
+                        let msg = Object.keys(factslist)[randomKey];
+                        let source = factslist[msg]['source'];
+
+                        if(source == null || source == ''){
+                            source = 'Unknown';
+                        }
+
+                        var embed = new Discord.MessageEmbed()
+                            .setColor(config['discord']['embed']['color'])
+                            .setTitle(msg)
+                            .setDescription('`Source: '+source+'`');
+                        message.channel.send({ embeds: [embed] });
+                    }
+                } else if (customResponse(rawMessage, false, "discord")) {
+                    let reply = customResponse(rawMessage, true, "discord");
+
+                    reply = replaceAll(reply, "%botname%", botName);
+                    reply = replaceAll(reply, "%author%", author);
+                    reply = replaceAll(reply, "%author_ping%", mension);
+
+                    message.channel.send(reply);
+                } else if(findName(rawMessage) || taggedUser == botUser_id) {
+                    message.react('854320612565450762');
                 }
             } else {
                 //get command name and args
@@ -1103,7 +1084,6 @@ function DiscordBot(token = null){
                 if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Discord Bot] "+messages['discord_bot']['command_execute']+": "+command+" by "+author);
 
                 //commands
-                // BLOODY HELL! IF SEQUENCE AHEAD
                 if (command == 'help'){
 
                     if(randomResponse == 0)
