@@ -419,33 +419,33 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
             if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['command_execute']+': '+command);
             
             //commands
-            if(command == ''){
-                //invalid command: null
-                bot.chat(messages['minecraft_bot']['chats']['command_invalid']);
-            } else if (admin && command == 'reloadconfig' && config['player']['commands']['reload'] || admin && command == 'reload' || admin && command == 'restartconfig' && config['player']['commands']['reload']){
-                //reload config
-                bot.chat("Reloading Bot Config");
-                
-                //reload function
-                let reloadConfig = parse();
+            switch (true){
+                case (admin && command == 'reloadconfig' && config['player']['commands']['reload'] || admin && command == 'reload' || admin && command == 'restartconfig' && config['player']['commands']['reload']):
+                    //reload config
+                    bot.chat("Reloading Bot Config");
+                    
+                    //reload function
+                    let reloadConfig = parse();
 
-                //parse config
-                if(reloadConfig){
-                    //reload success
-                    bot.chat(messages['reload_config']['success']);
-                } else{
-                    //reload failed
-                    bot.chat(messages['reload_config']['failed']);
-                }
-            } else if (admin && command == 'restartbot' && config['player']['commands']['restart'] || admin && command == 'reloadbot'&& config['player']['commands']['restart']){
-                //restart mineflayer bot
-                bot.chat(messages['minecraft_bot']['chats']['command_restarting']);
+                    //parse config
+                    if(reloadConfig){
+                        //reload success
+                        bot.chat(messages['reload_config']['success']);
+                    } else{
+                        //reload failed
+                        bot.chat(messages['reload_config']['failed']);
+                    }
+                    break;
+                case (admin && command == 'restartbot' && config['player']['commands']['restart'] || admin && command == 'reloadbot'&& config['player']['commands']['restart']):
+                    //restart mineflayer bot
+                    bot.chat(messages['minecraft_bot']['chats']['command_restarting']);
 
-                //quit and restart
-                bot.quit();
-                bot.end();
-            } else if (command == 'deathcount' && config['player']['countdeaths']['enabled']) {
-                bot.chat(`I died `+deathCount.toLocaleString()+` times`);
+                    //quit and restart
+                    bot.quit();
+                    bot.end();
+                    break;
+                case (command == 'deathcount' && config['player']['countdeaths']['enabled']) :
+                    bot.chat(`I died `+deathCount.toLocaleString()+` times`);
             }
 
         } else{
@@ -465,24 +465,32 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
             var lrmsg = removeMensions.toLowerCase();
 
             //bot reply
-            if(lmsg == player.toLowerCase() + ' hi'|| lmsg == 'hi ' + player.toLowerCase() || lrmsg == 'hi guys' || lrmsg == 'hi bot' || lrmsg == 'bot hi'){
-                reply = messages['minecraft_bot']['response']['hi'];
-            } else if (lmsg == player.toLowerCase() + 'hello' || lmsg == 'hello ' + player.toLowerCase() || lrmsg == 'hello guys' || lmsg == player.toLowerCase()){
-                reply = messages['minecraft_bot']['response']['hello'];
-            } else if (lrmsg.replace('hello','').replace('hi','').trim() == 'im new' || lrmsg.replace('hello','').replace('hi','').trim() == 'im new here' || lrmsg.replace('hello','').replace('hi','').trim() == 'new here'){
-                reply = messages['minecraft_bot']['response']['im_new'];
-            } else if (lmsg.indexOf("who") > -1 && lmsg.indexOf("is") > -1 && lmsg.indexOf(player.toLowerCase()) > -1 || lmsg == 'whos '+player.toLowerCase() || lmsg == player.toLowerCase()+' who are you'){
-                reply = messages['minecraft_bot']['response']['who'];
-            } else if (lmsg.indexOf("what") > -1 && lmsg.indexOf("is") > -1 && lmsg.indexOf("bot") > -1 || lmsg.indexOf("what") > -1 && lmsg.indexOf("are") > -1 && lmsg.indexOf("bot") > -1){
-                reply = messages['minecraft_bot']['response']['what'];
-            } else if (lrmsg == 'a government spy' && lmsg.indexOf(player.toLowerCase()) > -1){
-                reply = messages['minecraft_bot']['response']['spy'];
-            } else if (lmsg.indexOf("kill "+player) > -1){
-                reply = messages['minecraft_bot']['response']['kill'];
-            } else if (customResponse(lmsg, false)){
-                reply = customResponse(lmsg, true);
+            switch (true){
+                case (lmsg == player.toLowerCase() + ' hi'|| lmsg == 'hi ' + player.toLowerCase() || lrmsg == 'hi guys' || lrmsg == 'hi bot' || lrmsg == 'bot hi'):
+                    reply = messages['minecraft_bot']['response']['hi'];
+                    break;
+                case (lmsg == player.toLowerCase() + 'hello' || lmsg == 'hello ' + player.toLowerCase() || lrmsg == 'hello guys' || lmsg == player.toLowerCase()):
+                    reply = messages['minecraft_bot']['response']['hello'];
+                    break;
+                case (lrmsg.replace('hello','').replace('hi','').trim() == 'im new' || lrmsg.replace('hello','').replace('hi','').trim() == 'im new here' || lrmsg.replace('hello','').replace('hi','').trim() == 'new here'):
+                    reply = messages['minecraft_bot']['response']['im_new'];
+                    break;
+                case (lmsg.indexOf("who") > -1 && lmsg.indexOf("is") > -1 && lmsg.indexOf(player.toLowerCase()) > -1 || lmsg == 'whos '+player.toLowerCase() || lmsg == player.toLowerCase()+' who are you'):
+                    reply = messages['minecraft_bot']['response']['who'];
+                    break;
+                case (lmsg.indexOf("what") > -1 && lmsg.indexOf("is") > -1 && lmsg.indexOf("bot") > -1 || lmsg.indexOf("what") > -1 && lmsg.indexOf("are") > -1 && lmsg.indexOf("bot") > -1):
+                    reply = messages['minecraft_bot']['response']['what'];
+                    break;
+                case (lrmsg == 'a government spy' && lmsg.indexOf(player.toLowerCase()) > -1):
+                    reply = messages['minecraft_bot']['response']['spy'];
+                    break;
+                case (lmsg.indexOf("kill "+player) > -1):
+                    reply = messages['minecraft_bot']['response']['kill'];
+                    break;
+                case (customResponse(lmsg, false)):
+                    reply = customResponse(lmsg, true);
+                    break;
             }
-
             //reply placeholders
             reply = replaceAll(reply, "%player%", username);
             reply = replaceAll(reply, "%player_lowercase%", username.toLowerCase());
