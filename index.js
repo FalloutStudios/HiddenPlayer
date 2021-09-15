@@ -51,13 +51,6 @@ console.log();
 console.log('=========================================================='+loop(fullname.length, '=')+loop(configVersion.length, '='));
 console.log("\n\n");
 
-//disable functions if null
-if (config['player']['name'] == null || config['player']['name'] == ''){
-    config['player']['enabled'] = false;
-} else if (config['discord']['token'] == null){
-    config['discord']['enabled'] = false;
-}
-
 //Create discord client
 const client = new Discord.Client({ 
     intents: [
@@ -148,6 +141,12 @@ function parse(){
     }
 
     if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Config] '+messages['reload_config']['success']);
+
+    if (config['player']['name'] == null || config['player']['name'] == ''){
+        config['player']['enabled'] = false;
+    } else if (config['discord']['token'] == null){
+        config['discord']['enabled'] = false;
+    }
 
     if(success){
         //restart all proccesses
