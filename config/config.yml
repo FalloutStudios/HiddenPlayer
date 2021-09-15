@@ -15,7 +15,7 @@ player:
   enabled: true
   
   # Player Name (Ask if empty)
-  name: BetaHiddenPlayer
+  name: HiddenPlayer
   
   # Minecraft version (Will use supported latest version when empty)
   version:

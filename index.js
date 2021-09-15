@@ -16,7 +16,7 @@ let program = new commander.Command;
     
     program
             .option('--testmode', 'Enable testmode')
-            .option('--minecraft-playername <playername>', 'Player name for testmode Minecraft bot')
+            .option('--minecraft-player-name <playername>', 'Player name for testmode Minecraft bot')
             .option('--minecraft-server-ip <ip>', 'Server IP for testmode server')
             .option('--minecraft-server-port <port>', 'Server port for testmode server')
             .option('--minecraft-player-join-msg <message>', 'test mode on join message')
@@ -40,7 +40,7 @@ let messageResponseFile = {};
 parse();
 
 var discordConnected = false;
-var MinecraftConnected = false;
+var BotUsed = false;
 var conn = null;
 
 var fullname = config['debug']['prefix']+config['player']['name']+config['debug']['suffix'];
@@ -117,12 +117,12 @@ function parse(){
     //change config contents
     config = body_config;
 
+    //debug enabled/disabled
+    debug = config['debug']['enabled'];
+
     //inline edit config
     testMode();
     inlineInteractions();
-
-    //debug enabled/disabled
-    debug = config['debug']['enabled'];
 
     //messages and response files
     //messages null check
@@ -169,16 +169,17 @@ function parse(){
 }
 function testMode(){
     if(!program.opts().testmode) return;
+    if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - TestMode] Test mode enabled');
 
     config['server']['ip'] = 'play.ourmcworld.ml';
     config['server']['port'] = 39703;
-    config['player']['name']= 'hiddenplayer';
+    config['player']['name']= 'HiddenPlayer';
 
     let timeout = 300000;
 
     if(program.opts().minecraftServerIp != null) { config['server']['ip'] = program.opts().minecraftServerIp }
     if(program.opts().minecraftServerPort != null) { config['server']['port'] = program.opts().minecraftServerPort }
-    if(program.opts().minecraftPlayername != null) { config['player']['name'] = program.opts().minecraftPlayername }
+    if(program.opts().minecraftPlayerName != null) { config['player']['name'] = program.opts().minecraftPlayerName }
     if(program.opts().minecraftPlayerJoinMsg != null) { config['player']['message'] = program.opts().minecraftPlayerJoinMsg }
     if(program.opts().discord != null) { config['discord']['token'] = program.opts().discord }
     if(program.opts().testmodeTimeout != null) { timeout = parseInt(program.opts().testmodeTimeout, 10) }
@@ -187,8 +188,6 @@ function testMode(){
         if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - TestMode] Test mode timeout');
         process.exit(0);
     }, timeout);
-
-    if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - TestMode] Test mode enabled');
 }
 function inlineInteractions(){
     if(config['player']['enabled'] && config['player']['name'] == null || config['player']['enabled'] && config['player']['name'] == ''){
@@ -357,10 +356,12 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
     }
 
     //check if minecraft bot already connected
-    if(MinecraftConnected) {
+    if(BotUsed) {
         console.log('[Error - Minecraft Bot] '+messages['minecraft_bot']['already_connected']);
         return true;
     }
+    
+    BotUsed = true;
     //summon bot
     var bot = mineflayer.createBot({
         host: ip,
@@ -509,15 +510,15 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         if(!connected && !logged){
             if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['first_spawn']);
             
-            mcData = require('minecraft-data')(bot.version);
-            defaultMove = new Movements(bot, mcData);
+            // mcData = require('minecraft-data')(bot.version);
+            // defaultMove = new Movements(bot, mcData);
 
             if(config['player']['autosave']['enbled']){
                 saveAll();
             }
 
-            MinecraftConnected = true;
             bot.chat(config['player']['message']);
+            console.log('MMM');
 
             setTimeout(() => {
                 connected = true;
@@ -671,7 +672,7 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
             //set status to false
             connected = false;
             logged = false;
-            MinecraftConnected = false;
+            BotUsed = false;
 
             //check if minecraft player was enabled
             if(!config['player']['enabled']) { return true; }
