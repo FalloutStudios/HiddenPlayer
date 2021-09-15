@@ -36,15 +36,6 @@ player:
   # Attack hostile mobs
   pvp:
     enabled: true # Enable mobs attack
-    mobs: []
-
-  # follow entities
-  follow:
-    enabled: false # enable follow entities
-    max-range: 2
-    mobs: [] # entities to follow
-
-
   
   # Some bot commands
   commands:

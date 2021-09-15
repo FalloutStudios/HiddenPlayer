@@ -509,9 +509,6 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         //check if connected and logged status is true
         if(!connected && !logged){
             if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['first_spawn']);
-            
-            // mcData = require('minecraft-data')(bot.version);
-            // defaultMove = new Movements(bot, mcData);
 
             if(config['player']['autosave']['enbled']){
                 saveAll();
