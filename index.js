@@ -201,10 +201,39 @@ function inlineInteractions(){
     if(config['player']['enabled'] && config['server']['port'] == null || config['player']['enabled'] && config['server']['port'] == ''){
         config['server']['port'] = prompt("Enter Server Port (Enter to use default) >>> ");
         
-        if(isNaN(config['server']['port'])){
+        if(!isNumber(config['server']['port'])){
             config['server']['port'] = null;
         }
     }
+}
+function customResponse(message = null, get = true, source = "minecraft") {
+    if(message != null){
+        message = trimUnicode(message).toLowerCase();
+
+        if(config['player']['name'] != null){
+            message = replaceAll(message, config['player']['name'].toLowerCase(), "").trim();
+        }
+
+        if(Object.keys(messageResponseFile[source]).includes(message)){
+
+            if(isArray(messageResponseFile[source][message]) && messageResponseFile[source][message].length > 0 || typeof messageResponseFile[source][message] == 'string' &&  messageResponseFile[message] != ''){
+                
+                let response = null;
+
+                if(!get) { return true; }
+
+                if(isArray(messageResponseFile[source][message])) {
+                    response = messageResponseFile[source][message][Math.floor(Math.random() * Object.keys(messageResponseFile[source][message]).length)];
+                } else if (typeof messageResponseFile[source][message] == 'string') {
+                    response = messageResponseFile[source][message];
+                }
+                
+                return response;
+            }
+        }
+    }
+
+    return false;
 }
 function loop(num = 0, str = ''){
     var returnVal = '';
@@ -212,9 +241,6 @@ function loop(num = 0, str = ''){
         returnVal += str;
     }
     return returnVal;
-}
-function escapeRegExp(string) {
-    return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 function replaceAll(str, find, replace) {
     if(str != null){
@@ -229,13 +255,6 @@ function limitText(text = null){
 		text = text.substr(0,100) + "...";
 	}
 	return text;
-}
-function findValueOfProperty(obj, propertyName){
-    let reg = new RegExp(propertyName, "i"); // "i" to make it case insensitive
-    return Object.keys(obj).reduce((result, key) => {
-        if( reg.test(key) ) result.push(obj[key]);
-        return result;
-    }, []);
 }
 function trimUnicode(text) {
     if(text != null){
@@ -252,34 +271,14 @@ function trimUnicode(text) {
         return text;
     }
 }
-function customResponse(message = null, get = true, source = "minecraft") {
-    if(message != null){
-        message = trimUnicode(message).toLowerCase();
-
-        if(config['player']['name'] != null){
-            message = replaceAll(message, config['player']['name'].toLowerCase(), "").trim();
-        }
-
-        if(Object.keys(messageResponseFile[source]).includes(message)){
-
-            if(typeof messageResponseFile[source][message] == 'object' && messageResponseFile[source][message].length > 0 || typeof messageResponseFile[source][message] == 'string' &&  messageResponseFile[message] != ''){
-                
-                let response = null;
-
-                if(!get) { return true; }
-
-                if(typeof messageResponseFile[source][message] == 'object') {
-                    response = messageResponseFile[source][message][Math.floor(Math.random() * Object.keys(messageResponseFile[source][message]).length)];
-                } else if (typeof messageResponseFile[source][message] == 'string') {
-                    response = messageResponseFile[source][message];
-                }
-                
-                return response;
-            }
-        }
-    }
-
-    return false;
+function escapeRegExp(string) {
+    return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+function isNumber(n){
+    return !isNaN(parseFloat(n)) && isFinite(n);
+}
+function isArray(obj){
+    return Object.prototype.toString.call(obj) === '[object Array]' ;
 }
 
 //Main Functions
@@ -350,7 +349,7 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
     }
 
     //validate port
-    if (isNaN(port) || typeof port != 'undefined' && isNaN(port) || port > 65535 || port < 1) { 
+    if (!isNumber(port) || typeof port != 'undefined' && !isNumber(port) || port > 65535 || port < 1) { 
         console.error('\x1b[31m%s\x1b[0m', '[Error - Mincraft Bot] '+messages['minecraft_bot']['invalid_port']+': '+port); 
         process.exit(0);        
     }
@@ -383,7 +382,7 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         deathCount = parseInt(fs.readFileSync(config['player']['countdeaths']['src'])) || 0;
 
         //check for valid number
-        if(deathCount == null || typeof deathCount == 'undefined' || isNaN(deathCount)){
+        if(deathCount == null || typeof deathCount == 'undefined' || !isNumber(deathCount)){
             //set new number when invalid
             deathCount = 0;
 
@@ -1131,7 +1130,7 @@ function DiscordBot(token = null){
                 } else if (command == 'deathcount' && config['discord']['deathcount'] && fs.existsSync(config['player']['countdeaths']['src'])) {
                     let readDeathcountFile = parseInt(fs.readFileSync(config['player']['countdeaths']['src']));
                     let count = 0;
-                    if(typeof readDeathcountFile == 'null' || typeof readDeathcountFile == 'undefined' || isNaN(readDeathcountFile)){
+                    if(typeof readDeathcountFile == 'null' || typeof readDeathcountFile == 'undefined' || !isNumber(readDeathcountFile)){
                         fs.writeFileSync(config['player']['countdeaths']['src'], '0');
                     } else {
                         count = readDeathcountFile.toLocaleString();
@@ -1179,7 +1178,7 @@ function DiscordBot(token = null){
                             msg += ' '+args[i];
                         }
 
-                        if(args.length > 1 && !isNaN(parseInt(args[0]))){
+                        if(args.length > 1 && !isNumber(parseInt(args[0]))){
                             msg = '';
                             count = args[0];
                             for (let i = 1; i < args.length; i++) {
