@@ -52,11 +52,13 @@ console.log('=========================================================='+loop(fu
 console.log("\n\n");
 
 //disable functions if null
-if(config['player']['name'] == null || config['player']['name'] == ''){
-    config['player']['enabled'] = false;
-}
-if(config['discord']['token'] == null){
-    config['discord']['enabled'] = false;
+switch (true){
+    case (config['player']['name'] == null || config['player']['name'] == ''):
+        config['player']['enabled'] = false;
+        break;
+    case (config['discord']['token'] == null):
+        config['discord']['enabled'] = false;
+        break;
 }
 
 //Create discord client
@@ -125,39 +127,30 @@ function parse(){
     inlineInteractions();
 
     //messages and response files
-    //messages null check
-    if (config['language'] == null) {
-        console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Can\'t load messages file');
-        process.exit(0);
-    }
-    if (config['responses'] == null) {
-        console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Can\'t load response messages file');
-        process.exit(0);
-    }
+    switch (true){
+        case (config['language'] == null):
+            console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Can\'t load messages file');
+            process.exit(0);
+        case (config['responses'] == null):
+            console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Can\'t load response messages file');
+            process.exit(0);
+    }   
 
     //parse messages and response files
     messages = yml.parse(fs.readFileSync(config['language'], 'utf-8'));
     messageResponseFile = yml.parse(fs.readFileSync(config['responses'], 'utf8'));
 
     //messages and reponse files version check
-    if(messages['version'] != config['version']) {
-        console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Config version doesn\'t match messages file version');
-        process.exit(0);
-    }
-    if(messageResponseFile['version'] != config['version']) {
-        console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Config version doesn\'t match response messages file version');
-        process.exit(0);
+    switch (true){
+        case (messages['version'] != config['version']):
+            console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Config version doesn\'t match messages file version');
+            process.exit(0);
+        case (messageResponseFile['version'] != config['version']):
+            console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Config version doesn\'t match response messages file version');
+            process.exit(0);
     }
 
     if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Config] '+messages['reload_config']['success']);
-
-    //disable functions if null in config
-    if(config['player']['name'] == null || config['player']['name'] == ''){
-        config['player']['enabled'] = false;
-    }
-    if(config['discord']['token'] == null){
-        config['discord']['enabled'] = false;
-    }
 
     if(success){
         //restart all proccesses
