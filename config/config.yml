@@ -40,6 +40,7 @@ player:
   # follow entities
   follow:
     enabled: false # enable follow entities
+    max-range: 2
     mobs: [] # entities to follow
 
 

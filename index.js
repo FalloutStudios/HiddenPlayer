@@ -287,6 +287,14 @@ function customResponse(message = null, get = true, source = "minecraft") {
 function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
     //movements
     let actions = ['forward', 'back', 'left', 'right'];
+    var lasttime = -1;
+    var moveinterval = 5;
+    var maxrandom = 5;
+    var moving = false;
+    var jump = true;
+    var onPVP = false;
+    var lastaction = null;
+    var deathCount = 0;
 
     //login
     let logged = false;
@@ -295,6 +303,9 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
     //entities
     let entity = null;
     let target = null;
+
+    //mcdata ready
+    let mcDataEnabled = false;
 
     //parseint port
     port = parseInt(port, 10);
@@ -363,8 +374,6 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
     bot.loadPlugin(pathfinder);
     bot.loadPlugin(pvpBot);
 
-    var deathCount = 0;
-
     //check if death counts enabled
     if(config['player']['countdeaths']['enabled'] && fs.existsSync(config['player']['countdeaths']['src'])) {
         //read death count file
@@ -384,7 +393,6 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
     if(debug && config['player']['pvp']['enabled']) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['pvp-enabled']);
     if(debug && !config['player']['pvp']['enabled']) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['pvp-disabled']);
 
-    //on chat
     bot.on('chat', function (username, message){
         //set admin var
         let admin = false;
@@ -498,30 +506,6 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         }
     });
 
-    //movement variables
-    var lasttime = -1;
-    var moveinterval = 5;
-    var maxrandom = 5;
-    var moving = false;
-    var jump = true;
-    var onPVP = false;
-    var lastaction = null;
-
-    //auto save interval
-    function saveAll(){
-        if (!bot) { return true; }
-        if (!config['player']['enabled']) { return true; }
-
-        if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Mincraft Bot] "+messages['minecraft_bot']['saved']);
-
-        if(logged && connected) bot.chat(`/minecraft:save-all`);
-
-        setTimeout(() => {
-            saveAll();
-        }, config['player']['autosave']['interval']);
-    }
-
-    //every respawn
     bot.on('spawn', () => {
         if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['spawned']);
 
@@ -529,24 +513,21 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         if(!connected && !logged){
             if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['first_spawn']);
             
-            //check if auto save is enabled
+            const mcData = require('minecraft-data')(bot.version);
+
             if(config['player']['autosave']['enbled']){
                 saveAll();
             }
 
-            //set connection status
             MinecraftConnected = true;
-
-            //chat first message
             bot.chat(config['player']['message']);
-            
-            //set status to true
+
             setTimeout(() => {
                 connected = true;
                 logged = true;
+                mcDataEnabled = true;
+                if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] connected = '+connected+'; logged = '+logged);
             }, 500);
-
-            if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] connected = '+connected+'; logged = '+logged);
         }
 
         //set all to default
@@ -559,7 +540,6 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         // Hmmmmm... so basically database is useless wtf
     });
 
-    //respawn
     bot.on('death',function() {
         //emit respawn when died
         bot.emit("respawn");
@@ -573,7 +553,6 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         }
     });
 
-    //on ingame time change
     bot.on('time',function (time){
         //check if bot has been disabled
         if(!config['player']['enabled']) {
@@ -678,14 +657,12 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         }
     });
 
-    //if bot end
     bot.on('disconnect',function (){
         if(debug) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['disconnected']);
 
         //end bot
         if (connected) { bot.quit(); bot.end(); }
     });
-
     bot.on('error', reason => {
         if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - Minecraft Bot] Minecraft bot Error'+reason);
 
@@ -705,7 +682,6 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         if (connected) { bot.quit(); bot.end(); }
     });
 
-    //reconnect attempt
     bot.on('end', (reason) => {
         //reconnect timeout
         setTimeout(() => {
@@ -722,6 +698,20 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
             if(debug) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['bot_end']+': '+reason);
         }, config['server']['reconnectTimeout']);
     });
+
+    //auto save interval
+    function saveAll(){
+        if (!bot) { return true; }
+        if (!config['player']['enabled']) { return true; }
+
+        if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Mincraft Bot] "+messages['minecraft_bot']['saved']);
+
+        if(logged && connected) bot.chat(`/minecraft:save-all`);
+
+        setTimeout(() => {
+            saveAll();
+        }, config['player']['autosave']['interval']);
+    }
 }
 function DiscordBot(token = null){
     //check if discord bot was connected
