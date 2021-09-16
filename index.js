@@ -1025,8 +1025,8 @@ function DiscordBot(token = null){
                         }
                         message.channel.send(phrase);
                     } else{
-                        message.reply(':no_entry_sign: Invalid arguments! type `>help emotes` for help').then(msg => {
-                            setTimeout(() => msg.delete(), 3000)
+                        message.reply(':no_entry_sign: Invalid arguments! type `>help emotes` for help').then(sentMessage => {
+                            setTimeout( () => sentMessage.delete(), 5000);
                         });
                     }
                 } else if (findName(rawMessage) && removeMensions(lowerMessage).substr(0,8) == 'motivate' || findName(rawMessage) && removeMensions(lowerMessage).substr(0,11) == 'motivate me' || findName(rawMessage) && removeMensions(lowerMessage).substr(0,10) == 'motivation' || findName(rawMessage) && removeMensions(lowerMessage).substr(0,5) == 'quote' || removeMensions(lowerMessage).substr(0,11) == 'motivate me') {
@@ -1149,8 +1149,8 @@ function DiscordBot(token = null){
                             .setTimestamp()
                         message.channel.send({ embeds: [embed] });
                     } else {
-                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(msg => {
-                            setTimeout(() => { msg.delete(); message.delete() }, 5000);
+                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
+                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
                         });
                     }
                 } else if (command == 'send' && config['discord']['send-command']) {
@@ -1158,8 +1158,8 @@ function DiscordBot(token = null){
                         message.delete();
                         message.channel.send(rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).trim());
                     } else {
-                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(msg => {
-                            setTimeout(() => { msg.delete(); message.delete() }, 5000);
+                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
+                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
                         });
                     }
                 } else if (command == 'spam' && config['discord']['spam']['enabled']) {
@@ -1172,7 +1172,6 @@ function DiscordBot(token = null){
                             msg += ' '+ val;
                         }
 
-                        console.log(`number: `+isNumber(parseInt(args[0])) + '; lenght:' + args.length);
                         if(args.length > 1 && isNumber(parseInt(args[0]))){
                             msg = '';
                             count = parseInt(args[0]);
@@ -1185,36 +1184,43 @@ function DiscordBot(token = null){
                         
                         msg = msg.trim();
 
-                        if (count > 0 && count <= config['discord']['spam']['max']){
-                            if(!disabled_channels.includes(channelID.toString())){
-                                if(msg != null && msg != ''){
-                                    if(!config['discord']['spam']['player_ping'] && !message.mentions.users.size && !message.mentions.roles.size  && !message.mentions.everyone || config['discord']['spam']['player_ping']){
-                                        for (let i=0; i < count; i++){
-                                            message.channel.send(messages['discord_bot']['spam']['prefix']+msg);
-                                        }
-                                    } else{
-                                        message.reply(messages['discord_bot']['spam']['no_ping']).then(msg => {
-                                            setTimeout(() => { msg.delete(); message.delete() }, 5000);
-                                        });
-                                    }
-                                } else{
-                                    message.reply(messages['discord_bot']['spam']['empty']).then(msg => {
-                                        setTimeout(() => { msg.delete(); message.delete() }, 5000);
-                                    });
-                                }
-                            } else {
-                                message.reply(messages['discord_bot']['command_disabled']).then(msg => {
-                                    setTimeout(() => { msg.delete(); message.delete() }, 5000);
+                        let Continue = true;
+
+                        switch (true){
+                            case (count <= 0 && count > config['discord']['spam']['max']):
+                                message.reply(messages['discord_bot']['spam']['invalid_lenght']).then(sentMessage => {
+                                    setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
                                 });
+                                Continue = false;
+                                break;
+                            case (disabled_channels.includes(channelID.toString())):
+                                message.reply(messages['discord_bot']['command_disabled']).then(sentMessage => {
+                                    setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                                });
+                                Continue = false;
+                                break;
+                            case (msg == null && msg == ''):
+                                message.reply(messages['discord_bot']['spam']['empty']).then(sentMessage => {
+                                    setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                                });
+                                Continue = false;
+                                break;
+                            case (config['discord']['spam']['player_ping'] && message.mentions.users.size && message.mentions.roles.size  && message.mentions.everyone):
+                                message.reply(messages['discord_bot']['spam']['no_ping']).then(sentMessage => {
+                                    setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                                });
+                                Continue = false;
+                                break;
+                        }
+
+                        if(Continue){
+                            for (let i=0; i < count; i++){
+                                message.channel.send(messages['discord_bot']['spam']['prefix']+msg);
                             }
-                        } else{
-                            message.reply(messages['discord_bot']['spam']['invalid_lenght']).then(msg => {
-                                setTimeout(() => { msg.delete(); message.delete() }, 5000);
-                            });
                         }
                     } else{
-                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(msg => {
-                            setTimeout(() => { msg.delete(); message.delete() }, 5000);
+                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
+                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
                         });
                     }
 
@@ -1241,8 +1247,8 @@ function DiscordBot(token = null){
                             .setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');
                         message.channel.send({ embeds: [embed] });
                     } else {
-                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(msg => {
-                            setTimeout(() => { msg.delete(); message.delete() }, 5000);
+                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
+                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
                         });
                     }
                 } else if (command == 'reloadall' || command == 'reloadassets') {
@@ -1270,8 +1276,8 @@ function DiscordBot(token = null){
                         }
                         message.channel.send(messages['discord_bot']['reload_complete']+': Assets');
                     } else {
-                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(msg => {
-                            setTimeout(() => { msg.delete(); message.delete() }, 5000);
+                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
+                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
                         });
                     }
                 } else if (command == 'reload') {
@@ -1284,8 +1290,8 @@ function DiscordBot(token = null){
                             message.reply(messages['reload_config']['failed']);
                         }
                     } else {
-                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(msg => {
-                            setTimeout(() => { msg.delete(); message.delete() }, 5000);
+                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
+                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
                         });
                     }
                 }
