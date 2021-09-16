@@ -1168,7 +1168,7 @@ function DiscordBot(token = null){
                     let msg = '';
 
                     if(AdminPerms) {
-                        for (let val of args.length) {
+                        for (let val of args) {
                             msg += ' '+ val;
                         }
 
@@ -1192,12 +1192,12 @@ function DiscordBot(token = null){
                                             message.channel.send('`spam:` '+msg);
                                         }
                                     } else{
-                                        message.reply(config['discord_bot']['spam']['no_ping']).then(msg => {
+                                        message.reply(messages['discord_bot']['spam']['no_ping']).then(msg => {
                                             setTimeout(() => { msg.delete(); message.delete() }, 5000);
                                         });
                                     }
                                 } else{
-                                    message.reply(config['discord_bot']['spam']['empty']).then(msg => {
+                                    message.reply(messages['discord_bot']['spam']['empty']).then(msg => {
                                         setTimeout(() => { msg.delete(); message.delete() }, 5000);
                                     });
                                 }
