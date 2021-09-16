@@ -12,7 +12,7 @@ const yml = require('yaml');
 const fs = require('fs');
 const mysql = require('mysql');
 
-let program = new commander.Command;
+const program = new commander.Command;
     
     program
             .option('--testmode', 'Enable testmode')
@@ -23,6 +23,18 @@ let program = new commander.Command;
             .option('--discord <token>', 'Testmode discord bot')
             .option('--testmode-timeout <timeout>', 'Test mode timeout in milliseconds')
     program.parse();
+
+//Create discord client
+const client = new Discord.Client({ 
+    intents: [
+        Discord.Intents.FLAGS.GUILDS,
+        Discord.Intents.FLAGS.GUILD_INTEGRATIONS,
+        Discord.Intents.FLAGS.GUILD_BANS,
+        Discord.Intents.FLAGS.GUILD_MEMBERS,
+        Discord.Intents.FLAGS.GUILD_MESSAGES,
+        Discord.Intents.FLAGS.GUILD_PRESENCES
+    ]
+});
 
 const configlocation = 'config/config.yml';
 let configVersion = null;
@@ -50,18 +62,6 @@ console.log('GitHub: https://github.com/FalloutStudios/HiddenPlayer');
 console.log();
 console.log('=========================================================='+loop(fullname.length, '=')+loop(configVersion.length, '='));
 console.log("\n\n");
-
-//Create discord client
-const client = new Discord.Client({ 
-    intents: [
-        Discord.Intents.FLAGS.GUILDS,
-        Discord.Intents.FLAGS.GUILD_INTEGRATIONS,
-        Discord.Intents.FLAGS.GUILD_BANS,
-        Discord.Intents.FLAGS.GUILD_MEMBERS,
-        Discord.Intents.FLAGS.GUILD_MESSAGES,
-        Discord.Intents.FLAGS.GUILD_PRESENCES
-    ]
-});
 
 //debug mode enabled/disabled log
 if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Debug Mode] '+messages['logging']['enabled']);
@@ -710,6 +710,7 @@ function DiscordBot(token = null){
     }
 
     //set bot token
+    console.log(token);
     client.login(token);
     
     if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Discord Bot] "+messages['discord_bot']['enabled']);
