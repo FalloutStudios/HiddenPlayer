@@ -860,7 +860,7 @@ function DiscordBot(token = null){
                 string = string.toLowerCase().trim();
 
                 //start removing name
-                for (const i of config['discord']['prefix'].length) {
+                for (let i=0; i < config.discord.prefix.length; i++) {
                     if (string.indexOf(' '+config['discord']['prefix'][i]+' ') > -1 || string.indexOf(config['discord']['prefix'][i]+' ') > -1 || string.indexOf(' '+config['discord']['prefix'][i]) > -1 || string.startsWith(config['discord']['prefix'][i]+' ')){
                         string = replaceAll(string,' '+config['discord']['prefix'][i]+' ','');
                         string = replaceAll(string,config['discord']['prefix'][i]+' ','');
@@ -893,7 +893,7 @@ function DiscordBot(token = null){
                 if(!get) found = false;
                 
                 //check for action name
-                for (const i of actions.length) {
+                for (const i of actions) {
                     if(removeMensions(message).toLowerCase().startsWith(actions[i].toLowerCase())){
                         found = true;
 
@@ -1170,7 +1170,7 @@ function DiscordBot(token = null){
                     let msg = '';
 
                     if(AdminPerms) {
-                        for (const i of args.length) {
+                        for (const i of args) {
                             msg += ' '+args[i];
                         }
 
