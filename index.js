@@ -57,7 +57,7 @@ var conn = null;
 
 var fullname = config['debug']['prefix']+config['player']['name']+config['debug']['suffix'];
 console.log('============================ '+fullname+' '+configVersion+' ===========================');
-console.log("\n\n");
+console.log("");
 console.log('GitHub: https://github.com/FalloutStudios/HiddenPlayer');
 console.log();
 console.log('=========================================================='+loop(fullname.length, '=')+loop(configVersion.length, '='));
