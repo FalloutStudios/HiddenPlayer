@@ -708,7 +708,6 @@ function DiscordBot(token = null){
     }
 
     //set bot token
-    console.log(token);
     client.login(token);
     
     if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Discord Bot] "+messages['discord_bot']['enabled']);
@@ -1093,14 +1092,20 @@ function DiscordBot(token = null){
                     else
                         message.channel.send('I don\'t help anyone :expressionless:');
                     
-                } else if (command == 'version' && config['discord']['version-command']) {
-                    var embed = new Discord.MessageEmbed()
-                        .setColor(config['discord']['embed']['color'])
-                        .setAuthor(botName, botAvatar)
-                        .setTitle('Version')
-                        .setDescription(config['version'])
-                        .setTimestamp();
-                    message.reply({ embeds: [embed] });
+                } else if (command == 'version' && config['discord']['version-command']['enabled']) {
+                    if(!AdminPerms || AdminPerms && config['discord']['version-command']['admin-only']){
+                        var embed = new Discord.MessageEmbed()
+                            .setColor(config['discord']['embed']['color'])
+                            .setAuthor(botName, botAvatar)
+                            .setTitle('Version')
+                            .setDescription(config['version'])
+                            .setTimestamp();
+                        message.reply({ embeds: [embed] });
+                    } else{
+                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
+                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                        });
+                    }
                 } else if (command == 'me') {
                     var embed = new Discord.MessageEmbed()
                         .setColor(config['discord']['embed']['color'])
@@ -1121,20 +1126,26 @@ function DiscordBot(token = null){
                             .setTimestamp();
                         message.channel.send({ embeds: [embed] });
 
-                } else if (command == 'deathcount' && config['discord']['deathcount'] && fs.existsSync(config['player']['countdeaths']['src'])) {
-                    let readDeathcountFile = parseInt(fs.readFileSync(config['player']['countdeaths']['src']));
-                    let count = 0;
-                    if(typeof readDeathcountFile == 'null' || typeof readDeathcountFile == 'undefined' || !isNumber(readDeathcountFile)){
-                        fs.writeFileSync(config['player']['countdeaths']['src'], '0');
-                    } else {
-                        count = readDeathcountFile.toLocaleString();
+                } else if (command == 'deathcount' && config['discord']['deathcount']['enabled'] && fs.existsSync(config['player']['countdeaths']['src'])) {
+                    if(!AdminPerms || AdminPerms && config['discord']['deathcount']['admin-only']){
+                        let readDeathcountFile = parseInt(fs.readFileSync(config['player']['countdeaths']['src']));
+                        let count = 0;
+                        if(typeof readDeathcountFile == 'null' || typeof readDeathcountFile == 'undefined' || !isNumber(readDeathcountFile)){
+                            fs.writeFileSync(config['player']['countdeaths']['src'], '0');
+                        } else {
+                            count = readDeathcountFile.toLocaleString();
+                        }
+                    } else{
+                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
+                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                        });
                     }
 
                     console.log(readDeathcountFile);
 
                     message.channel.send(replaceAll(messages['discord_bot']['deathcount'], "%count%", count));
                 } else if (command == 'embed' && config['discord']['embed']['enabled']) {
-                    if(AdminPerms) {
+                    if(!AdminPerms || AdminPerms && config['discord']['embed']['admin-only']) {
                         message.delete();
 
                         let title = rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).split(" ",1)[0];
@@ -1153,8 +1164,8 @@ function DiscordBot(token = null){
                             setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
                         });
                     }
-                } else if (command == 'send' && config['discord']['send-command']) {
-                    if(AdminPerms) {
+                } else if (command == 'send' && config['discord']['send-command']['enabled']) {
+                    if(!AdminPerms || AdminPerms && config['discord']['send-command']['admin-only']) {
                         message.delete();
                         message.channel.send(rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).trim());
                     } else {
@@ -1167,67 +1178,55 @@ function DiscordBot(token = null){
                     let count = 10;
                     let msg = '';
 
-                    if(AdminPerms) {
-                        for (let val of args) {
-                            msg += ' '+ val;
+                    if(!AdminPerms || AdminPerms && config['discord']['spam']['admin-only']){
+                        for (const value of args) {
+                            msg += ' ' + value;
                         }
 
                         if(args.length > 1 && isNumber(parseInt(args[0]))){
                             msg = '';
                             count = parseInt(args[0]);
-                            for (let i = 1; i < args.lenght; i++) {
+                            for (let i = 1; i < args.length; i++) {
                                 msg += ' '+args[i];
                             }
                         }
 
-                        var disabled_channels = config.discord.spam.disabled_channels;
-                        
-                        msg = msg.trim();
-
-                        let Continue = true;
+                        msg = msg.toString().trim();
+                        let disabled_channels = config.discord.spam.disabled_channels;
 
                         switch (true){
                             case (count <= 0 && count > config['discord']['spam']['max']):
                                 message.reply(messages['discord_bot']['spam']['invalid_lenght']).then(sentMessage => {
-                                    setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                                    setTimeout(() => { sentMessage.delete(); message.delete() }, 5000);
                                 });
-                                Continue = false;
                                 break;
                             case (disabled_channels.includes(channelID.toString())):
                                 message.reply(messages['discord_bot']['command_disabled']).then(sentMessage => {
-                                    setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                                    setTimeout(() => { sentMessage.delete(); message.delete() }, 5000);
                                 });
-                                Continue = false;
                                 break;
-                            case (msg == null && msg == ''):
+                            case (msg == ''):
                                 message.reply(messages['discord_bot']['spam']['empty']).then(sentMessage => {
-                                    setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                                    setTimeout(() => { sentMessage.delete(); message.delete() }, 5000);
                                 });
-                                Continue = false;
                                 break;
-                            case (config['discord']['spam']['player_ping'] && message.mentions.users.size && message.mentions.roles.size  && message.mentions.everyone):
-                                message.reply(messages['discord_bot']['spam']['no_ping']).then(sentMessage => {
-                                    setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
-                                });
-                                Continue = false;
-                                break;
+                            default:
+                                if(!config['discord']['spam']['player_ping'] && !message.mentions.users.size > 0 && !message.mentions.roles.size > 0 && !message.mentions.everyone || config['discord']['spam']['player_ping']){
+                                    for (let i = 0; i < count; i++){
+                                        message.channel.send(messages['discord_bot']['spam']['prefix'] + msg);
+                                    }
+                                } else {
+                                    message.reply(messages['discord_bot']['spam']['no_ping']).then(sentMessage => {
+                                        setTimeout(() => { sentMessage.delete(); message.delete() }, 5000);
+                                    });
+                                }
                         }
-
-                        if(Continue){
-                            for (let i=0; i < count; i++){
-                                message.channel.send(messages['discord_bot']['spam']['prefix']+msg);
-                            }
-                        }
-                    } else{
-                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
-                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
-                        });
                     }
 
                 } else if (command == 'smap') {
                     message.reply("Did you mean `>spam` :thinking:");
                 } else if (command == 'exembed') {
-                    if(AdminPerms) {
+                    if(!AdminPerms || AdminPerms && config['discord']['embed']['admin-only']) {
                         var embed = new Discord.MessageEmbed()
                             .setColor(config['discord']['embed']['color'])
                             .setTitle('Some title')

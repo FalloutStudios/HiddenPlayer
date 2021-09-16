@@ -57,7 +57,7 @@ discord_bot:
     invalid_lenght: 'Spam chat count is too small or too large :no_entry_sign:'
     empty: 'Provide spam message :no_entry_sign:'
     no_ping: 'Pings are disabled in spam command :no_entry_sign:'
-    prefix: '`spam:`'
+    prefix: '`spam:` '
 database:
   connecting: Connecting to database...
   disabled: Database disabled!
