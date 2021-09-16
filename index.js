@@ -892,7 +892,7 @@ function DiscordBot(token = null){
                 if(!get) found = false;
                 
                 //check for action name
-                for (let i=0; i < actions.length; i++;) {
+                for (let i=0; i < actions.length; i++) {
                     if(removeMensions(message).toLowerCase().startsWith(actions[i].toLowerCase())){
                         found = true;
 
