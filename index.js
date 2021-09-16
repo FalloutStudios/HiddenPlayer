@@ -841,7 +841,7 @@ function DiscordBot(token = null){
                 string = trimUnicode(string.toLowerCase());
 
                 //start finding
-                for (const i of config['discord']['prefix'].length) {
+                for (let i = 0; i < config.discord.prefix.length; i++) {
                     if (string.indexOf(' '+config['discord']['prefix'][i].toLowerCase()+' ') > -1 || string.startsWith(config['discord']['prefix'][i].toLowerCase()+' ') || string.endsWith(' '+config['discord']['prefix'][i].toLowerCase()) || config['discord']['prefix'][i].toLowerCase() == string){
                         return true;
                     }
