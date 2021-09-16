@@ -892,11 +892,11 @@ function DiscordBot(token = null){
                 if(!get) found = false;
                 
                 //check for action name
-                for (let i=0; i < actions.length; i++) {
-                    if(removeMensions(message).toLowerCase().startsWith(actions[i].toLowerCase())){
+                for (let val of actions) {
+                    if(removeMensions(message).toLowerCase().startsWith(val.toLowerCase())){
                         found = true;
 
-                        if(get) return actions[i].toLowerCase();
+                        if(get) return val.toLowerCase();
                     }
                 }
 
@@ -1176,8 +1176,8 @@ function DiscordBot(token = null){
                         if(args.length > 1 && !isNumber(parseInt(args[0]))){
                             msg = '';
                             count = args[0];
-                            for (let i = 0; i < args.length; i++) {
-                                msg += ' '+args[i];
+                            for (let arg of args.length) {
+                                msg += ' '+arg;
                             }
                         }
 
