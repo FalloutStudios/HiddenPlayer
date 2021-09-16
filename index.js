@@ -892,7 +892,7 @@ function DiscordBot(token = null){
                 if(!get) found = false;
                 
                 //check for action name
-                for (const i of actions) {
+                for (let i=0; i < actions.length; i++;) {
                     if(removeMensions(message).toLowerCase().startsWith(actions[i].toLowerCase())){
                         found = true;
 
@@ -1169,14 +1169,14 @@ function DiscordBot(token = null){
                     let msg = '';
 
                     if(AdminPerms) {
-                        for (const i of args) {
+                        for (let i = 0; i < args.lenght; i++) {
                             msg += ' '+args[i];
                         }
 
                         if(args.length > 1 && !isNumber(parseInt(args[0]))){
                             msg = '';
                             count = args[0];
-                            for (let i = 1; i < args.length; i++) {
+                            for (let i = 0; i < args.length; i++) {
                                 msg += ' '+args[i];
                             }
                         }
