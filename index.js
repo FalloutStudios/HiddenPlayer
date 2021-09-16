@@ -239,9 +239,8 @@ function loop(num = 0, str = ''){
     return returnVal;
 }
 function replaceAll(str, find, replace) {
-    if(str != null){
-        return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
-    }
+    if(str == null) { return; }
+    return str.toString().replace(new RegExp(escapeRegExp(find), 'g'), replace);
 }
 function randomInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
