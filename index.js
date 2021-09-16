@@ -840,8 +840,8 @@ function DiscordBot(token = null){
                 string = trimUnicode(string.toLowerCase());
 
                 //start finding
-                for (let i = 0; i < config.discord.prefix.length; i++) {
-                    if (string.indexOf(' '+config['discord']['prefix'][i].toLowerCase()+' ') > -1 || string.startsWith(config['discord']['prefix'][i].toLowerCase()+' ') || string.endsWith(' '+config['discord']['prefix'][i].toLowerCase()) || config['discord']['prefix'][i].toLowerCase() == string){
+                for (let val of config.discord.prefix) {
+                    if (string.indexOf(' '+val.toLowerCase()+' ') > -1 || string.startsWith(val.toLowerCase()+' ') || string.endsWith(' '+val.toLowerCase()) || val.toLowerCase() == string){
                         return true;
                     }
                 }
@@ -1169,7 +1169,7 @@ function DiscordBot(token = null){
                     let msg = '';
 
                     if(AdminPerms) {
-                        for (let i = 0; i < args.lenght; i++) {
+                        for (let i = 1; i < args.lenght; i++) {
                             msg += ' '+args[i];
                         }
 
