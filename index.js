@@ -1172,9 +1172,10 @@ function DiscordBot(token = null){
                             msg += ' '+ val;
                         }
 
-                        if(args.length > 1 && !isNumber(parseInt(args[0]))){
+                        console.log(`number: `+isNumber(parseInt(args[0])) + '; lenght:' + args.length);
+                        if(args.length > 1 && isNumber(parseInt(args[0]))){
                             msg = '';
-                            count = args[0];
+                            count = parseInt(args[0]);
                             for (let i = 1; i < args.lenght; i++) {
                                 msg += ' '+args[i];
                             }
@@ -1189,7 +1190,7 @@ function DiscordBot(token = null){
                                 if(msg != null && msg != ''){
                                     if(!config['discord']['spam']['player_ping'] && !message.mentions.users.size && !message.mentions.roles.size  && !message.mentions.everyone || config['discord']['spam']['player_ping']){
                                         for (let i=0; i < count; i++){
-                                            message.channel.send('`spam:` '+msg);
+                                            message.channel.send(messages['discord_bot']['spam']['prefix']+msg);
                                         }
                                     } else{
                                         message.reply(messages['discord_bot']['spam']['no_ping']).then(msg => {
