@@ -205,31 +205,33 @@ function inlineInteractions(){
         case (config['player']['enabled'] && config['server']['port'] == null || config['player']['enabled'] && config['server']['port'] == ''):
             config['server']['port'] = prompt("Enter Server Port (Enter to use default) >>> ");
         
-            if(!isNumber(config['server']['port'])){
+            if(!isNumber(parseInt(config['server']['port']))){
                 config['server']['port'] = null;
             }
         break;
     }
 }
 function customResponse(message = null, get = true, source = "minecraft") {
-    if(message == null) {return true;}
+    if(message == null) {return;}
     message = trimUnicode(message).toLowerCase();
 
-    if(!Object.keys(messageResponseFile[source]).includes(message)) {return true;}
+    if(!Object.keys(messageResponseFile[source]).includes(message)) {return;}
 
     if(config['player']['name'] != null){
         message = replaceAll(message, config['player']['name'].toLowerCase(), "").trim();
     }
 
-    if(isArray(messageResponseFile[source][message]) && messageResponseFile[source][message].length > 0 || typeof messageResponseFile[source][message] == 'string' &&  messageResponseFile[message] != ''){
-        if(!get) { return true; }
+    if(messageResponseFile[source][message].isArray()) {
+        if(get) {return true;}
 
-        if(isArray(messageResponseFile[source][message])) {
-            return messageResponseFile[source][message][Math.floor(Math.random() * Object.keys(messageResponseFile[source][message]).length)];
-        } else if (typeof messageResponseFile[source][message] == 'string') {
-            return messageResponseFile[source][message];
-        }
+        return messageResponseFile[source][message][Math.floor(Math.random() * Object.keys(messageResponseFile[source][message]).length)];
+    } else if (typeof messageResponseFile[source][message] == 'string' || isNumber(parseInt(messageResponseFile[source][message]))) {
+        if(get) {return true;}
+
+        return messageResponseFile[source][message];
     }
+
+    return false;
 }
 function loop(num = 0, str = ''){
     var returnVal = '';
@@ -270,9 +272,6 @@ function escapeRegExp(string) {
 }
 function isNumber(n){
     return !isNaN(parseFloat(n)) && isFinite(n);
-}
-function isArray(obj){
-    return Object.prototype.toString.call(obj) === '[object Array]' ;
 }
 
 //Main Functions
@@ -1169,15 +1168,15 @@ function DiscordBot(token = null){
                     let msg = '';
 
                     if(AdminPerms) {
-                        for (let i = 1; i < args.lenght; i++) {
-                            msg += ' '+args[i];
+                        for (let val of args.length) {
+                            msg += ' '+ val;
                         }
 
                         if(args.length > 1 && !isNumber(parseInt(args[0]))){
                             msg = '';
                             count = args[0];
-                            for (let arg of args.length) {
-                                msg += ' '+arg;
+                            for (let i = 1; i < args.lenght; i++) {
+                                msg += ' '+args[i];
                             }
                         }
 
@@ -1193,27 +1192,27 @@ function DiscordBot(token = null){
                                             message.channel.send('`spam:` '+msg);
                                         }
                                     } else{
-                                        message.reply(`Pings are disabled in spam command :no_entry_sign:`).then(msg => {
+                                        message.reply(config['discord_bot']['spam']['no_ping']).then(msg => {
                                             setTimeout(() => { msg.delete(); message.delete() }, 5000);
                                         });
                                     }
                                 } else{
-                                    message.reply(`Provide spam message :no_entry_sign:`).then(msg => {
+                                    message.reply(config['discord_bot']['spam']['empty']).then(msg => {
                                         setTimeout(() => { msg.delete(); message.delete() }, 5000);
                                     });
                                 }
                             } else {
-                                message.reply(`Spam command is disabled in this channel :no_entry_sign:`).then(msg => {
+                                message.reply(messages['discord_bot']['command_disabled']).then(msg => {
                                     setTimeout(() => { msg.delete(); message.delete() }, 5000);
                                 });
                             }
                         } else{
-                            message.reply(`Spam chat count is too small or too large :no_entry_sign:`).then(msg => {
+                            message.reply(messages['discord_bot']['spam']['invalid_lenght']).then(msg => {
                                 setTimeout(() => { msg.delete(); message.delete() }, 5000);
                             });
                         }
                     } else{
-                        message.reply(`This command is only for Admins :no_entry_sign:`).then(msg => {
+                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(msg => {
                             setTimeout(() => { msg.delete(); message.delete() }, 5000);
                         });
                     }

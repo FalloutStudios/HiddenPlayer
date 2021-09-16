@@ -45,13 +45,18 @@ discord_bot:
   message_sent: Discord Message from
   message_received: Discord Message
   command_execute: Executed Discord bot command
+  command_disabled: 'command disabled :no_entry_sign:'
   reloading: Reloading config files...
   reload_complete: Reload Successful
   deathcount: I died %count% in game <:HiddenPlayer:854320612565450762>
   chats:
-    command_no_perm: You don't have permission to do that
+    command_no_perm: 'You don''t have permission to do that :no_entry_sign:'
     reloaded: ":white_check_mark: Config Reloaded!"
     reload_failed: ":no_entry_sign: Failed to reload config!"
+  spam:
+    invalid_lenght: 'Spam chat count is too small or too large :no_entry_sign:'
+    empty: 'Provide spam message :no_entry_sign:'
+    no_ping: 'Pings are disabled in spam command :no_entry_sign:'
 database:
   connecting: Connecting to database...
   disabled: Database disabled!

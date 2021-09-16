@@ -60,8 +60,8 @@ discord:
   presence:
     enable: true # Enable Discord bot status
     status: dnd # Bot status ( online, idle, dnd )
-    type: PLAYING # Bot activity ( PLAYING, LISTENING, WATCHING, STREAMING )
-    name: Minecraft # Bot activity name
+    type: LISTENING # Bot activity ( PLAYING, LISTENING, WATCHING, STREAMING )
+    name: '>help' # Bot activity name
     url: https://minecraft.net # Bot activity url
   
   # Bot on message call prefixes
