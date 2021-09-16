@@ -10,7 +10,7 @@ Simple Minecraft player bot and and Discord bot.
 
 If you haven't `node.js` installed yet you can download it here (**requires Node 16.6.x or higher**): https://nodejs.org/
 
-This is my practice project.
+### This is my practice project. :)
 
 ## config/config.yml
 
