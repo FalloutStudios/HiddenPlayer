@@ -54,7 +54,7 @@ discord:
   enabled: true
   
   # Discord bot token
-  token: ODU0MjMwMzY2MDg4MjAwMjMz.YMg6Bg.vn3vTzlY8CNO5t6FNAWyeZf9UH8
+  token:
   
   # Discord bot status
   presence:
@@ -69,23 +69,29 @@ discord:
   - hiddenplayer
   - hidden
   
-  command-prefix: ">" # Bot command prefix
+  command-prefix: "." # Bot command prefix
 
   # Allow version commad
-  version-command: true
+  version-command: 
+    enabled: true
+    admin-only: true
   
   # Embed Command
   embed:
     enabled: true # Enable Embed
+    admin-only: true
     color: "#0099ff" # Embed Color
   
   # Enable !send command
-  send-command: true
+  send-command: 
+    enabled: true
+    admin-only: true
   
   # Enable !spam (count) <Message> command
   spam:
     enabled: true # Enable spam command
-    player_ping: true # Allow pings in spam messages
+    admin-only: true
+    player_ping: false # Allow pings in spam messages
     max: 100 # Spam limit 
 
     # Disabled channels
@@ -95,24 +101,29 @@ discord:
   # Show player death count on Discord via command !deathcount
   deathcount:
     enabled: true
+    admin-only: false
   
   # Enable random quotes message call
   motivate:
     enabled: true
+    admin-only: false
     src: config/motivate.yml
   
   # Enable random facts message call
   facts:
     enabled: true
+    admin-only: false
     src: config/facts.yml
   # Enable random gifs emote message call
   emotes:
     enabled: true
+    admin-only: false
     src: config/emotes.yml
 
   # Enable random reaction gifs message call
   react:
     enabled: true
+    admin-only: false
     src: config/reacts.yml
 
   # Ignored channels
