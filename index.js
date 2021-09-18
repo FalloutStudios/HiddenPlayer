@@ -957,9 +957,9 @@ function DiscordBot(token = null){
                             if(taggedUser != user_id){
 
                                 if (!message.mentions.users.size)
-                                    message.channel.send(removeMensions(lowerMessage).substr(9)+' Would you like me to tp '+mension+' to you in real life :smirk:');
+                                    message.channel.send(removeMensions(lowerMessage).substr(9)+' Would you like me to tp '+mension+' to you in real life?');
                                 else
-                                    message.channel.send(pinged+' Would you like me to tp '+mension+' to you in real life :smirk:');
+                                    message.channel.send(pinged+' Would you like me to tp '+mension+' to you in real life?');
                     
                             } else{
 
@@ -987,80 +987,98 @@ function DiscordBot(token = null){
                         message.channel.send('It\'s empty you know :confused:');
                     }
                 } else if (findName(rawMessage) && actionFind(lowerMessage) && config['discord']['emotes']['enabled']) {
-                    if(message.mentions.users.size){
-                        let emoteName = actionFind(lowerMessage, true);
-                        let emote = emotes[emoteName];
+                    if(AdminPerms || !AdminPerms && !config['discord']['emotes']['admin-only']){
+                        if(message.mentions.users.size){
+                            let emoteName = actionFind(lowerMessage, true);
+                            let emote = emotes[emoteName];
 
-                        let selfPing = false;
-                        if(taggedUser == user_id) selfPing = true;
+                            let selfPing = false;
+                            if(taggedUser == user_id) selfPing = true;
 
-                        let phrase = null;
-                        let RandomImage = null;
-                        
-                        if(selfPing){
-                            if(randomResponse == 0 && emote['selfAllow']){
-                                phrase = emote['sentences'][Math.floor(Math.random() * Object.keys(emote.sentences).length)];
+                            let phrase = null;
+                            let RandomImage = null;
+                            
+                            if(selfPing){
+                                if(randomResponse == 0 && emote['selfAllow']){
+                                    phrase = emote['sentences'][Math.floor(Math.random() * Object.keys(emote.sentences).length)];
+                                } else{
+                                    phrase = emote['selfPing'][Math.floor(Math.random() * Object.keys(emote.selfPing).length)];
+                                }
                             } else{
-                                phrase = emote['selfPing'][Math.floor(Math.random() * Object.keys(emote.selfPing).length)];
+                                phrase = emote['sentences'][Math.floor(Math.random() * Object.keys(emote.sentences).length)];
                             }
+
+                            phrase = phrase.replace(/%author%/g, author).replace(/%victim%/g, taggedUsername);
+
+                            if(!selfPing){
+                                RandomImage = emote['sources'][Math.floor(Math.random() * Object.keys(emote.sources).length)];
+                            }
+
+                            if (RandomImage != null) {
+                                var embed = new Discord.MessageEmbed()
+                                    .setColor(config['discord']['embed']['color'])
+                                    .setAuthor(phrase, userAvatar)
+                                    .setImage(RandomImage);
+
+                                message.channel.send({ embeds: [embed] });
+                                return true;
+                            }
+                            message.channel.send(phrase);
                         } else{
-                            phrase = emote['sentences'][Math.floor(Math.random() * Object.keys(emote.sentences).length)];
+                            message.reply(':no_entry_sign: Invalid arguments! type `>help` for help').then(sentMessage => {
+                                setTimeout( () => sentMessage.delete(), 5000);
+                            });
                         }
-
-                        phrase = phrase.replace(/%author%/g, author).replace(/%victim%/g, taggedUsername);
-
-                        if(!selfPing){
-                            RandomImage = emote['sources'][Math.floor(Math.random() * Object.keys(emote.sources).length)];
-                        }
-
-                        if (RandomImage != null) {
-                            var embed = new Discord.MessageEmbed()
-                                .setColor(config['discord']['embed']['color'])
-                                .setAuthor(phrase, userAvatar)
-                                .setImage(RandomImage);
-
-                            message.channel.send({ embeds: [embed] });
-                            return true;
-                        }
-                        message.channel.send(phrase);
-                    } else{
-                        message.reply(':no_entry_sign: Invalid arguments! type `>help emotes` for help').then(sentMessage => {
-                            setTimeout( () => sentMessage.delete(), 5000);
+                    } else {
+                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
+                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
                         });
                     }
                 } else if (findName(rawMessage) && removeMensions(lowerMessage).substr(0,8) == 'motivate' || findName(rawMessage) && removeMensions(lowerMessage).substr(0,11) == 'motivate me' || findName(rawMessage) && removeMensions(lowerMessage).substr(0,10) == 'motivation' || findName(rawMessage) && removeMensions(lowerMessage).substr(0,5) == 'quote' || removeMensions(lowerMessage).substr(0,11) == 'motivate me') {
                     if(config['discord']['motivate']['enabled']){
-                        let randomKey = Math.floor(Math.random() * Object.keys(motivations).length);
-                        
-                        let msg = Object.keys(motivations)[randomKey];
-                        let author = motivations[msg]['author'];
+                        if(AdminPerms || !AdminPerms && !config['discord']['motivate']['admin-only']){
+                            let randomKey = Math.floor(Math.random() * Object.keys(motivations).length);
+                            
+                            let msg = Object.keys(motivations)[randomKey];
+                            let author = motivations[msg]['author'];
 
-                        if(author == null && author == ''){
-                            author = 'Unknown';
+                            if(author == null && author == ''){
+                                author = 'Unknown';
+                            }
+
+                            var embed = new Discord.MessageEmbed()
+                                .setColor(config['discord']['embed']['color'])
+                                .setTitle(`By: `+author)
+                                .setDescription('> '+msg);
+                            message.channel.send({ embeds: [embed] });
+                        } else {
+                            message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
+                                setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                            });
                         }
-
-                        var embed = new Discord.MessageEmbed()
-                            .setColor(config['discord']['embed']['color'])
-                            .setTitle(`By: `+author)
-                            .setDescription('> '+msg);
-                        message.channel.send({ embeds: [embed] });
                     }
                 } else if (findName(rawMessage) && removeMensions(lowerMessage).substr(0,11).replace('tell','').replace('me','').trim() == 'random fact') {
                     if(config['discord']['facts']['enabled']){
-                        let randomKey = Math.floor(Math.random() * Object.keys(factslist).length);
+                        if(AdminPerms || !AdminPerms && !config['discord']['facts']['admin-only']){
+                            let randomKey = Math.floor(Math.random() * Object.keys(factslist).length);
 
-                        let msg = Object.keys(factslist)[randomKey];
-                        let source = factslist[msg]['source'];
+                            let msg = Object.keys(factslist)[randomKey];
+                            let source = factslist[msg]['source'];
 
-                        if(source == null || source == ''){
-                            source = 'Unknown';
+                            if(source == null || source == ''){
+                                source = 'Unknown';
+                            }
+
+                            var embed = new Discord.MessageEmbed()
+                                .setColor(config['discord']['embed']['color'])
+                                .setTitle(msg)
+                                .setDescription('`Source: '+source+'`');
+                            message.channel.send({ embeds: [embed] });
+                        } else {
+                            message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
+                                setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                            });
                         }
-
-                        var embed = new Discord.MessageEmbed()
-                            .setColor(config['discord']['embed']['color'])
-                            .setTitle(msg)
-                            .setDescription('`Source: '+source+'`');
-                        message.channel.send({ embeds: [embed] });
                     }
                 } else if (customResponse(rawMessage, false, "discord")) {
                     let reply = customResponse(rawMessage, true, "discord");
@@ -1178,7 +1196,7 @@ function DiscordBot(token = null){
                     let count = 10;
                     let msg = '';
 
-                    if(!AdminPerms || AdminPerms && config['discord']['spam']['admin-only']){
+                    if(AdminPerms || !AdminPerms && !config['discord']['spam']['admin-only']){
                         for (const value of args) {
                             msg += ' ' + value;
                         }
@@ -1221,6 +1239,10 @@ function DiscordBot(token = null){
                                     });
                                 }
                         }
+                    } else {
+                        message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
+                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                        });
                     }
 
                 } else if (command == 'smap') {
