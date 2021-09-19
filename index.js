@@ -1111,7 +1111,7 @@ function DiscordBot(token = null){
                         message.channel.send('I don\'t help anyone :expressionless:');
                     
                 } else if (command == 'version' && config['discord']['version-command']['enabled']) {
-                    if(!AdminPerms || AdminPerms && config['discord']['version-command']['admin-only']){
+                    if(AdminPerms || !AdminPerms && !config['discord']['version-command']['admin-only']){
                         var embed = new Discord.MessageEmbed()
                             .setColor(config['discord']['embed']['color'])
                             .setAuthor(botName, botAvatar)
@@ -1145,7 +1145,7 @@ function DiscordBot(token = null){
                         message.channel.send({ embeds: [embed] });
 
                 } else if (command == 'deathcount' && config['discord']['deathcount']['enabled'] && fs.existsSync(config['player']['countdeaths']['src'])) {
-                    if(!AdminPerms || AdminPerms && config['discord']['deathcount']['admin-only']){
+                    if(AdminPerms || !AdminPerms && !config['discord']['deathcount']['admin-only']){
                         let readDeathcountFile = parseInt(fs.readFileSync(config['player']['countdeaths']['src']));
                         let count = 0;
                         if(typeof readDeathcountFile == 'null' || typeof readDeathcountFile == 'undefined' || !isNumber(readDeathcountFile)){
@@ -1163,7 +1163,7 @@ function DiscordBot(token = null){
 
                     message.channel.send(replaceAll(messages['discord_bot']['deathcount'], "%count%", count));
                 } else if (command == 'embed' && config['discord']['embed']['enabled']) {
-                    if(!AdminPerms || AdminPerms && config['discord']['embed']['admin-only']) {
+                    if(AdminPerms || !AdminPerms && !config['discord']['embed']['admin-only']) {
                         message.delete();
 
                         let title = rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).split(" ",1)[0];
@@ -1183,7 +1183,7 @@ function DiscordBot(token = null){
                         });
                     }
                 } else if (command == 'send' && config['discord']['send-command']['enabled']) {
-                    if(!AdminPerms || AdminPerms && config['discord']['send-command']['admin-only']) {
+                    if(AdminPerms || !AdminPerms && !config['discord']['send-command']['admin-only']) {
                         message.delete();
                         message.channel.send(rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).trim());
                     } else {
@@ -1248,7 +1248,7 @@ function DiscordBot(token = null){
                 } else if (command == 'smap') {
                     message.reply("Did you mean `>spam` :thinking:");
                 } else if (command == 'exembed') {
-                    if(!AdminPerms || AdminPerms && config['discord']['embed']['admin-only']) {
+                    if(AdminPerms || !AdminPerms && !config['discord']['embed']['admin-only']) {
                         var embed = new Discord.MessageEmbed()
                             .setColor(config['discord']['embed']['color'])
                             .setTitle('Some title')
