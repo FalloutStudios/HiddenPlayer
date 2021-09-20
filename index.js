@@ -273,6 +273,23 @@ function escapeRegExp(string) {
 function isNumber(n){
     return !isNaN(parseFloat(n)) && isFinite(n);
 }
+function splitCommand(text = '', removeQuotations = false){
+    let regex = new RegExp("(?<=^[^\"]*(?:\"[^\"]*\"[^\"]*)*) (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+
+    text = text.trim();
+    text = escapeRegExp(text);
+    text = text.split(regex);
+
+    if(removeQuotations){
+        let newText = [];
+        for (const value of text) {
+            newText.push(replaceAll(value, '"', ''));
+        }
+        text = newText;
+    }
+
+    return text;
+}
 
 //Main Functions
 function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
