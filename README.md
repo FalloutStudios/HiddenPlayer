@@ -39,12 +39,6 @@ player:
   # Minecraft version (Will use supported latest version when empty)
   version:
 
-  # Web viewer
-  # Still not implemented
-  Viewer:
-    enabled: false
-    port: 300
-
   # Log death counts
   countdeaths:
     enabled: true # Enable death count logging
@@ -62,7 +56,7 @@ player:
     restart: true # Enable !restart
   
     # Admins for Player commands
-  admin: ['GhexterCortes']
+  admin: []
 
   # Player chat delay
   chatDelay: 500
@@ -79,14 +73,14 @@ discord:
   enabled: true
   
   # Discord bot token
-  token: 
+  token:
   
   # Discord bot status
   presence:
     enable: true # Enable Discord bot status
     status: dnd # Bot status ( online, idle, dnd )
-    type: PLAYING # Bot activity ( PLAYING, LISTENING, WATCHING, STREAMING )
-    name: Minecraft # Bot activity name
+    type: LISTENING # Bot activity ( PLAYING, LISTENING, WATCHING, STREAMING )
+    name: '>help' # Bot activity name
     url: https://minecraft.net # Bot activity url
   
   # Bot on message call prefixes
@@ -95,19 +89,28 @@ discord:
   - hidden
   
   command-prefix: ">" # Bot command prefix
+
+  # Allow version commad
+  version-command: 
+    enabled: true
+    admin-only: true
   
   # Embed Command
   embed:
     enabled: true # Enable Embed
+    admin-only: true
     color: "#0099ff" # Embed Color
   
   # Enable !send command
-  send-command: true
+  send-command: 
+    enabled: true
+    admin-only: true
   
   # Enable !spam (count) <Message> command
   spam:
     enabled: true # Enable spam command
-    player_ping: true # Allow pings in spam messages
+    admin-only: true
+    player_ping: false # Allow pings in spam messages
     max: 100 # Spam limit 
 
     # Disabled channels
@@ -116,25 +119,30 @@ discord:
   
   # Show player death count on Discord via command !deathcount
   deathcount:
-    enabled: false
+    enabled: true
+    admin-only: false
   
   # Enable random quotes message call
   motivate:
-    enabled: false
+    enabled: true
+    admin-only: false
     src: config/motivate.yml
   
   # Enable random facts message call
   facts:
-    enabled: false
+    enabled: true
+    admin-only: false
     src: config/facts.yml
   # Enable random gifs emote message call
   emotes:
     enabled: true
+    admin-only: false
     src: config/emotes.yml
 
   # Enable random reaction gifs message call
   react:
     enabled: true
+    admin-only: false
     src: config/reacts.yml
 
   # Ignored channels
@@ -169,7 +177,7 @@ language: config/language.yml # Language file
 responses: config/response.yml # Custom reponse file
 
 # Config version (Please don't modify)
-version: 1.8.5
+version: 1.8.6
 ```
 ### Discord not working?
 
