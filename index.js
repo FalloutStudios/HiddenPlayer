@@ -814,19 +814,22 @@ function DiscordBot(token = null){
             if(author.bot || botUser_id == user_id) { return true; }
 
             //ignored channels
-            var ignored_channels = JSON.stringify(Object.keys(config['discord']['ignored_channels']));
+            var ignored_channels = config['discord']['ignored_channels'];
             var ignored_to_whitelist = config['discord']['ignored_to_whitelist'];
 
             //ignored users
-            var ignored_users = JSON.stringify(Object.keys(config['discord']['ignored_users']));
+            var ignored_users = config['discord']['ignored_users'];
 
             //Check discord ignore list
             if(ignored_to_whitelist && !ignored_channels.includes(channelID.toString()) || !ignored_to_whitelist && ignored_channels.includes(channelID.toString())){
                 return true;
             }
+            if(ignored_to_whitelist && !ignored_channels.includes(parseInt(channelID)) || !ignored_to_whitelist && ignored_channels.includes(parseInt(channelID))){
+                return true;
+            }
 
             //Check player ignore list
-            if(ignored_users.includes(user_id.toString())) { return true; }
+            if(ignored_users.includes(user_id.toString()) || ignored_users.includes(parseInt(user_id))) { return true; }
 
             //bot utility functions
             //find bot name in message
