@@ -1184,8 +1184,6 @@ function DiscordBot(token = null){
                     if(AdminPerms || !AdminPerms && !config['discord']['embed']['admin-only']) {
                         message.delete();
 
-                        console.log(args);
-
                         let title = args[Object.keys(args)[0]];
                         let content = args[Object.keys(args)[1]];
 
