@@ -814,11 +814,11 @@ function DiscordBot(token = null){
             if(author.bot || botUser_id == user_id) { return true; }
 
             //ignored channels
-            var ignored_channels = config['discord']['ignored_channels'];
+            var ignored_channels = JSON.stringify(Object.keys(config['discord']['ignored_channels']));
             var ignored_to_whitelist = config['discord']['ignored_to_whitelist'];
 
             //ignored users
-            var ignored_users = config['discord']['ignored_users'];
+            var ignored_users = JSON.stringify(Object.keys(config['discord']['ignored_users']));
 
             //Check discord ignore list
             if(ignored_to_whitelist && !ignored_channels.includes(channelID.toString()) || !ignored_to_whitelist && ignored_channels.includes(channelID.toString())){
