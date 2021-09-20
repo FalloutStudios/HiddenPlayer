@@ -867,7 +867,6 @@ function DiscordBot(token = null){
                 //return result
                 return false;
             }
-
             //remove bot mensions
             function removeMensions (string) {
                 //return if null
@@ -891,7 +890,6 @@ function DiscordBot(token = null){
                 //return string
                 return string;
             }
-
             //find action command in message
             function actionFind (message = '', get = false){
                 //return if null
@@ -1113,7 +1111,7 @@ function DiscordBot(token = null){
                 }
             } else {
                 //get command name and args
-                let args = rawMessage.slice(config['discord']['command-prefix'].length).trim().split(/ +/);
+                let args = splitCommand(rawMessage.slice(config['discord']['command-prefix'].length).trim(), true);
                 let command = args.shift().toLowerCase().trim();
 
                 if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Discord Bot] "+messages['discord_bot']['command_execute']+": "+command+" by "+author);
@@ -1186,9 +1184,10 @@ function DiscordBot(token = null){
                     if(AdminPerms || !AdminPerms && !config['discord']['embed']['admin-only']) {
                         message.delete();
 
-                        let title = rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).split(" ",1)[0];
-                            title = replaceAll(title,"_"," ").trim();
-                        let content = rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).slice(title.length);
+                        console.log(args);
+
+                        let title = args[Object.keys(args)[0]];
+                        let content = args[Object.keys(args)[1]];
 
                         var embed = new Discord.MessageEmbed()
                             .setColor(config['discord']['embed']['color'])
