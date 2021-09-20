@@ -1,6 +1,5 @@
 kill:
   name: kill
-  pastTense: killed
   selfAllow: false
   sentences:
   - "%author% killed %victim%'s butt"
@@ -26,7 +25,6 @@ kill:
   - https://media1.tenor.com/images/65eb11d03b956948b6e52f4b1875129f/tenor.gif
 hug:
   name: hug
-  pastTense: hugged
   selfAllow: false
   sentences:
   - "%author% don't squish %victim% hard!"
@@ -50,7 +48,6 @@ hug:
   - https://media1.tenor.com/images/7822479112cf7625937e8c56ff5824b4/tenor.gif
 cuddle:
   name: cuddle
-  pastTense: cuddled
   selfAllow: false
   sentences:
   - "%author% cuddles %victim%"
@@ -75,7 +72,6 @@ cuddle:
   - https://media1.tenor.com/images/e07473d3cf372dbc24c760527740b85e/tenor.gif
 kiss:
   name: kiss
-  pastTense: kissed
   selfAllow: false
   sentences:
   - "%author% kisses %victim%"
@@ -104,7 +100,6 @@ kiss:
   - https://media1.tenor.com/images/8cab4f4c73547d077c56066461c40a5e/tenor.gif
 pat:
   name: pat
-  pastTense: patted
   selfAllow: false
   sentences:
   - "%author% pets %victim%! How sweet <3"
@@ -127,7 +122,6 @@ pat:
   - https://media1.tenor.com/images/116fe7ede5b7976920fac3bf8067d42b/tenor.gif
 lick:
   name: lick
-  pastTense: licked
   selfAllow: false
   sentences:
   - "%author% licks %victim%"
@@ -140,7 +134,6 @@ lick:
   - https://media1.tenor.com/images/5f73f2a7b302a3800b3613095f8a5c40/tenor.gif
 slap:
   name: slap
-  pastTense: slapped
   selfAllow: false
   sentences:
   - "%author% slaps %victim%'s face! Ouch \U0001F629"
@@ -160,7 +153,6 @@ slap:
   - https://media1.tenor.com/images/37c72d1a4a4ad8108897642f7bebc4be/tenor.gif
 punch:
   name: punch
-  pastTense: punched
   selfAllow: false
   sentences:
   - "%author% gives %victim% a punch! \U0001F44A"
@@ -181,7 +173,6 @@ punch:
   - https://media1.tenor.com/images/8789543a04274a720b13b1af69a25867/tenor.gif
 bite:
   name: bite
-  pastTense: bitten
   selfAllow: false
   sentences:
   - ''
@@ -190,7 +181,6 @@ bite:
   sources: []
 wave:
   name: wave
-  pastTense: waves
   selfAllow: false
   sentences:
   - ''
@@ -199,7 +189,6 @@ wave:
   sources: []
 greet:
   name: greet
-  pastTense: greets
   selfAllow: false
   sentences:
   - ''
@@ -208,7 +197,6 @@ greet:
   sources: []
 choke:
   name: choke
-  pastTense: chokes
   selfAllow: false
   sentences:
   - ''
