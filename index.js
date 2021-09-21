@@ -288,6 +288,17 @@ function splitCommand(text = '', removeQuotations = false){
 
     return text;
 }
+function makeSentence(object = [], skip = 0) {
+    if(typeof object === 'object' && Object.keys(object).length > 0) {
+        let outputText = '';
+        for (let i = 0; i < Object.keys(object).length; i++) {
+            if(i < skip) { continue; }
+
+            outputText += ' ' + object[Object.keys(object)[i]];
+        }
+        return outputText.trim();
+    }
+}
 
 //Main Functions
 function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
