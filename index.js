@@ -10,7 +10,6 @@ const Discord = require('discord.js');
 const commander = require('commander');
 const yml = require('yaml');
 const fs = require('fs');
-const mysql = require('mysql');
 
 const program = new commander.Command;
     
@@ -150,7 +149,6 @@ function parse(){
 
     if(success){
         //restart all proccesses
-        connectDB();
         if(config['discord']['enabled']) DiscordBot(config['discord']['token']);
         if(config['player']['enabled']) newBot(config['player']['name'], config['server']['ip'], config['server']['port'], config['server']['version']);
     }
@@ -540,8 +538,6 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         if (lastaction != null) bot.setControlState(lastaction,false);
         bot.deactivateItem();
         moving = false;
-        
-        // Hmmmmm... so basically database is useless wtf
     });
 
     bot.on('death',function() {
@@ -1338,40 +1334,6 @@ function DiscordBot(token = null){
             if(config['debug']['discord_chats']) {
                 console.log("[Log - Discord Bot] "+messages['discord_bot']['message_received']+": "+limitText(message.content));
             }
-        });
-    });
-}
-function connectDB(){
-    // This part is useless
-    if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Discord Bot] '+messages['database']['connecting']);
-
-    //return if database was disabled
-    if(!config['database']['enabled']){
-        if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Discord Bot] '+messages['database']['disabled']);
-        return true;
-    }
-
-    //execute connection
-    conn = mysql.createConnection({
-        host: config['database']['host'],
-        user: config['database']['user'],
-        password: config['database']['pass'],
-        database: config['database']['database']
-    });
-
-    //connect to database
-    conn.connect(function(error) {
-        //on error return
-        if (error) {
-            console.error('\x1b[31m%s\x1b[0m', '[Error - Database] '+messages['database']['connect_failed']);
-            return true;
-        }
-
-        if(debug) console.log('\x1b[32m%s\x1b[0m', '[Log - Database] '+messages['database']['connected']+' name: '+db_name+'; host: '+db_host+'; pass: '+db_pass+'; user: '+db_user);
-
-        //log connection
-        conn.query("INSERT INTO `connection` VALUES('','"+Date.now()+"')", function(){
-            if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Database] '+messages['database']['connection_logged']);
         });
     });
 }

@@ -137,14 +137,6 @@ discord:
   # make sure the ignored user id is valid
   ignored_users: []
 
-# Database Configuration (Still unused)
-database:
-  enabled: false # Database enabled
-  host: 127.0.0.1 # Database host
-  user: root # Database username
-  pass: '' # Database password
-  database: bot # Database name
-
 # Debugging log
 debug:
   enabled: true  # Enable logs
