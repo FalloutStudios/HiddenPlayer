@@ -1192,7 +1192,7 @@ function DiscordBot(token = null){
                         message.delete();
 
                         let title = args[Object.keys(args)[0]];
-                        let content = args[Object.keys(args)[1]];
+                        let content = makeSentence(args, 1);
 
                         var embed = new Discord.MessageEmbed()
                             .setColor(config['discord']['embed']['color'])
