@@ -934,49 +934,7 @@ function DiscordBot(token = null){
                 if(config['debug']['discord_chats']) console.log("[Log - Discord Bot] "+messages['discord_bot']['message_sent']+": "+author);
                 //discord msg
 
-                if(findName(rawMessage) && removeMensions(lowerMessage) == 'hi' || lowerMessage == 'hi guys'){
-                    
-                    if (randomResponse == 0)
-                        message.channel.send('Hello, '+mension);
-                    else if (randomResponse == 1)
-                        message.channel.send('Hello, '+mension+'!');
-                    else if (randomResponse == 2)
-                        message.channel.send('Hello, '+mension+' :face_with_hand_over_mouth:');
-                    else if (randomResponse == 3)
-                        message.channel.send('Helloooooooooo '+mension+'!');
-                    else
-                        message.channel.send('Hello, '+mension);
-
-                } else if(findName(rawMessage) && removeMensions(lowerMessage) == 'hello' || lowerMessage.indexOf('im') > -1 && lowerMessage.indexOf('new') > -1 && lowerMessage.length <= 19 || lowerMessage.indexOf('i') > -1 && lowerMessage.indexOf('am') > -1 && lowerMessage.indexOf('new') > -1 && lowerMessage.length <= 21){
-                    if(lowerMessage.indexOf('im') > -1 && lowerMessage.indexOf('new') > -1){
-                        
-                        if(randomResponse == 0)
-                            message.channel.send('We hope '+mension+' brought us pizza :smiley:');
-                        else if (randomResponse == 1)
-                            message.channel.send(mension+' is new!');
-                        else if (randomResponse == 2)
-                            message.channel.send('Hello '+mension+', Good luck with our communities :)');
-                        else if (randomResponse == 3)
-                            message.channel.send('Give '+mension+' some food! :pizza:');
-                        else if (randomResponse == 4)
-                            message.channel.send(mension+' Because you\'re new tell us something secret <:666:853195979461361684>');
-                        else
-                            message.channel.send('I think we have a new born baby. '+mension);
-                        
-                    } else{
-                        
-                        if(randomResponse == 0)
-                            message.channel.send('Hi, '+mension);
-                        else if(randomResponse == 1)
-                            message.channel.send('Sup '+mension+'!');
-                        else if(randomResponse == 2)
-                            message.channel.send('Hi, '+mension+':wave:');
-                        else if(randomResponse == 3)
-                            message.channel.send('Ohh! Hi '+mension);
-                        else
-                            message.channel.send('Hi, '+mension);
-                    }
-                } else if (findName(rawMessage) && removeMensions(lowerMessage).substr(0, 9) == 'tp me to ') {
+                if (findName(rawMessage) && removeMensions(lowerMessage).substr(0, 9) == 'tp me to ') {
                     if(removeMensions(lowerMessage).substr(9) != ''){
                         if(taggedUser != client.user.id){
                             if(taggedUser != user_id){
@@ -1126,14 +1084,7 @@ function DiscordBot(token = null){
                 //commands
                 if (command == 'help'){
 
-                    if(randomResponse == 0)
-                        message.channel.send('Get lost :smirk:');
-                    else if (randomResponse == 1)
-                        message.channel.send('I can\'t help sorry');
-                    else if (randomResponse == 2)
-                        message.channel.send('I\'m dumb so I can\'t help :laughing:');
-                    else
-                        message.channel.send('I don\'t help anyone :expressionless:');
+                    message.channel.send("Help not available")
                     
                 } else if (command == 'version' && config['discord']['version-command']['enabled']) {
                     if(AdminPerms || !AdminPerms && !config['discord']['version-command']['admin-only']){
@@ -1152,23 +1103,9 @@ function DiscordBot(token = null){
                 } else if (command == 'me') {
                     var embed = new Discord.MessageEmbed()
                         .setColor(config['discord']['embed']['color'])
-                        .setAuthor(author, userAvatar);
+                        .setAuthor(author)
+                        .setImage(avatar);
                     message.channel.send({ embeds: [embed] });
-                } else if (command == 'you') {
-
-                    if(randomResponse == 0)
-                        message.channel.send('I don\'t give my personal info to others :disappointed:');
-                    else if(randomResponse == 1)
-                        message.channel.send('Are you a stalker?');
-                    else if (randomResponse == 2)
-                        message.channel.send('I need privacy :smirk:');
-                    else
-                        var embed = new Discord.MessageEmbed()
-                            .setColor(config['discord']['embed']['color'])
-                            .setAuthor(botName, botAvatar)
-                            .setTimestamp();
-                        message.channel.send({ embeds: [embed] });
-
                 } else if (command == 'deathcount' && config['discord']['deathcount']['enabled'] && fs.existsSync(config['player']['countdeaths']['src'])) {
                     if(AdminPerms || !AdminPerms && !config['discord']['deathcount']['admin-only']){
                         let readDeathcountFile = parseInt(fs.readFileSync(config['player']['countdeaths']['src']));
