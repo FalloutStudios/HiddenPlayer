@@ -1,8 +1,21 @@
 # Custom mincraft message response
-minecraft: []
+# %player%            -> Author's name
+# %player_lowercase%  -> Author's name in lowercase
+# %player_uppercase%  -> Author's name in uppercase
+# %bot%               -> Bot's name
+# %bot_lowercase%     -> Bot's name in lowercase
+# %bot_uppercase%     -> Bot's name in uppercase
+minecraft:
+  hello bot: "Hello %player%"
+  
 
 # Custom discord message response
-discord: []
+# %botname%           -> Bot name
+# %author%            -> Author's name
+# %author_ping%       -> Ping Author
+discord:
+  hello bot: "Hello **%author%**"
+  
 
 # Config version (Please don't modify)
-version: 1.8.6
+version: 1.8.7

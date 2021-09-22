@@ -30,12 +30,17 @@ minecraft_bot:
     command_failed: You're not allowed to execute this command!
     command_restarting: Restarting
   response:
+    # %player%            -> Author's name
+    # %player_lowercase%  -> Author's name in lowercase
+    # %player_uppercase%  -> Author's name in uppercase
+    # %bot%               -> Bot's name
+    # %bot_lowercase%     -> Bot's name in lowercase
+    # %bot_uppercase%     -> Bot's name in uppercase
     hi: Hello %player%!
     hello: Hi %player%!
     im_new: Welcome %player%
     who: I'm a bot!
-    what: Bots are players controlled by a program or artificial intellegence or AI
-      in short they're not human.
+    what: A bot is software program that performs automated, repetitive, pre-defined tasks.
     spy: No! I'm innocent!
     kill: Pls... don't
 discord_bot:
@@ -49,6 +54,7 @@ discord_bot:
   reloading: Reloading config files...
   reload_complete: Reload Successful
   deathcount: I died %count% in game <:HiddenPlayer:854320612565450762>
+  response:
   chats:
     command_no_perm: 'You don''t have permission to do that :no_entry_sign:'
     reloaded: ":white_check_mark: Config Reloaded!"
@@ -66,4 +72,4 @@ database:
   connection_logged: MySQL connection logged!
 
 # Config version (Please don't modify)
-version: 1.8.6
+version: 1.8.7
