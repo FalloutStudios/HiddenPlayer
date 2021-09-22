@@ -1014,7 +1014,10 @@ function DiscordBot(token = null){
                         }
                     } else {
                         message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
-                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                            try {
+                                    sentMessage.delete(); 
+                                    message.delete();
+                            } catch {}
                         });
                     }
                 } else if (findName(rawMessage) && removeMensions(lowerMessage).substr(0,8) == 'motivate' || findName(rawMessage) && removeMensions(lowerMessage).substr(0,11) == 'motivate me' || findName(rawMessage) && removeMensions(lowerMessage).substr(0,10) == 'motivation' || findName(rawMessage) && removeMensions(lowerMessage).substr(0,5) == 'quote' || removeMensions(lowerMessage).substr(0,11) == 'motivate me') {
@@ -1036,7 +1039,10 @@ function DiscordBot(token = null){
                             message.channel.send({ embeds: [embed] });
                         } else {
                             message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
-                                setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                                try {
+                                    sentMessage.delete(); 
+                                    message.delete();
+                                } catch {}
                             });
                         }
                     }
@@ -1059,7 +1065,10 @@ function DiscordBot(token = null){
                             message.channel.send({ embeds: [embed] });
                         } else {
                             message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
-                                setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                                try {
+                                    sentMessage.delete(); 
+                                    message.delete();
+                                } catch {}
                             });
                         }
                     }
@@ -1097,7 +1106,10 @@ function DiscordBot(token = null){
                         message.reply({ embeds: [embed] });
                     } else{
                         message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
-                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                            try {
+                                sentMessage.delete(); 
+                                message.delete();
+                            } catch {}
                         });
                     }
                 } else if (command == 'me') {
@@ -1117,7 +1129,10 @@ function DiscordBot(token = null){
                         }
                     } else{
                         message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
-                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                            try {
+                                sentMessage.delete(); 
+                                message.delete();
+                            } catch {}
                         });
                     }
 
@@ -1126,7 +1141,7 @@ function DiscordBot(token = null){
                     message.channel.send(replaceAll(messages['discord_bot']['deathcount'], "%count%", count));
                 } else if (command == 'embed' && config['discord']['embed']['enabled']) {
                     if(AdminPerms || !AdminPerms && !config['discord']['embed']['admin-only']) {
-                        message.delete();
+                        try { message.delete(); } catch {}
 
                         let title = args[Object.keys(args)[0]];
                         let content = makeSentence(args, 1);
@@ -1140,16 +1155,22 @@ function DiscordBot(token = null){
                         message.channel.send({ embeds: [embed] });
                     } else {
                         message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
-                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                            try {
+                                sentMessage.delete(); 
+                                message.delete();
+                            } catch {}
                         });
                     }
                 } else if (command == 'send' && config['discord']['send-command']['enabled']) {
                     if(AdminPerms || !AdminPerms && !config['discord']['send-command']['admin-only']) {
-                        message.delete();
+                        try { message.delete(); } catch {}
                         message.channel.send(rawMessage.slice(config['discord']['command-prefix'].length).substr(command.length + 1).trim());
                     } else {
                         message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
-                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                            try {
+                                sentMessage.delete(); 
+                                message.delete();
+                            } catch {}
                         });
                     }
                 } else if (command == 'spam' && config['discord']['spam']['enabled']) {
@@ -1202,7 +1223,10 @@ function DiscordBot(token = null){
                         }
                     } else {
                         message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
-                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                            try {
+                                sentMessage.delete(); 
+                                message.delete();
+                            } catch {}
                         });
                     }
 
@@ -1230,7 +1254,10 @@ function DiscordBot(token = null){
                         message.channel.send({ embeds: [embed] });
                     } else {
                         message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
-                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                            try {
+                                sentMessage.delete(); 
+                                message.delete();
+                            } catch {}
                         });
                     }
                 } else if (command == 'reloadall' || command == 'reloadassets') {
@@ -1259,7 +1286,10 @@ function DiscordBot(token = null){
                         message.channel.send(messages['discord_bot']['reload_complete']+': Assets');
                     } else {
                         message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
-                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                            try {
+                                sentMessage.delete(); 
+                                message.delete();
+                            } catch {}
                         });
                     }
                 } else if (command == 'reload') {
@@ -1273,7 +1303,10 @@ function DiscordBot(token = null){
                         }
                     } else {
                         message.reply(messages['discord_bot']['chats']['command_no_perm']).then(sentMessage => {
-                            setTimeout(() => { sentMessage.delete(); message.delete(); }, 5000);
+                            try {
+                                sentMessage.delete(); 
+                                message.delete();
+                            } catch {}
                         });
                     }
                 }
