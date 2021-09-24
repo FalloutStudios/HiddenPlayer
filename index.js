@@ -57,6 +57,7 @@ var BotUsed = false;
 var conn = null;
 
 var fullname = config['debug']['prefix']+config['player']['name']+config['debug']['suffix'];
+startUpScreen();
 consoleLog.log('============================ '+fullname+' '+configVersion+' ===========================', "Startup", 1);
 consoleLog.log("", "Startup", 1);
 consoleLog.log('GitHub: https://github.com/FalloutStudios/HiddenPlayer', "Startup", 1);
@@ -80,7 +81,6 @@ function startUpScreen() {
     consoleLog.log('', 'Startup', 1);
 }
 function parse(){
-    startUpScreen();
     //success pre variable
     var success = false;
 
@@ -109,6 +109,9 @@ function parse(){
 
     //change config contents
     config = body_config;
+
+    //date log
+    consoleLog.log(new Date.now(), "Date");
 
     //debug enabled/disabled
     debug = config['debug']['enabled'];
@@ -303,7 +306,6 @@ function makeSentence(object = [], skip = 0) {
 }
 function Logger(){
     const object = {};
-    ;
 
     object.log = function (text = "", logType = "Log", warnLevel = 0, logFile = true){
         if(warnLevel < 0 || warnLevel > 4) return false;
@@ -348,6 +350,16 @@ function Logger(){
         fs.writeFileSync(config['log_file'], logFileContent.toString());
 
         return true;
+    }
+
+    object.overwriteLatest = function (){
+        if(typeof config['log_file'] === "undefined") return false;
+
+        if(fs.existsSync(config['log_file'])) { 
+            const contents = fs.readFileSync(config['log_file']);
+
+
+        }
     }
 
     return object;
