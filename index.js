@@ -56,12 +56,12 @@ var BotUsed = false;
 var conn = null;
 
 var fullname = config['debug']['prefix']+config['player']['name']+config['debug']['suffix'];
-console.log('============================ '+fullname+' '+configVersion+' ===========================');
-console.log("");
-console.log('GitHub: https://github.com/FalloutStudios/HiddenPlayer');
-console.log();
-console.log('=========================================================='+loop(fullname.length, '=')+loop(configVersion.length, '='));
-console.log("\n\n");
+consoleLog('============================ '+fullname+' '+configVersion+' ===========================', "Startup", true, 1);
+consoleLog("", "Startup", true, 1);
+consoleLog('GitHub: https://github.com/FalloutStudios/HiddenPlayer', "Startup", true, 1);
+consoleLog("", "Startup", true, 1);
+consoleLog('=========================================================='+loop(fullname.length, '=')+loop(configVersion.length, '='), "Startup", true, 1);
+consoleLog("\n\n", "Startup", true, 1);
 
 //debug mode enabled/disabled log
 if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Debug Mode] '+messages['logging']['enabled']);
@@ -336,11 +336,9 @@ function consoleLog(text = "", logType = "Log", logFile = true, warnLevel = 0){
     newText += "\n"
     logFileContent += newText;
 
-    if(!fs.existsSync(config['log_file'])) { 
-        fs.writeFileSync(logFileContent, config['log_file']);
-    } else if (fs.existsSync(config['log_file'])) {
-        fs.writeFileSync(logFileContent, config['log_file']);
-    }
+    if(!logFile) return;
+
+    fs.writeFileSync(config['log_file'], logFileContent.toString());
 }
 
 //Main Functions
