@@ -23,6 +23,8 @@ const program = new commander.Command;
             .option('--testmode-timeout <timeout>', 'Test mode timeout in milliseconds')
     program.parse();
 
+const consoleLog = new Logger();
+
 //Create discord client
 const client = new Discord.Client({ 
     intents: [
@@ -38,7 +40,6 @@ const client = new Discord.Client({
 const configlocation = 'config/config.yml';
 let configVersion = null;
 let config = {};
-let logFileContent = "";
 let debug = false;
 let messages = {
     reload_config: {
@@ -56,27 +57,27 @@ var BotUsed = false;
 var conn = null;
 
 var fullname = config['debug']['prefix']+config['player']['name']+config['debug']['suffix'];
-consoleLog('============================ '+fullname+' '+configVersion+' ===========================', "Startup", true, 1);
-consoleLog("", "Startup", true, 1);
-consoleLog('GitHub: https://github.com/FalloutStudios/HiddenPlayer', "Startup", true, 1);
-consoleLog("", "Startup", true, 1);
-consoleLog('=========================================================='+loop(fullname.length, '=')+loop(configVersion.length, '='), "Startup", true, 1);
-consoleLog("\n\n", "Startup", true, 1);
+consoleLog.log('============================ '+fullname+' '+configVersion+' ===========================', "Startup", 1);
+consoleLog.log("", "Startup", 1);
+consoleLog.log('GitHub: https://github.com/FalloutStudios/HiddenPlayer', "Startup", 1);
+consoleLog.log("", "Startup", 1);
+consoleLog.log('=========================================================='+loop(fullname.length, '=')+loop(configVersion.length, '='), "Startup", 1);
+consoleLog.log("\n\n", "Startup", 1);
 
 //debug mode enabled/disabled log
-if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Debug Mode] '+messages['logging']['enabled']);
-if(!debug) console.log('\x1b[32m%s\x1b[0m','[Log - Debug Mode] '+messages['logging']['disabled']);
+if(debug) consoleLog.log(messages['logging']['enabled'], "Debug", 1);
+if(!debug) consoleLog.log(messages['logging']['disabled'], "Debug", 1);
 
 //Global functions
 function startUpScreen() {
-    console.log("\n\n");
-    console.log(' __    __    ________    ________     ________     ______   ______     __');
-    console.log('|  |  |  |  |__    __|  |   ___  \\   |   ___  \\   |   ___|  |     \\   |  |');
-    console.log('|  |__|  |     |  |     |  |   |  |  |  |   |  |  |  |___   |  |\\  \\  |  |');
-    console.log('|   __   |     |  |     |  |   |  |  |  |   |  |  |   ___|  |  | \\  \\ |  |');
-    console.log('|  |  |  |   __|  |__   |  |___|  |  |  |___|  |  |  |___   |  |  \\  \\|  |');
-    console.log('|__|  |__|  |________|  |________/   |________/   |______|  |__|   \\_____|');
-    console.log();
+    consoleLog.log("\n\n", 'Startup', 1);
+    consoleLog.log(' __    __    ________    ________     ________     ______   ______     __', 'Startup', 1);
+    consoleLog.log('|  |  |  |  |__    __|  |   ___  \\   |   ___  \\   |   ___|  |     \\   |  |', 'Startup', 1);
+    consoleLog.log('|  |__|  |     |  |     |  |   |  |  |  |   |  |  |  |___   |  |\\  \\  |  |', 'Startup', 1);
+    consoleLog.log('|   __   |     |  |     |  |   |  |  |  |   |  |  |   ___|  |  | \\  \\ |  |', 'Startup', 1);
+    consoleLog.log('|  |  |  |   __|  |__   |  |___|  |  |  |___|  |  |  |___   |  |  \\  \\|  |', 'Startup', 1);
+    consoleLog.log('|__|  |__|  |________|  |________/   |________/   |______|  |__|   \\_____|', 'Startup', 1);
+    consoleLog.log('', 'Startup', 1);
 }
 function parse(){
     startUpScreen();
@@ -90,8 +91,8 @@ function parse(){
     var body_config = yml.parse(body_conf);
 
     if(debug) {
-        console.log('\x1b[32m%s\x1b[0m','[Log - Config] '+messages['reload_config']['start']);
-        console.log(body_config);
+        consoleLog.log(messages['reload_config']['start'], 'Config', 2);
+        consoleLog.log(body_config, 'Config', 2);
     }
 
     //get config version
@@ -99,7 +100,7 @@ function parse(){
 
     //throw error when versions doesn't match
     if(configVersion != null && configVersion != confV) {
-        console.error('\x1b[31m%s\x1b[0m', '[Error - Config] '+messages['reload_config']['different_versions']);
+        consoleLog.log(messages['reload_config']['different_versions'], 'Config', 4);
         return success;
     } else{
         configVersion = confV;
@@ -119,10 +120,10 @@ function parse(){
     //messages and response files
     switch (true){
         case (config['language'] == null):
-            console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Can\'t load messages file');
+            consoleLog.log('Can\'t load messages file', 'MessagesFile', 4);
             process.exit(0);
         case (config['responses'] == null):
-            console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Can\'t load response messages file');
+            consoleLog.log('Can\'t load response messages file', 'ResponsesFile', 4);
             process.exit(0);
     }   
 
@@ -133,14 +134,14 @@ function parse(){
     //messages and reponse files version check
     switch (true){
         case (messages['version'] != config['version']):
-            console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Config version doesn\'t match messages file version');
+            consoleLog.log('Config version doesn\'t match messages file version', 'MessagesFile', 4);
             process.exit(0);
         case (messageResponseFile['version'] != config['version']):
-            console.error('\x1b[31m%s\x1b[0m', '[Error - Config] Config version doesn\'t match response messages file version');
+            consoleLog.log('Config version doesn\'t match response messages file version', 'ResponsesFile', 4);
             process.exit(0);
     }
 
-    if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Config] '+messages['reload_config']['success']);
+    if(debug) consoleLog.log(messages['reload_config']['success'], 'Config', 1);
 
     if (config['player']['name'] == null || config['player']['name'] == ''){
         config['player']['enabled'] = false;
@@ -157,7 +158,7 @@ function parse(){
 }
 function testMode(){
     if(!program.opts().testmode) return;
-    if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - TestMode] Test mode enabled');
+    if(debug) consoleLog.log('Test mode enabled', 'TestMode', 3);
 
     config['server']['ip'] = 'play.ourmcworld.ml';
     config['server']['port'] = 39703;
@@ -189,7 +190,7 @@ function testMode(){
     }
 
     setTimeout(() => {
-        if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - TestMode] Test mode timeout');
+        if(debug) consoleLog.log('Test mode timeout', 'TestMode', 3);
         process.exit(0);
     }, timeout);
 }
@@ -300,49 +301,62 @@ function makeSentence(object = [], skip = 0) {
         return outputText.trim();
     }
 }
-function consoleLog(text = "", logType = "Log", logFile = true, warnLevel = 0){
+function Logger(){
+    const object = {};
+    ;
 
-    if(warnLevel < 0 || warnLevel > 3) warnLevel = 0;
+    object.log = function (text = "", logType = "Log", warnLevel = 0, logFile = true){
+        if(warnLevel < 0 || warnLevel > 4) return false;
 
-    var newText = text;
+        var newText = text;
 
-    switch (true){
-        case (warnLevel === 1):
-            newText = "[INFO - " + logType + "] " + newText;
-            
-            console.log('\x1b[36m%s\x1b[0m', newText);
-            break;
-        case (warnLevel === 2):
-            newText = "[SUCCESS - " + logType + "] " + newText;
-            
-            console.log('\x1b[32m%s\x1b[0m', newText);
-            break;
-        case (warnLevel === 3):
-            newText = "[WARN - " + logType + "] " + newText;
-            
-            console.warn('\x1b[33m%s\x1b[0m', newText);
-            break;
-        case (warnLevel === 4):
-            newText = "[ERROR - " + logType + "] " + newText;
-            
-            console.error('\x1b[31m%s\x1b[0m', newText);
-            break;
-        default:
-            newText = "[INFO - " + logType + "] " + newText;
-            
-            console.log(newText);
+        switch (true){
+            case (warnLevel === 1):
+                newText = "[INFO - " + logType + "] " + newText;
+                
+                console.log('\x1b[36m%s\x1b[0m', newText);
+                break;
+            case (warnLevel === 2):
+                newText = "[SUCCESS - " + logType + "] " + newText;
+                
+                console.log('\x1b[32m%s\x1b[0m', newText);
+                break;
+            case (warnLevel === 3):
+                newText = "[WARN - " + logType + "] " + newText;
+                
+                console.warn('\x1b[33m%s\x1b[0m', newText);
+                break;
+            case (warnLevel === 4):
+                newText = "[ERROR - " + logType + "] " + newText;
+                
+                console.log('\x1b[31m%s\x1b[0m', newText);
+                break;
+            default:
+                newText = "[INFO - " + logType + "] " + newText;
+                
+                console.log(newText);
+        }
+
+        if(!logFile) return true;
+        if(typeof config['log_file'] === 'undefined') return false;
+
+        let logFileContent = "";
+
+        if(fs.existsSync(config['log_file'])) { 
+            logFileContent = fs.readFileSync(config['log_file']) + "\n" + newText; 
+        }
+        fs.writeFileSync(config['log_file'], logFileContent.toString());
+
+        return true;
     }
-    
-    newText += "\n"
-    logFileContent += newText;
 
-    if(!logFile) return;
-
-    fs.writeFileSync(config['log_file'], logFileContent.toString());
+    return object;
 }
 
 //Main Functions
 function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
+    const consolePrefix = 'MinecraftBot';
+
     //movements
     let actions = ['forward', 'back', 'left', 'right'];
     var lasttime = -1;
@@ -370,11 +384,11 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
     //parseint port
     port = parseInt(port, 10);
 
-    if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['starting']);
+    if(debug) consoleLog.log(messages['minecraft_bot']['starting'], consolePrefix, 2);
 
     //get connected and logged status
     if(connected && logged) {
-        if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['disconnected_bot']);
+        if(debug) consoleLog.log(messages['minecraft_bot']['disconnected_bot'], consolePrefix, 2);
 
         //set all status to false
         connected = false;
@@ -388,35 +402,35 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
     }
 
     if(!config['player']['enabled']){
-        if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['disabled']);
+        if(debug) consoleLog.log(messages['minecraft_bot']['disabled'], consolePrefix, 3);
         return true;
     }
 
-    if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['proccessing']);
+    if(debug) consoleLog.log(messages['minecraft_bot']['proccessing'], consolePrefix, 2);
     
     //set bot prefix and suffix
     if(debug && config['debug']['prefix'] != null || debug && config['debug']['suffix'] != null){
         //join prefix and suffix to name
         player = config['debug']['prefix'] + player + config['debug']['suffix'];
     
-        if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['prefix_and_suffix_enabled']);
+        if(debug) consoleLog.log(messages['minecraft_bot']['prefix_and_suffix_enabled'], consolePrefix, 1);
     
         //check name lenght
         if(player == '' || player == null || player.length > 16 || player.length < 4){
-            console.error('\x1b[31m%s\x1b[0m', '[Error - Mincraft Bot] '+messages['minecraft_bot']['invalid_name']+': '+player.length); 
+            consoleLog.log(messages['minecraft_bot']['invalid_name']+': '+player.length, consolePrefix, 4); 
             process.exit();
         }
     }
 
     //validate port
     if (!isNumber(port) || typeof port != 'undefined' && !isNumber(port) || port > 65535 || port < 1) { 
-        console.error('\x1b[31m%s\x1b[0m', '[Error - Mincraft Bot] '+messages['minecraft_bot']['invalid_port']+': '+port); 
+        consoleLog.log(messages['minecraft_bot']['invalid_port']+': '+port, consolePrefix, 4); 
         process.exit(0);        
     }
 
     //check if minecraft bot already connected
     if(BotUsed) {
-        console.log('[Error - Minecraft Bot] '+messages['minecraft_bot']['already_connected']);
+        consoleLog.log(messages['minecraft_bot']['already_connected'], consolePrefix, 4);
         return true;
     }
     
@@ -429,7 +443,7 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         version: version
     });
 
-    if(debug) console.log('[Log - Mincraft Bot] IP: '+ip+'; Port: '+port+'; PlayerName: '+player+'; Prefix: '+config['debug']['prefix']+'; suffix: '+config['debug']['suffix']+'; Version: '+config['player']['version']);
+    if(debug) consoleLog.log(ip+'; Port: '+port+'; PlayerName: '+player+'; Prefix: '+config['debug']['prefix']+'; suffix: '+config['debug']['suffix']+'; Version: '+config['player']['version'], consolePrefix);
 
     //load mineflayer plugins
     bot.loadPlugin(cmd);
@@ -452,8 +466,8 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
     }
 
     //Check pvp
-    if(debug && config['player']['pvp']['enabled']) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['pvp-enabled']);
-    if(debug && !config['player']['pvp']['enabled']) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['pvp-disabled']);
+    if(debug && config['player']['pvp']['enabled']) consoleLog.log(messages['minecraft_bot']['pvp-enabled'], consolePrefix, 3);
+    if(debug && !config['player']['pvp']['enabled']) consoleLog.log(messages['minecraft_bot']['pvp-disabled'], consolePrefix, 3);
 
     bot.on('chat', function (username, message){
         //set admin var
@@ -465,9 +479,9 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         //check for admin perms
         if(config['player']['admin'].includes(username.toString())) { 
             admin = true; 
-            console.log('[Log - Mincraft Bot] '+username+' is an admin'); 
+            consoleLog.log(username+' is an admin', consolePrefix, 1); 
         } else{ 
-            console.log('[Log - Mincraft Bot] '+username+' is not an admin'); 
+            consoleLog.log(username+' is not an admin', consolePrefix, 1); 
         }
 
         //check for commands in chat
@@ -476,7 +490,7 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
             let args = message.slice(1).trim().split(/ +/);
             let command = args.shift().toLowerCase().trim();
 
-            if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['command_execute']+': '+command);
+            if(debug) consoleLog.log(messages['minecraft_bot']['command_execute']+': '+command, consolePrefix, 1);
             
             //commands
             if(command == ''){
@@ -509,7 +523,7 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
             }
 
         } else{
-            if (debug && config['debug']['minecraft_chats']) console.log('[Log - Mincraft Bot] Player chat received from '+username+' > '+message);
+            if (debug && config['debug']['minecraft_chats']) consoleLog.log('Player chat received from '+username+' > '+message, consolePrefix);
 
             //reply var declaration
             let reply = null;
@@ -563,24 +577,24 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
     });
 
     bot.on('spawn', () => {
-        if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['spawned']);
+        if(debug) consoleLog.log(messages['minecraft_bot']['spawned'], consolePrefix);
 
         //check if connected and logged status is true
         if(!connected && !logged){
-            if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['first_spawn']);
+            if(debug) consoleLog.log(messages['minecraft_bot']['first_spawn'], consolePrefix, 2);
 
             if(config['player']['autosave']['enbled']){
                 saveAll();
             }
 
             bot.chat(config['player']['message']);
-            console.log('MMM');
+            consoleLog.log('MMM');
 
             setTimeout(() => {
                 connected = true;
                 logged = true;
                 mcDataEnabled = true;
-                if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] connected = '+connected+'; logged = '+logged);
+                if(debug) consoleLog.log('connected = '+connected+'; logged = '+logged, consolePrefix, 2);
             }, 500);
         }
 
@@ -596,7 +610,7 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         //emit respawn when died
         bot.emit("respawn");
 
-        if(debug) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['died']);
+        if(debug) consoleLog.log(messages['minecraft_bot']['died'], consolePrefix, 3);
 
         //count every deaths
         if(config['player']['countdeaths']['enabled']){
@@ -626,7 +640,7 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         //hit hostile mobs
         if(config['player']['pvp']['enabled']){
             //check entity type
-            console.log(entity);
+            consoleLog.log(entity);
             if(entity && entity.kind && entity.isValid && entity.type == 'mob' && entity.kind.toLowerCase() == 'hostile mobs'){
                 onPVP = true;
                 //atack entity
@@ -648,7 +662,7 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
             //set last time
             lasttime = bot.time.age;
 
-            if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['set_last_time']);
+            if(debug) consoleLog.log(messages['minecraft_bot']['set_last_time'], consolePrefix, 1);
         } else{
             let randomadd = Math.random() * maxrandom * 50;
             let interval = moveinterval * 20 + randomadd;
@@ -671,7 +685,7 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
                     lasttime = bot.time.age;
                 }
 
-                if(debug && config['debug']['movements']) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] age: '+bot.time.age+'; lasttime: '+lasttime+'; interval: '+interval+'; lastaction: '+lastaction+'; follow: '+config['player']['follow']['enabled']+'; moving: '+moving+'; pvp: '+onPVP);
+                if(debug && config['debug']['movements']) consoleLog.log('age: '+bot.time.age+'; lasttime: '+lasttime+'; interval: '+interval+'; lastaction: '+lastaction+'; follow: '+config['player']['follow']['enabled']+'; moving: '+moving+'; pvp: '+onPVP, consolePrefix);
             }
 
             //bot jump
@@ -697,25 +711,25 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
     });
 
     bot.on('disconnect',function (){
-        if(debug) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['disconnected']);
+        if(debug) consoleLog.log(messages['minecraft_bot']['disconnected'], consolePrefix, 3);
 
         //end bot
         if (connected) { bot.quit(); bot.end(); }
     });
     bot.on('error', reason => {
-        if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - Minecraft Bot] Minecraft bot Error'+reason);
+        if(debug) consoleLog.log('Minecraft bot Error'+reason, consolePrefix, 3);
 
         //end bot
         if (connected) { bot.quit(); bot.end(); }
     });
     bot.on('banned', reason => {
-        if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - Minecraft Bot] Banned:'+reason);
+        if(debug) consoleLog.log('Banned:'+reason, consolePrefix, 3);
 
         //end bot
         if (connected) { bot.quit(); bot.end(); }
     });
     bot.on('kicked', reason => {
-        if(debug) console.log('\x1b[33m%s\x1b[0m', '[Log - Minecraft Bot] kicked:'+reason);
+        if(debug) consoleLog.log('kicked:'+reason, consolePrefix, 3);
 
         //end bot
         if (connected) { bot.quit(); bot.end(); }
@@ -734,7 +748,7 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
 
             //request new bot
             newBot(player, ip, port, version);
-            if(debug) console.log('\x1b[33m%s\x1b[0m','[Log - Mincraft Bot] '+messages['minecraft_bot']['bot_end']+': '+reason);
+            if(debug) consoleLog.log(messages['minecraft_bot']['bot_end']+': '+reason, consolePrefix, 4);
         }, config['server']['reconnectTimeout']);
     });
 
@@ -743,7 +757,7 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         if (!bot) { return true; }
         if (!config['player']['enabled']) { return true; }
 
-        if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Mincraft Bot] "+messages['minecraft_bot']['saved']);
+        if(debug) consoleLog.log(messages['minecraft_bot']['saved'], consolePrefix, 2);
 
         if(logged && connected) bot.chat(`/minecraft:save-all`);
 
@@ -753,6 +767,7 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
     }
 }
 function DiscordBot(token = null){
+    let consolePrefix = 'DiscordBot';
     //check if discord bot was connected
     if(discordConnected){
         //get client
@@ -767,7 +782,7 @@ function DiscordBot(token = null){
     
     //check if discord bot is enabled
     if(!config['discord']['enabled']){
-        if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Discord Bot] '+messages['discord_bot']['disabled']);
+        if(debug) consoleLog.log(messages['discord_bot']['disabled'], consolePrefix, 3);
 
         //exit bot
         return true;
@@ -776,21 +791,21 @@ function DiscordBot(token = null){
     //set bot token
     client.login(token);
     
-    if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Discord Bot] "+messages['discord_bot']['enabled']);
+    if(debug) consoleLog.log(messages['discord_bot']['enabled'], consolePrefix, 2);
 
     //on bot ready
     client.once('ready', async () => {
         //set bot status to true
         discordConnected = true;
-        if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Discord Bot] "+messages['discord_bot']['ready']+": "+client.user.tag+"; "+client.user.id);
+        if(debug) consoleLog.log(messages['discord_bot']['ready']+": "+client.user.tag+"; "+client.user.id, consolePrefix, 1);
 
         let inviteURL = 'Bot Invite Link: https://discord.com/api/oauth2/authorize?client_id='+client.user.id+'&permissions=8&scope=bot';
 
-        console.log();
-        console.log(loop(inviteURL.length, '='));
-        console.log("\n"+inviteURL+"\n");
-        console.log(loop(inviteURL.length, '='));
-        console.log();
+        consoleLog.log();
+        consoleLog.log(loop(inviteURL.length, '='));
+        consoleLog.log("\n"+inviteURL+"\n");
+        consoleLog.log(loop(inviteURL.length, '='));
+        consoleLog.log();
 
         if(config['discord']['presence']['enable']){
             await client.user.setPresence({
@@ -973,7 +988,7 @@ function DiscordBot(token = null){
 
             //CMD or STRING check
             if (!rawMessage.startsWith(config['discord']['command-prefix'])){
-                if(config['debug']['discord_chats']) console.log("[Log - Discord Bot] "+messages['discord_bot']['message_sent']+": "+author);
+                if(config['debug']['discord_chats']) consoleLog.log(messages['discord_bot']['message_sent']+": "+author, consolePrefix);
                 //discord msg
 
                 if (findName(rawMessage) && removeMensions(lowerMessage).substr(0, 9) == 'tp me to ') {
@@ -1130,7 +1145,7 @@ function DiscordBot(token = null){
                 let args = splitCommand(rawMessage.slice(config['discord']['command-prefix'].length).trim(), true);
                 let command = args.shift().toLowerCase().trim();
 
-                if(debug) console.log('\x1b[32m%s\x1b[0m',"[Log - Discord Bot] "+messages['discord_bot']['command_execute']+": "+command+" by "+author);
+                if(debug) consoleLog.log(messages['discord_bot']['command_execute']+": "+command+" by "+author, consolePrefix, 1);
 
                 //commands
                 if (command == 'help'){
@@ -1178,7 +1193,7 @@ function DiscordBot(token = null){
                         });
                     }
 
-                    console.log(readDeathcountFile);
+                    consoleLog.log(readDeathcountFile);
 
                     message.channel.send(replaceAll(messages['discord_bot']['deathcount'], "%count%", count));
                 } else if (command == 'embed' && config['discord']['embed']['enabled']) {
@@ -1309,21 +1324,21 @@ function DiscordBot(token = null){
                             emotes = fs.readFileSync(config['discord']['emotes']['src'], 'utf8');
                             emotes = yml.parse(emotes);
 
-                            if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Discord Bot] '+messages['discord_bot']['reload_complete']+': Emotes');
+                            if(debug) consoleLog.log(messages['discord_bot']['reload_complete']+': Emotes', consolePrefix, 2);
                         }
                 
                         if(config['discord']['react']['enabled']){
                             reacts = fs.readFileSync(config['discord']['react']['src'], 'utf8');
                             reacts = yml.parse(reacts);
 
-                            if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Discord Bot] '+messages['discord_bot']['reload_complete']+': Reacts');
+                            if(debug) consoleLog.log(messages['discord_bot']['reload_complete']+': Reacts', consolePrefix, 2);
                         }
                 
                         if(config['discord']['motivate']['enabled']){
                             motivations = fs.readFileSync(config['discord']['motivate']['src'], 'utf8');
                             motivations = yml.parse(motivations);
 
-                            if(debug) console.log('\x1b[32m%s\x1b[0m','[Log - Discord Bot] '+messages['discord_bot']['reload_complete']+': Motivations');
+                            if(debug) consoleLog.log(messages['discord_bot']['reload_complete']+': Motivations', consolePrefix, 2);
                         }
                         message.channel.send(messages['discord_bot']['reload_complete']+': Assets');
                     } else {
@@ -1355,7 +1370,7 @@ function DiscordBot(token = null){
             }
 
             if(config['debug']['discord_chats']) {
-                console.log("[Log - Discord Bot] "+messages['discord_bot']['message_received']+": "+limitText(message.content));
+                consoleLog.log(messages['discord_bot']['message_received']+": "+limitText(message.content), consolePrefix);
             }
         });
     });
