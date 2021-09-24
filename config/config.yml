@@ -146,6 +146,7 @@ debug:
   prefix: '' # Debug mode playername prefix
   suffix: '' # Debug mode playername suffix
 
+log_file: 'logs.txt'
 language: config/language.yml # Language file 
 responses: config/response.yml # Custom reponse file
 

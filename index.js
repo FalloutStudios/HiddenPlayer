@@ -38,6 +38,7 @@ const client = new Discord.Client({
 const configlocation = 'config/config.yml';
 let configVersion = null;
 let config = {};
+let logFileContent = "";
 let debug = false;
 let messages = {
     reload_config: {
@@ -297,6 +298,48 @@ function makeSentence(object = [], skip = 0) {
             outputText += ' ' + object[Object.keys(object)[i]];
         }
         return outputText.trim();
+    }
+}
+function consoleLog(text = "", logType = "Log", logFile = true, warnLevel = 0){
+
+    if(warnLevel < 0 || warnLevel > 3) warnLevel = 0;
+
+    var newText = text;
+
+    switch (true){
+        case (warnLevel === 1):
+            newText = "[INFO - " + logType + "] " + newText;
+            
+            console.log('\x1b[36m%s\x1b[0m', newText);
+            break;
+        case (warnLevel === 2):
+            newText = "[SUCCESS - " + logType + "] " + newText;
+            
+            console.log('\x1b[32m%s\x1b[0m', newText);
+            break;
+        case (warnLevel === 3):
+            newText = "[WARN - " + logType + "] " + newText;
+            
+            console.warn('\x1b[33m%s\x1b[0m', newText);
+            break;
+        case (warnLevel === 4):
+            newText = "[ERROR - " + logType + "] " + newText;
+            
+            console.error('\x1b[31m%s\x1b[0m', newText);
+            break;
+        default:
+            newText = "[INFO - " + logType + "] " + newText;
+            
+            console.log(newText);
+    }
+    
+    newText += "\n"
+    logFileContent += newText;
+
+    if(!fs.existsSync(config['log_file'])) { 
+        fs.writeFileSync(logFileContent, config['log_file']);
+    } else if (fs.existsSync(config['log_file'])) {
+        fs.writeFileSync(logFileContent, config['log_file']);
     }
 }
 
@@ -585,6 +628,7 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         //hit hostile mobs
         if(config['player']['pvp']['enabled']){
             //check entity type
+            console.log(entity);
             if(entity && entity.kind && entity.isValid && entity.type == 'mob' && entity.kind.toLowerCase() == 'hostile mobs'){
                 onPVP = true;
                 //atack entity
