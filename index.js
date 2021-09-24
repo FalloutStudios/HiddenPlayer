@@ -382,11 +382,14 @@ function Logger(){
                 fs.writeFileSync(logPath + 'latest.log', '');
                 
                 const dateLogMatch = /^([0-9]+(-[0-9]+)+):[0-9]+-[a-zA-Z]+\.[0-9]+$/si;
-                
                 splitDate = replaceAll(splitDate[3].toUpperCase(), "\\", '').trim();
-                if(!dateLogMatch.test(splitDate)) { return console.log('Tangena - ' + splitDate); }
 
-                fs.writeFileSync(logPath + splitDate + '.log', contents.toString())
+                if(!dateLogMatch.test(splitDate)) { return false; }
+                splitDate = replaceAll(splitDate, '.', '_');
+                let path = splitDate + '.log';
+                console.log(contents);
+
+                fs.writeFileSync(path, contents);
         }
     }
 
