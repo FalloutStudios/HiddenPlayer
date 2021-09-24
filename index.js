@@ -11,6 +11,7 @@ const commander = require('commander');
 const yml = require('yaml');
 const fs = require('fs');
 
+// sub commands
 const program = new commander.Command;
     
     program
@@ -23,6 +24,21 @@ const program = new commander.Command;
             .option('--testmode-timeout <timeout>', 'Test mode timeout in milliseconds')
     program.parse();
 
+// date
+let date = new Date;
+let date_d = String(date.getDate()).padStart(2, '0');
+let date_m = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+let date_y = date.getFullYear();
+let date_mm = 'AM';
+let date_h = date.getHours();
+    if(date_h >= 12) { date_mm = 'PM' }
+    if(date_h > 12){
+        date_h = date_h - 12;
+    }
+let date_mi = date.getMinutes()
+let date_dmy = date_d + '-' + date_m + '-' + date_y + '-' + date_h + ':' + date_mi + '-' + date_mm + '.' + randomInteger(100,200);
+
+//logger
 const consoleLog = new Logger();
 
 //Create discord client
@@ -37,7 +53,9 @@ const client = new Discord.Client({
     ]
 });
 
+// Global variables
 const configlocation = 'config/config.yml';
+const logPath = 'logs/';
 let configVersion = null;
 let config = {};
 let debug = false;
@@ -50,12 +68,17 @@ let messages = {
     }
 };
 let messageResponseFile = {};
+
+consoleLog.overwriteLatest();
+consoleLog.log(date_dmy, "Date");
 parse();
 
+//connections
 var discordConnected = false;
 var BotUsed = false;
 var conn = null;
 
+// Repository
 var fullname = config['debug']['prefix']+config['player']['name']+config['debug']['suffix'];
 startUpScreen();
 consoleLog.log('============================ '+fullname+' '+configVersion+' ===========================', "Startup", 1);
@@ -109,9 +132,6 @@ function parse(){
 
     //change config contents
     config = body_config;
-
-    //date log
-    consoleLog.log(new Date.now(), "Date");
 
     //debug enabled/disabled
     debug = config['debug']['enabled'];
@@ -339,26 +359,34 @@ function Logger(){
                 console.log(newText);
         }
 
-        if(!logFile) return true;
-        if(typeof config['log_file'] === 'undefined') return false;
+        let logFileContent = newText;
 
-        let logFileContent = "";
-
-        if(fs.existsSync(config['log_file'])) { 
-            logFileContent = fs.readFileSync(config['log_file']) + "\n" + newText; 
+        if(fs.existsSync(logPath + 'latest.log')) { 
+            logFileContent = fs.readFileSync(logPath + 'latest.log') + "\n" + newText; 
         }
-        fs.writeFileSync(config['log_file'], logFileContent.toString());
+        fs.writeFileSync(logPath + 'latest.log', logFileContent.toString());
 
         return true;
     }
 
     object.overwriteLatest = function (){
-        if(typeof config['log_file'] === "undefined") return false;
+        if(typeof logPath + 'latest.log' === "undefined") return false;
 
-        if(fs.existsSync(config['log_file'])) { 
-            const contents = fs.readFileSync(config['log_file']);
+        if(fs.existsSync(logPath + 'latest.log')) { 
+            const contents = fs.readFileSync(logPath + 'latest.log', 'utf-8');
+            let splitDate = contents.toString().trim().split("\n");
+                splitDate = splitCommand(splitDate[0].toString(), true);
 
+                if(contents.trim() == '' || splitDate == null) { return false; }
 
+                fs.writeFileSync(logPath + 'latest.log', '');
+                
+                const dateLogMatch = /^([0-9]+(-[0-9]+)+):[0-9]+-[a-zA-Z]+\.[0-9]+$/si;
+                
+                splitDate = replaceAll(splitDate[3].toUpperCase(), "\\", '').trim();
+                if(!dateLogMatch.test(splitDate)) { return console.log('Tangena - ' + splitDate); }
+
+                fs.writeFileSync(logPath + splitDate + '.log', contents.toString())
         }
     }
 
