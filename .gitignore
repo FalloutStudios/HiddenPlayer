@@ -1,5 +1,4 @@
 # Logs
-logs
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -110,4 +109,3 @@ LICENSE
 deathcount.txt
 tempCodeRunnerFile.js
 config/deathcount.txt
-logs.txt

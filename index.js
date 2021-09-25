@@ -385,8 +385,8 @@ function Logger(){
                 splitDate = replaceAll(splitDate[3].toUpperCase(), "\\", '').trim();
 
                 if(!dateLogMatch.test(splitDate)) { return false; }
-                splitDate = replaceAll(splitDate, '.', '_');
-                let path = splitDate + '.log';
+                splitDate = replaceAll(replaceAll(splitDate, '.', '_'), ':', '_');
+                let path = logPath + splitDate + '.log';
                 console.log(contents);
 
                 fs.writeFileSync(path, contents);
