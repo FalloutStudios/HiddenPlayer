@@ -632,7 +632,6 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
             }
 
             bot.chat(config['player']['message']);
-            consoleLog.log('MMM');
 
             setTimeout(() => {
                 connected = true;
@@ -684,7 +683,6 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         //hit hostile mobs
         if(config['player']['pvp']['enabled']){
             //check entity type
-            consoleLog.log(entity);
             if(entity && entity.kind && entity.isValid && entity.type == 'mob' && entity.kind.toLowerCase() == 'hostile mobs'){
                 onPVP = true;
                 //atack entity
