@@ -5,7 +5,7 @@ Simple Minecraft player bot and and Discord bot.
 - Using this bot may violate some server hosting Terms of Service and EULA.
 - Use this bot only on your own server `Use it on other server at your own risk`
 
-### Requirement
+### Prerequisite
 - [x] Node.js
 
 If you haven't installed `node.js` yet you can download it here (**requires Node 16.6.x or higher**): https://nodejs.org/
