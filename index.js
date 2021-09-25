@@ -364,6 +364,7 @@ function Logger(){
         if(fs.existsSync(logPath + 'latest.log')) { 
             logFileContent = fs.readFileSync(logPath + 'latest.log') + "\n" + newText; 
         }
+        logFileContent = logFileContent.trim();
         fs.writeFileSync(logPath + 'latest.log', logFileContent.toString());
 
         return true;
