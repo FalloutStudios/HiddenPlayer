@@ -306,9 +306,9 @@ function splitCommand(text = '', removeQuotations = false){
     if(removeQuotations){
         let newText = [];
         for (const value of text) {
-            newText.push(replaceAll(value, '"', ''));
+            newText.push(replaceAll(replaceAll(value, '"', ''), "\\", ''));
         }
-        text = newText;
+        text =newText;
     }
 
     return text;
@@ -388,7 +388,6 @@ function Logger(){
                 if(!dateLogMatch.test(splitDate)) { return false; }
                 splitDate = replaceAll(replaceAll(splitDate, '.', '_'), ':', '_');
                 let path = logPath + splitDate + '.log';
-                console.log(contents);
 
                 fs.writeFileSync(path, contents);
         }
