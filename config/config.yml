@@ -1,10 +1,10 @@
 # Server Information
 server:
   # Server IP address without port (Ask if empty)
-  ip: play.ourmcworld.ml
+  ip: OuOsurvival.aternos.me
   
   # Server port (Ask if empty)
-  port: 39703
+  port: 12948
   
   # Reconnect interval timout when player disconnects
   reconnectTimeout: 5000
@@ -25,11 +25,11 @@ player:
     enabled: true # Enable death count logging
     src: config/deathcount.txt # Source file
   
-  message: '/login hello' # Message on join
+  message: '/login 12345' # Message on join
   
   # Attack hostile mobs
   pvp:
-    enabled: true # Enable mobs attack
+    enabled: false # Enable mobs attack
   
   # Some bot commands
   commands:
@@ -37,7 +37,7 @@ player:
     restart: true # Enable !restart
   
     # Admins for Player commands
-  admin: []
+  admin: ['NOVA_X0']
 
   # Player chat delay
   chatDelay: 500
