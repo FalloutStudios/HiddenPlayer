@@ -4,7 +4,7 @@ server:
   ip: play.ourmcworld.ml
   
   # Server port (Ask if empty)
-  port: 39703
+  port: 25565
   
   # Reconnect interval timout when player disconnects
   reconnectTimeout: 5000
