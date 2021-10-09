@@ -306,9 +306,9 @@ function splitCommand(text = '', removeQuotations = false){
     if(removeQuotations){
         let newText = [];
         for (const value of text) {
-            newText.push(replaceAll(value, '"', ''));
+            newText.push(replaceAll(replaceAll(value, '"', ''), "\\", ''));
         }
-        text = newText;
+        text =newText;
     }
 
     return text;
@@ -388,7 +388,6 @@ function Logger(){
                 if(!dateLogMatch.test(splitDate)) { return false; }
                 splitDate = replaceAll(replaceAll(splitDate, '.', '_'), ':', '_');
                 let path = logPath + splitDate + '.log';
-                console.log(contents);
 
                 fs.writeFileSync(path, contents);
         }
@@ -632,7 +631,6 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
             }
 
             bot.chat(config['player']['message']);
-            consoleLog.log('MMM');
 
             setTimeout(() => {
                 connected = true;
@@ -684,7 +682,6 @@ function newBot(player = "", ip = '127.0.0.1', port = 25565, version = null){
         //hit hostile mobs
         if(config['player']['pvp']['enabled']){
             //check entity type
-            consoleLog.log(entity);
             if(entity && entity.kind && entity.isValid && entity.type == 'mob' && entity.kind.toLowerCase() == 'hostile mobs'){
                 onPVP = true;
                 //atack entity
