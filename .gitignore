@@ -104,8 +104,5 @@ dist
 
 # Human generated
 .github/
-.travis.yml
+/config/
 LICENSE
-deathcount.txt
-tempCodeRunnerFile.js
-config/deathcount.txt
