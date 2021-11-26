@@ -1,4 +1,3 @@
-const Fs = require('fs');
 const Yml = require('yaml');
 const Version = require('./version');
 const Commander = require('commander');
@@ -26,7 +25,7 @@ module.exports = class {
     parse() {
         if(!this.location || this.location == null) throw new Error('No config file path provided');
 
-        let config = Yml.parse(MakeConfig(this.location, generateConfig()));
+        const config = Yml.parse(MakeConfig(this.location, generateConfig()));
         
         if(config.version != Version) throw new Error('Config version isn\'t compatible. Version: ' + config.version + '; Supported: ' + Version);
         this.config = config;
