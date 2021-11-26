@@ -3,6 +3,7 @@
     "commander": "^8.3.0",
     "fallout-utility": "^1.0.37",
     "mineflayer": "^3.11.2",
+    "prompt-sync": "^4.1.6",
     "yaml": "^1.10.2"
   }
 }
