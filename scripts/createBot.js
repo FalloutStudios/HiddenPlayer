@@ -31,7 +31,7 @@ module.exports = class Bot {
     }
 
     setBotVersion(botVersion) {
-        if(!botVersion) throw new Error("Invalid bot version");
+        if(!botVersion) botVersion = null;
 
         this.botVersion = botVersion;
         return this;
