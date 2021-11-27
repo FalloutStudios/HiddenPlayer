@@ -24,6 +24,9 @@ let language = new Language('./config/language.yml').parse().getLanguage();
 
 // Create the bot
 function createBot() {
+    const consolePrefix = `Bot`;
+    let plugins = {};
+
     // Create the bot
     log.log("Creating bot...", consolePrefix);
     const bot = new CreateBot()
