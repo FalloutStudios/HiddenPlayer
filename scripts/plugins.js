@@ -24,7 +24,7 @@ module.exports = async (Bot, location, config, language) => {
         try {
             if(constructor?.versions && !constructor.versions.find(version => version === config.version)) throw new Error(`Unsupported plugin version: ${config.version} (supported: ${config.version})`);
 
-            if(!Promise.resolve(constructor.start(Bot, config, language)).then(response => response)) throw new Error(`Plugin ${file}failed to start.`);
+            if(!await Promise.resolve(constructor.start(Bot, config, language))) throw new Error(`Plugin ${file}failed to start.`);
 
             scripts.push(constructor);
             log.log(`Plugin ${file}.js loaded!`);
