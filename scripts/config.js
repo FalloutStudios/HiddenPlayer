@@ -47,7 +47,6 @@ module.exports = class {
     prefill() {
         this.config.server.host = !this.config.server.host            ?    ask(`Server IP (No Port) >>> `)    :    this.config.server.host;
         this.config.server.port = !this.config.server.port            ?    ask(`Server Port >>> `)            :    this.config.server.port;
-        this.config.player.version = !this.config.player.version      ?    ask(`Server Version >>> `)         :    this.config.player.version;
         this.config.player.username = !this.config.player.username    ?    ask(`Player Name >>> `)            :    this.config.player.username;
 
         return this;
