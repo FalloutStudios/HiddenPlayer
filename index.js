@@ -24,7 +24,7 @@ let config = new Config('./config/config.yml').parse().testmode().prefill().getC
 let language = new Language('./config/language.yml').parse().getLanguage();
 
 // Create the bot
-function createBot() {
+async function createBot() {
     const consolePrefix = `Bot`;
     let error = false;
     let plugins = {};
@@ -40,7 +40,7 @@ function createBot() {
     
     // Load plugins
     log.log("Bot created!", consolePrefix);
-    plugins = config.plugins.enabled ? Plugins(bot, config, language) : null;
+    plugins = config.plugins.enabled ? await Plugins(bot, config, language) : null;
     bot.HiddenPlayer = {
         config: config,
         language: language,
