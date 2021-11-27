@@ -5,8 +5,10 @@ const Path = require('path');
 
 const log = new Util.Logger("Plugins");
 
-module.exports = function(Bot, config, language) {
-    log.log("Loading plugins...");
+module.exports = async (Bot, config, language) => {
+    log.warn("Loading plugins...");
+
+    let scripts = [];
 
     // Load minified plugins
     Bot.loadPlugin(cmd);
@@ -14,7 +16,33 @@ module.exports = function(Bot, config, language) {
     // Load plugins
     const files = readDir(config.plugins.pluginsFolder);
 
-    console.log(files);
+    log.warn(`found ${files.length} plugin(s).`);
+    for (const file of files) {
+        const constructor = require(Path.join('../', config.plugins.pluginsFolder, file));
+
+        try {
+            if(constructor?.versions && !constructor.versions.find(version => version === config.version)) throw new Error(`Unsupported plugin version: ${config.version} (supported: ${config.version})`);
+
+            switch (constructor?.start) {
+                case constructor?.start.constructor.name === 'AsyncFunction':
+                    await constructor.start(Bot, config, language);
+                    break;
+                case constructor?.start.constructor.name === 'Function':
+                    constructor.start(Bot, config, language);
+                    break;
+                default:
+                    throw new Error(`Invalid plugin start function: ${constructor.start}`);
+            }
+
+            scripts.push(constructor);
+            log.log(`Plugin ${file}.js loaded!`);
+        } catch (err) {
+            log.error(`Error loading plugin ${file}: ${err}`, `${file}.js`);
+            log.error(err, `${file}.js`);
+        }
+    }
+
+    return scripts;
 }
 
 function readDir(folder) {
