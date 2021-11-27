@@ -12,7 +12,7 @@ module.exports = function(Bot, config, language) {
     Bot.loadPlugin(cmd);
 
     // Load plugins
-    const files = readDir(config.plugins.pluginsFoler);
+    const files = readDir(config.plugins.pluginsFolder);
 
     console.log(files);
 }

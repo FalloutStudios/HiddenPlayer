@@ -39,15 +39,13 @@ function createBot() {
                 .createBot();
     
     // Load plugins
+    log.log("Bot created!", consolePrefix);
     plugins = config.plugins.enabled ? Plugins(bot, config, language) : null;
     bot.HiddenPlayer = {
         config: config,
         language: language,
         plugins: plugins
     }
-
-    // Check bot
-    log.log("Bot created!", consolePrefix);
 
     // Events
     bot.on('spawn', () => {
