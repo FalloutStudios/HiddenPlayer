@@ -104,5 +104,6 @@ dist
 
 # Human generated
 .github/
+/plugins/
 /config/
 LICENSE
