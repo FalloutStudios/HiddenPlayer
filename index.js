@@ -57,9 +57,9 @@ function createBot() {
     // Exit events
     bot.on('kicked', reason => log.warn(`Bot was kicked:\n${JSON.parse(reason)?.text}`, `${consolePrefix} Kicked`));
     bot.on('error', err => {
-        log.error(`Bot error occured:\n${err}`, `${consolePrefix} Error`);
-        
         if(config.server.reconnect.autoReconnectOnError || error) return;
+
+        log.error(`Bot error occured:\n${err}`, `${consolePrefix} Error`);
         if(Util.ask("Bot error has occured! Would you like to continue? (y/n) >>> ").toString().toLowerCase() !== "y") {
             process.exit(0);
         }
