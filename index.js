@@ -25,30 +25,46 @@ let language = new Language('./config/language.yml').parse().getLanguage();
 // Create the bot
 function createBot() {
     // Create the bot
-    log.log("Creating bot...");
+    log.log("Creating bot...", consolePrefix);
     const bot = new CreateBot()
                 .setBotName(config.player.username)
                 .setBotVersion(config.player.version)
                 .setServerHost(config.server.host)
                 .setServerPort(config.server.port)
                 .createBot();
+    
+    // Load plugins
+    plugins = config.plugins.enabled ? Plugins(bot, config, language) : null;
+    bot.HiddenPlayer = {
+        config: config,
+        language: language,
+        plugins: plugins
+    }
 
     // Check bot
-    if(!bot) (() => (Util.ask("Bot creation error! would you like to create a new? (y/n)") == 'y' ? createBot() : process.exit(0)))();
-    log.log("Bot created!");
+    log.log("Bot created!", consolePrefix);
 
     // Events
     bot.on('spawn', () => {
-        log.log("Bot Spawned!");
+        log.log("Bot Spawned!", consolePrefix);
     });
 
     // Exit events
+    bot.on('kicked', reason => log.warn(`Bot was kicked:\n${JSON.parse(reason)?.text}`, `${consolePrefix} kicked`));
+    bot.on('error', err => {
+        log.error(`Bot error occured:\n${err}`, `${consolePrefix} Error`);
+        
+        if(config.server.reconnect.autoReconnectOnError) return;
+        if(Util.ask("Bot error has occured! Would you like to continue? (y/n) >>> ").toString().toLowerCase() !== "y") {
+            process.exit(0);
+        }
+    });
     bot.on('end', () => {
-        log.warn("Bot Ended!");
+        log.warn("Bot Ended!", consolePrefix);
 
         // Reconnect
         if(!config.server.reconnect.enabled) return;
-        log.log(`Reconnecting in ${config.server.reconnect.timeout / 1000}s`);
+        log.log(`Reconnecting in ${config.server.reconnect.timeout / 1000}s`, consolePrefix);
         setTimeout(() => createBot(), config.server.reconnect.timeout);
     })
 }
