@@ -26,6 +26,7 @@ let language = new Language('./config/language.yml').parse().getLanguage();
 // Create the bot
 function createBot() {
     const consolePrefix = `Bot`;
+    let error = false;
     let plugins = {};
 
     // Create the bot
@@ -58,10 +59,12 @@ function createBot() {
     bot.on('error', err => {
         log.error(`Bot error occured:\n${err}`, `${consolePrefix} Error`);
         
-        if(config.server.reconnect.autoReconnectOnError) return;
+        if(config.server.reconnect.autoReconnectOnError || error) return;
         if(Util.ask("Bot error has occured! Would you like to continue? (y/n) >>> ").toString().toLowerCase() !== "y") {
             process.exit(0);
         }
+
+        error = true;
     });
     bot.on('end', () => {
         log.warn("Bot Ended!", consolePrefix);
