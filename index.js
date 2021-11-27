@@ -54,7 +54,7 @@ function createBot() {
     });
 
     // Exit events
-    bot.on('kicked', reason => log.warn(`Bot was kicked:\n${JSON.parse(reason)?.text}`, `${consolePrefix} kicked`));
+    bot.on('kicked', reason => log.warn(`Bot was kicked:\n${JSON.parse(reason)?.text}`, `${consolePrefix} Kicked`));
     bot.on('error', err => {
         log.error(`Bot error occured:\n${err}`, `${consolePrefix} Error`);
         
