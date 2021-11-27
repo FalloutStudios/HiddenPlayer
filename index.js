@@ -16,6 +16,7 @@ const Util = require('fallout-utility');
 const CreateBot = require('./scripts/createBot');
 const Config = require('./scripts/config');
 const Language = require('./scripts/language');
+const Plugins = require('./scripts/plugins');
 
 // Configure the bot
 const log = new Util.Logger("Main");
