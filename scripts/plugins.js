@@ -5,10 +5,11 @@ const Path = require('path');
 
 const log = new Util.Logger("Plugins");
 
-module.exports = async (Bot, config, language) => {
+module.exports = async (Bot, location, config, language) => {
     log.warn("Loading plugins...");
 
     let scripts = [];
+    location = Path.join(location, config.plugins.pluginsFolder);
 
     // Load minified plugins
     Bot.loadPlugin(cmd);
@@ -18,7 +19,7 @@ module.exports = async (Bot, config, language) => {
 
     log.warn(`found ${files.length} plugin(s).`);
     for (const file of files) {
-        const constructor = require(Path.join('../', config.plugins.pluginsFolder, file));
+        const constructor = require(Path.join(location, file));
 
         try {
             if(constructor?.versions && !constructor.versions.find(version => version === config.version)) throw new Error(`Unsupported plugin version: ${config.version} (supported: ${config.version})`);
@@ -45,8 +46,7 @@ module.exports = async (Bot, config, language) => {
     return scripts;
 }
 
-function readDir(folder) {
-    const path = Path.join(__dirname, folder);
+function readDir(path) {
     if(!Fs.existsSync(path)) Fs.mkdirSync(path, { recursive: true }); 
 
     return Fs.readdirSync(path).filter(file => (file.endsWith('.js') && !file.startsWith('_')));

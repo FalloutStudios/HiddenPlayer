@@ -40,7 +40,7 @@ async function createBot() {
     
     // Load plugins
     log.log("Bot created!", consolePrefix);
-    plugins = config.plugins.enabled ? await Plugins(bot, config, language) : null;
+    plugins = config.plugins.enabled ? await Plugins(bot, __dirname, config, language) : null;
     bot.HiddenPlayer = {
         config: config,
         language: language,
