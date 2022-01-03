@@ -4,10 +4,11 @@ const Config = require('./scripts/config');
 
 const ms = require('ms');
 const chats = require('./scripts/chat');
+const movement = require('./scripts/movement');
 const createBot = require('./scripts/createBot');
 const config = new Config().parse().validate().toJson();
 
-const print = new Util.Logger('Main');
+const print = new Util.Logger('Main').logFile(config.logFile);
 
 makeBot();
 
@@ -23,6 +24,10 @@ function makeBot() {
     bot.once('spawn', () => {
         print.warn('Bot spawned');
         chats(bot);
+    });
+
+    bot.on('spawn', () => {
+        movement(bot);
     });
 
     bot.on('error', (err) => {

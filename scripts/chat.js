@@ -7,7 +7,7 @@ module.exports = async (bot) => {
     bot.on('chat', (username, message) => {
         if(config.actions.message.logMessages.enabled) print.log(`${username}: ${message}`);
 
-        if(config.actions.message.messageAutoResponse.enabled) {
+        if(config.actions.message.messageAutoResponse.enabled && username != bot.username) {
             const find = config.actions.message.messageAutoResponse.responses.find(m => !m.matchCase && m.phrase?.toLowerCase().trim() === message.toLowerCase().trim() || m.matchCase && m.phrase?.trim() === message.trim());
 
             if(find?.reply) bot.chat(getRandomKey(find.reply));
