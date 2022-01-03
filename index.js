@@ -3,6 +3,7 @@ const Mineflayer = require('mineflayer');
 const Config = require('./scripts/config');
 
 const ms = require('ms');
+const chats = require('./scripts/chat');
 const createBot = require('./scripts/createBot');
 const config = new Config().parse().validate().toJson();
 
@@ -16,8 +17,12 @@ function makeBot() {
 
     const bot = new Mineflayer.createBot(createBot(config));
 
+    bot.config = config;
+    bot.logger = print;
+
     bot.once('spawn', () => {
         print.warn('Bot spawned');
+        chats(bot);
     });
 
     bot.on('error', (err) => {
