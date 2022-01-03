@@ -152,6 +152,6 @@ actions:
 logFile: './logs/latest.log'
 
 # supported config version
-version: '2.0.0'`;
+version: ${Version}`;
     }
 }
