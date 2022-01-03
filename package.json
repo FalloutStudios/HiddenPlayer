@@ -1,0 +1,29 @@
+{
+  "name": "hiddenplayer",
+  "author": "FalloutStudios",
+  "license": "GPL-3.0",
+  "version": "2.0.0",
+  "main": "index.js",
+  "description": "",
+  "homepage": "https://github.com/FalloutStudios/HiddenPlayer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FalloutStudios/HiddenPlayer.git"
+  },
+  "scripts": {
+    "test": "node index.js"
+  },
+  "keywords": [
+    "HiddenPlayer"
+  ],
+  "bugs": {
+    "url": "https://github.com/FalloutStudios/HiddenPlayer/issues"
+  },
+  "dependencies": {
+    "fallout-utility": "^1.2.5",
+    "mineflayer": "^3.14.1",
+    "prompt-sync": "^4.1.6",
+    "yaml": "^1.10.2"
+  },
+  "devDependencies": {}
+}
