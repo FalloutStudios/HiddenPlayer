@@ -26,45 +26,47 @@ module.exports = class Config {
         if(!config.version || config.version !== Version) throw new Error('Config version is not set');
         
         if(!config.server) throw new Error('Server config is not set');
-        switch (config.server) {
-            case (!config.server?.host): throw new Error('Server host is not set');
-            case (!config.server?.port): throw new Error('Server port is not set');
-        }
+        this.validateServer(config.server);
 
         if(!config.player) throw new Error('Player config is not set');
-        switch (config.player) {
-            case (this.validateUsername(config.player?.username)): throw new Error('Player username is not valid');
-            case (config.player?.password):
-                if(!config.player?.auth || config.player?.auth && (!config.player?.auth !== 'mojang' || !config.player?.auth !== 'microsoft')) throw new Error('Player auth is not valid');
-                break;
-        }
+        this.validatePlayer(config.player);
 
         if(!config.actions) throw new Error('Actions config is not set');
-        switch (config.actions) {
-            case (!config.actions?.message): throw new Error('Actions message is not set');
-            case (!config.actions?.message?.logMessages): throw new Error('Actions message logMessages is not set');
-            case (!config.actions?.message?.onJoinMessage): throw new Error('Actions message onJoinMessage is not set');
-            case (!config.actions?.message?.messageAutoResponse): throw new Error('Actions message messageAutoResponse is not set');
-            case (!config.actions?.disconnect): throw new Error('Actions disconnect is not set');
-            case (!config.actions?.disconnect?.reconnect): throw new Error('Actions disconnect reconnect is not set');
-        }
+        this.validateActions(config.actions);
 
         return this;
     }
 
-    validateUsername(username) {
-        if(!username) return false;
-        if(isEmail(username)) return true;
+    validateServer(config) {
+        if(!config) throw new Error('Server config is not set');
+        if(!config.host) throw new Error('Server host is not set');
+        if(!config.port) throw new Error('Server port is not set');
 
-        const regex = /([a-zA-Z0-9_]{3,16})|(\*[a-zA-Z0-9_]{4,17})/;;
-        
-        return regex.test(username) ? true : false;
+        return this;
+    }
 
-        
+    validatePlayer(config) {
+        const userRegex = /([a-zA-Z0-9_]{3,16})|(\*[a-zA-Z0-9_]{4,17})/;;
+
+        if(!config) throw new Error('Player config is not set');
+        if(!userRegex.test(config.username) && !isEmail(config.username)) throw new Error('Invalid username');
+        if((config.auth && config.password) && config.auth !== 'mojang' && config.auth !== 'microsoft') throw new Error('Invalid auth');
+
+        return this;
         function isEmail(str) {
             const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             return emailRegex.test(String(str).toLowerCase());
         }
+    }
+
+    validateActions(config) {
+        if(!config) throw new Error('Actions config is not set');
+        if(!config.message) throw new Error('Actions message is not set');
+        if(!config.message.logMessages) throw new Error('Actions message logMessages is not set');
+        if(!config.message.onJoinMessage) throw new Error('Actions message onJoinMessage is not set');
+        if(!config.message.messageAutoResponse) throw new Error('Actions message messageAutoResponse is not set');
+        if(!config.disconnect) throw new Error('Actions disconnect is not set');
+        if(!config.disconnect.reconnect) throw new Error('Actions disconnect reconnect is not set');
     }
 
     toJson() {
@@ -94,7 +96,7 @@ player:
   # Set Mojang/Microsoft account password (Empty if you want to use cracked)
   password:
 
-  # Set account authentication this can be (mojang) or (microsoft)
+  # Set account authentication this can be (mojang) or (microsoft) (Don't touch if you're using cracked)
   auth: 'mojang'
 
 # Actions
