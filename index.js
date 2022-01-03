@@ -1,77 +1,58 @@
-/**
- * 
- * 
- * ██   ██ ██ ██████  ██████  ███████ ███    ██ ██████  ██       █████  ██    ██ ███████ ██████  
- * ██   ██ ██ ██   ██ ██   ██ ██      ████   ██ ██   ██ ██      ██   ██  ██  ██  ██      ██   ██ 
- * ███████ ██ ██   ██ ██   ██ █████   ██ ██  ██ ██████  ██      ███████   ████   █████   ██████  
- * ██   ██ ██ ██   ██ ██   ██ ██      ██  ██ ██ ██      ██      ██   ██    ██    ██      ██   ██ 
- * ██   ██ ██ ██████  ██████  ███████ ██   ████ ██      ███████ ██   ██    ██    ███████ ██   ██
- * 
- * 
-*/
-
-require('./scripts/startup')();
-
 const Util = require('fallout-utility');
-const CreateBot = require('./scripts/createBot');
+const Mineflayer = require('mineflayer');
 const Config = require('./scripts/config');
-const Language = require('./scripts/language');
-const Plugins = require('./scripts/plugins');
 
-// Configure the bot
-const log = new Util.Logger("Main");
-let config = new Config('./config/config.yml').parse().testmode().prefill().getConfig();
-let language = new Language('./config/language.yml').parse().getLanguage();
+const ms = require('ms');
+const chats = require('./scripts/chat');
+const createBot = require('./scripts/createBot');
+const config = new Config().parse().validate().toJson();
 
-// Create the bot
-async function createBot() {
-    const consolePrefix = `Bot`;
-    let error = false;
-    let plugins = {};
+const print = new Util.Logger('Main');
 
-    // Create the bot
-    log.log("Creating bot...", consolePrefix);
-    const bot = new CreateBot()
-                .setBotName(config.player.username)
-                .setBotVersion(config.player.version)
-                .setServerHost(config.server.host)
-                .setServerPort(config.server.port)
-                .createBot();
-    
-    // Load plugins
-    log.log("Bot created!", consolePrefix);
-    plugins = config.plugins.enabled ? await Plugins(bot, __dirname, config, language) : null;
-    bot.HiddenPlayer = {
-        config: config,
-        language: language,
-        plugins: plugins
-    }
+makeBot();
 
-    // Events
-    bot.on('spawn', () => {
-        log.log("Bot Spawned!", consolePrefix);
+function makeBot() {
+    print.info('Creating bot...');
+    print.info(createBot(config));
+
+    const bot = new Mineflayer.createBot(createBot(config));
+
+    bot.config = config;
+    bot.logger = print;
+
+    bot.once('spawn', () => {
+        print.warn('Bot spawned');
+        chats(bot);
     });
 
-    // Exit events
-    bot.on('kicked', reason => log.warn(`Bot was kicked:\n${JSON.parse(reason)?.text}`, `${consolePrefix} Kicked`));
-    bot.on('error', err => {
-        if(config.server.reconnect.autoReconnectOnError || error) return;
-
-        log.error(`Bot error occured:\n${err}`, `${consolePrefix} Error`);
-        if(Util.ask("Bot error has occured! Would you like to continue? (y/n) >>> ").toString().toLowerCase() !== "y") {
-            process.exit(0);
-        }
-
-        error = true;
+    bot.on('error', (err) => {
+        print.error(`Error: ${err}`);
+        bot.end();
     });
+    bot.on('kicked', (reason) => {
+        print.warn(`Kicked: ${reason}`);
+        bot.end();
+    });
+
     bot.on('end', () => {
-        log.warn("Bot Ended!", consolePrefix);
+        print.warn('Bot disconnected');
 
-        // Reconnect
-        if(!config.server.reconnect.enabled) return;
-        log.log(`Reconnecting in ${config.server.reconnect.timeout / 1000}s`, consolePrefix);
-        setTimeout(() => createBot(), config.server.reconnect.timeout);
-    })
+        if(config.actions.disconnect.reconnect.enabled) {
+            print.log(`Reconnecting ${ms(config.actions.disconnect.reconnect.reconnectTimeout, { long: true })}...`);
+            setTimeout(() => {
+                makeBot();
+            }, config.actions.disconnect.reconnect.reconnectTimeout);
+        } else {
+            print.log('Exiting...');
+        }
+    });
 }
 
-createBot();
+process.on('uncaughtException', (err) => {
+    print.error(err);
+    setTimeout(() => process.exit(1), 10);
+});
+process.on('unhandledRejection', (err) => {
+    print.error(err);
+    setTimeout(() => process.exit(1), 10);
+});

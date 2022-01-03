@@ -1,56 +1,13 @@
-const Mineflayer = require('mineflayer');
-const { isNumber } = require('fallout-utility');
+module.exports = (config) => {
+    let bot = {};
 
-module.exports = class Bot {
-    constructor() {
-        this.botName = null;
-        this.botVersion = null;
-        this.serverHost = null;
-        this.serverPort = null;
-    }
+    bot.host = config.server.host;
+    bot.port = config.server.port;
+    bot.username = config.player.username;
 
-    setBotName(botName) {
-        if(!validateUsername(botName)) throw new Error("Invalid bot name");
-        
-        this.botName = botName;
-        return this;
-    }
+    if(config.player.password) bot.password = config.player.password;
+    if(config.player.password && config.player.auth) bot.auth = config.player.auth;
+    if(config.server.version) bot.version = config.server.version;
 
-    setServerHost(serverHost) {
-        if(!serverHost) throw new Error("Invalid server host");
-
-        this.serverHost = serverHost;
-        return this;
-    }
-
-    setServerPort(serverPort) {
-        if(!(isNumber(serverPort) && validatePort(parseInt(serverPort)))) throw new Error("Invalid server port");
-
-        this.serverPort = serverPort;
-        return this;
-    }
-
-    setBotVersion(botVersion) {
-        if(!botVersion) botVersion = null;
-
-        this.botVersion = botVersion;
-        return this;
-    }
-
-    createBot() {
-        return Mineflayer.createBot({
-            host: this.serverHost,
-            port: this.serverPort,
-            username: this.botName,
-            version: this.botVersion,
-        });
-    }
-}
-
-function validateUsername(username) {
-    return /^[a-zA-Z0-9_]{3,16}$/.test(username);
-}
-
-function validatePort(port) {
-    return /^[0-9]{1,5}$/.test(port);
+    return bot;
 }
