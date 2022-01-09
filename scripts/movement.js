@@ -3,25 +3,25 @@ const Fs = require('fs');
 const Path = require('path');
 const { getRandomKey } = require('fallout-utility');
 
-module.exports = (bot) => {
-    const config = bot.config;
-    const print = bot.logger;
+let emitted = false;
 
+let moving = false;
+let time = -1;
+let actionTimeout = -1;
+let jumpTimeout = -1;
+let entity = null;
+let activeHeldItem = false;
+
+module.exports = (bot) => {
     const botConfig = getConfig('./config/movements.yml');
 
-    if(botConfig.playerLocationMovements.enabled) {
+    if(botConfig.playerLocationMovements.enabled && !emitted) {
         playerMovements(bot, botConfig);
+        emitted = true;
     }
 }
 
 function playerMovements(bot, botConfig) {
-    let moving = false;
-    let time = -1;
-    let actionTimeout = -1;
-    let jumpTimeout = -1;
-    let entity = null;
-    let activeHeldItem = false;
-    
     bot.on('time', () => {
         time = bot.time.age;
 
