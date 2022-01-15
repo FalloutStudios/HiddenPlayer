@@ -20,7 +20,7 @@
     "url": "https://github.com/FalloutStudios/HiddenPlayer/issues"
   },
   "dependencies": {
-    "fallout-utility": "^1.2.5",
+    "fallout-utility": "^1.2.7",
     "mineflayer": "^3.14.1",
     "ms": "^2.1.3",
     "prismarine-chat": "^1.5.0",
