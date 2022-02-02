@@ -20,8 +20,6 @@ module.exports = (bot, Pathfinder) => {
 }
 
 function playerMovements(bot, Pathfinder, botConfig) {
-    const mcData = require('minecraft-data')(bot.version);
-    const defaultMove = configureMovements(new Pathfinder.Movements(bot, mcData), botConfig);
 
     bot.on('time', () => {
         time = bot.time.age;
