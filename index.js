@@ -1,5 +1,6 @@
 const Util = require('fallout-utility');
 const Mineflayer = require('mineflayer');
+const Pathfinder = require('mineflayer-pathfinder');
 const Config = require('./scripts/config');
 
 const ms = require('ms');
@@ -17,6 +18,8 @@ function makeBot() {
     print.info(createBot(config));
 
     const bot = new Mineflayer.createBot(createBot(config));
+
+    bot.loadPlugin(Pathfinder.pathfinder);
 
     bot.config = config;
     bot.logger = print;
