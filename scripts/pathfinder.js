@@ -24,14 +24,14 @@ function pathFinder(bot, Pathfinder, botConfig) {
         const command = commandData.command.toLowerCase();
         const args = commandData.args;
         
-        if(!Object.values(botConfig.commands).find(c => c.name === command)?.enabled) return bot.whisper(username, `${command} is disabled.`);
+        if(!Object.values(botConfig.commands).find(c => c.name === command)?.enabled) return bot.whisper(username, `${command} is not found or disabled.`);
 
         if(botConfig.commandAccessPermissions.enabled) {
             const allowedPlayer = !botConfig.commandAccessPermissions.invertAllowedToDisallowed ? botConfig.commandAccessPermissions.allowedPlayers.includes(username) : !botConfig.commandAccessPermissions.allowedPlayers.includes(username);
             if(!allowedPlayer) return bot.whisper(username, `You are not allowed to use ${command}`);
         }
 
-        if((bot.pathfinder.isMoving() || bot.pathfinder.isMining() || bot.pathfinder.isBuilding()) && command !== 'stop') return bot.whisper(username, 'I am already pathfinding! Stop it first!');
+        if((bot.pathfinder.isMoving() || bot.pathfinder.isMining() || bot.pathfinder.isBuilding()) && (command !== 'stop' || command !== 'help')) return bot.whisper(username, 'I am already pathfinding! Stop it first!');
         bot.pathfinder.setMovements(defaultMove);
         switch(command) {
             case 'goto':
@@ -66,6 +66,13 @@ function pathFinder(bot, Pathfinder, botConfig) {
                 bot.pathfinder.stop();
                 if(args.length > 0 && args[0] == 'force') { bot.pathfinder.setGoal(null); bot.chat('Force stopping pathfinding'); }
                 break;
+            case 'help':
+                let helpReply = 'Pathfinder commands:';
+                for(const command of Object.values(botConfig.commands)) {
+                    if(command.enabled) helpReply += `\n${botConfig.pathFinderCommandPrefix}${command.name}${command.usage} - ${command.description}`;
+                }
+                bot.whisper(username, helpReply);
+                break;
         }
     }); 
 
@@ -73,8 +80,9 @@ function pathFinder(bot, Pathfinder, botConfig) {
         if(bot.pathfinder.isMoving() || bot.pathfinder.isMining() || bot.pathfinder.isBuilding()) {
             if(botConfig.events.announceOnDeathWhilePathfinding.enabled) {
                 bot.chat(botConfig.events.announceOnDeathWhilePathfinding.message);
-                bot.pathfinder.stop();
             }
+
+            bot.pathfinder.stop();
         }
     });
 }
@@ -101,26 +109,31 @@ function getConfig(configLocation) {
             goto: {
                 name: 'goto',
                 enabled: true,
+                usage: ' <x> <y> <z>',
                 description: 'Pathfind to a coordinate',
             },
             gotoMe: {
                 name: 'gotome',
                 enabled: true,
+                usage: '',
                 description: 'Pathfind to your current location',
             },
             gotoNear: {
                 name: 'gotonear',
                 enabled: true,
+                usage: '',
                 description: 'Pathfind to a nearby entity',
             },
             gotoNearPlayer: {
                 name: 'gotonearplayer',
                 enabled: true,
+                usage: '',
                 description: 'Pathfind to a nearby player',
             },
             stop: {
                 name: 'stop',
                 enabled: true,
+                usage: ' [force]',
                 description: 'Stop pathfinding',
             }
         },
@@ -145,9 +158,6 @@ function getConfig(configLocation) {
             allowFreeMotion: false,
             allowParkour: true,
             allowSprinting: true,
-        },
-        log: {
-            enabled: true
         },
     }
 
