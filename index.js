@@ -27,7 +27,7 @@ function makeBot() {
     bot.logger = print;
 
     pathfinder(bot, Pathfinder);
-    movement(bot);
+    movement(bot, Pathfinder);
     chats(bot);
 
     bot.once('spawn', () => {

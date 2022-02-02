@@ -11,15 +11,18 @@ let entity = null;
 let activeHeldItem = false;
 let stopped = false;
 
-module.exports = (bot) => {
+module.exports = (bot, Pathfinder) => {
     const botConfig = getConfig('./config/movements.yml');
 
     if(botConfig.playerLocationMovements.enabled) {
-        playerMovements(bot, botConfig);
+        playerMovements(bot, Pathfinder, botConfig);
     }
 }
 
-function playerMovements(bot, botConfig) {
+function playerMovements(bot, Pathfinder, botConfig) {
+    const mcData = require('minecraft-data')(bot.version);
+    const defaultMove = configureMovements(new Pathfinder.Movements(bot, mcData), botConfig);
+
     bot.on('time', () => {
         time = bot.time.age;
 
