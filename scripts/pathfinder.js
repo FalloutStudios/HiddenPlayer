@@ -64,6 +64,7 @@ function pathFinder(bot, Pathfinder, botConfig) {
             case 'stop':
                 bot.whisper(username, 'Stopping pathfinding');
                 bot.pathfinder.stop();
+                if(args.length > 0 && args[0] == 'force') { bot.pathfinder.setGoal(null); bot.chat('Force stopping pathfinding'); }
                 break;
         }
     }); 
