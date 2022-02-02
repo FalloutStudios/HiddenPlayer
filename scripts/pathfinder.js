@@ -4,7 +4,7 @@ const Path = require('path');
 const Util = require('fallout-utility');
 
 module.exports = (bot, Pathfinder) => {
-    const botConfig = getConfig('./config/movements.yml');
+    const botConfig = getConfig('./config/pathfinder.yml');
 
     if(botConfig.enablePathfinder) {
         pathFinder(bot, Pathfinder, botConfig);
@@ -13,7 +13,7 @@ module.exports = (bot, Pathfinder) => {
 
 function pathFinder(bot, Pathfinder, botConfig) {
     const mcData = require('minecraft-data')(bot.version);
-    const defaultMove = configureMovements(new Movements(bot, mcData), botConfig);
+    const defaultMove = configureMovements(new Pathfinder.Movements(bot, mcData), botConfig);
 
     bot.on('whisper', (username, message, rawMessage) => { 
         if(username === bot.username) return;
@@ -23,7 +23,8 @@ function pathFinder(bot, Pathfinder, botConfig) {
 
         const command = commandData.command.toLowerCase();
         const args = commandData.args;
-        if(!botConfig.commands[command].enabled) return bot.whisper(username, `${command} is disabled`);
+        
+        if(!Object.values(botConfig.commands).find(c => c.name === command)?.enabled) return bot.whisper(username, `${command} is disabled.`);
 
         if(botConfig.commandAccessPermissions.enabled) {
             const allowedPlayer = !botConfig.commandAccessPermissions.invertAllowedToDisallowed ? botConfig.commandAccessPermissions.allowedPlayers.includes(username) : !botConfig.commandAccessPermissions.allowedPlayers.includes(username);

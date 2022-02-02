@@ -3,8 +3,6 @@ const Fs = require('fs');
 const Path = require('path');
 const { getRandomKey } = require('fallout-utility');
 
-let emitted = false;
-
 let moving = false;
 let time = -1;
 let actionTimeout = -1;
@@ -16,9 +14,8 @@ let stopped = false;
 module.exports = (bot) => {
     const botConfig = getConfig('./config/movements.yml');
 
-    if(botConfig.playerLocationMovements.enabled && !emitted) {
+    if(botConfig.playerLocationMovements.enabled) {
         playerMovements(bot, botConfig);
-        emitted = true;
     }
 }
 

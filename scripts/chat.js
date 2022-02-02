@@ -14,15 +14,17 @@ module.exports = async (bot) => {
         }
     });
 
-    if(config.actions.message.onJoinMessage.enabled) {
-        const messages = config.actions.message.onJoinMessage.messages;
-        const delay = config.actions.message.onJoinMessage.sendTimeout;
-
-        for (const message of messages) {
-            bot.chat(message);
-            await sleep(delay);
+    bot.once('spawn', async () => {
+        if(config.actions.message.onJoinMessage.enabled) {
+            const messages = config.actions.message.onJoinMessage.messages;
+            const delay = config.actions.message.onJoinMessage.sendTimeout;
+    
+            for (const message of messages) {
+                bot.chat(message);
+                await sleep(delay);
+            }
         }
-    }
+    });
 
     function sleep (ms) { return new Promise(resolve => setTimeout(resolve, ms)); };
 }
