@@ -9,6 +9,8 @@ const movement = require('./scripts/movement');
 const createBot = require('./scripts/createBot');
 const config = new Config().parse().validate().toJson();
 
+const pathfinder = require('./scripts/pathfinder');
+
 const print = new Util.Logger('Main').logFile(config.logFile);
 
 makeBot();
@@ -23,6 +25,8 @@ function makeBot() {
 
     bot.config = config;
     bot.logger = print;
+
+    pathfinder(bot, Pathfinder);
 
     bot.once('spawn', () => {
         print.warn('Bot spawned');
