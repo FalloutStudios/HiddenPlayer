@@ -3,27 +3,39 @@ const Fs = require('fs');
 const Path = require('path');
 const { getRandomKey } = require('fallout-utility');
 
-let emitted = false;
-
 let moving = false;
 let time = -1;
 let actionTimeout = -1;
 let jumpTimeout = -1;
 let entity = null;
 let activeHeldItem = false;
+let stopped = false;
 
-module.exports = (bot) => {
+module.exports = (bot, Pathfinder) => {
     const botConfig = getConfig('./config/movements.yml');
 
-    if(botConfig.playerLocationMovements.enabled && !emitted) {
-        playerMovements(bot, botConfig);
-        emitted = true;
+    if(botConfig.playerLocationMovements.enabled) {
+        playerMovements(bot, Pathfinder, botConfig);
     }
 }
 
-function playerMovements(bot, botConfig) {
+function playerMovements(bot, Pathfinder, botConfig) {
+
     bot.on('time', () => {
         time = bot.time.age;
+
+        if((bot.pathfinder.isMoving() || bot.pathfinder.isMining() || bot.pathfinder.isBuilding()) && botConfig.playerLocationMovements.cancelOnPathfinderMovement) {
+            if(!stopped) {
+                bot.setControlState('jump', false);
+                bot.deactivateItem();
+                for (const action of  botConfig.playerLocationMovements.actions) { bot.setControlState(action, false); }
+
+                moving = false;
+                stopped = true;
+            }
+
+            return;
+        }
 
         entity = bot.nearestEntity((e) => botConfig.playerLocationMovements.lookAt.players && e.type === 'player' && e.name !== bot.username || botConfig.playerLocationMovements.lookAt.mobs && e.type !== 'player');
         if(entity && (botConfig.playerLocationMovements.lookAt.players || botConfig.playerLocationMovements.lookAt.mobs)) bot.lookAt(entity.position.offset(0, 1.6, 0));
@@ -81,6 +93,7 @@ function getConfig(configLocation) {
         },
         playerLocationMovements: {
             enabled: true,
+            cancelOnPathfinderMovement: true,
             actions: ['forward', 'back', 'left', 'right'],
             lookAt: {
                 players: true,

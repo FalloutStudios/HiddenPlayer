@@ -1,5 +1,6 @@
 const Util = require('fallout-utility');
 const Mineflayer = require('mineflayer');
+const Pathfinder = require('mineflayer-pathfinder');
 const Config = require('./scripts/config');
 
 const ms = require('ms');
@@ -7,6 +8,8 @@ const chats = require('./scripts/chat');
 const movement = require('./scripts/movement');
 const createBot = require('./scripts/createBot');
 const config = new Config().parse().validate().toJson();
+
+const pathfinder = require('./scripts/pathfinder');
 
 const print = new Util.Logger('Main').logFile(config.logFile);
 
@@ -18,16 +21,17 @@ function makeBot() {
 
     const bot = new Mineflayer.createBot(createBot(config));
 
+    bot.loadPlugin(Pathfinder.pathfinder);
+
     bot.config = config;
     bot.logger = print;
 
+    pathfinder(bot, Pathfinder);
+    movement(bot, Pathfinder);
+    chats(bot);
+
     bot.once('spawn', () => {
         print.warn('Bot spawned');
-        chats(bot);
-    });
-
-    bot.on('spawn', () => {
-        movement(bot);
     });
 
     bot.on('error', (err) => {
