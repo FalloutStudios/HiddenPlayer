@@ -15,66 +15,8 @@ function pathFinder(bot, Pathfinder, botConfig) {
     const mcData = require('minecraft-data')(bot.version);
     const defaultMove = configureMovements(new Pathfinder.Movements(bot, mcData), botConfig);
 
-    bot.on('whisper', (username, message, rawMessage) => { 
-        if(username === bot.username) return;
-
-        const commandData = Util.detectCommand(message, botConfig.pathFinderCommandPrefix) ? Util.getCommand(message, botConfig.pathFinderCommandPrefix) : null;
-        if(!commandData) return;
-
-        const command = commandData.command.toLowerCase();
-        const args = commandData.args;
-        
-        if(!Object.values(botConfig.commands).find(c => c.name === command)?.enabled) return bot.whisper(username, `${command} is not found or disabled.`);
-
-        if(botConfig.commandAccessPermissions.enabled) {
-            const allowedPlayer = !botConfig.commandAccessPermissions.invertAllowedToDisallowed ? botConfig.commandAccessPermissions.allowedPlayers.includes(username) : !botConfig.commandAccessPermissions.allowedPlayers.includes(username);
-            if(!allowedPlayer) return bot.whisper(username, `You are not allowed to use ${command}`);
-        }
-
-        if((bot.pathfinder.isMoving() || bot.pathfinder.isMining() || bot.pathfinder.isBuilding()) && (command !== 'stop' || command !== 'help')) return bot.whisper(username, 'I am already pathfinding! Stop it first!');
-        bot.pathfinder.setMovements(defaultMove);
-        switch(command) {
-            case 'goto':
-                if(args.length <= 2 || (!parseInt(args[0]) || !parseInt(args[1]) || !parseInt(args[2]))) return bot.whisper(username, `Usage: ${command} <x> <y> <z>`);
-                bot.whisper(username, `Pathfinding to ${args[0]} ${args[1]} ${args[2]}`);
-
-                bot.pathfinder.setGoal(new Pathfinder.goals.GoalBlock(args[0], args[1], args[2]));
-                break;
-            case 'gotome':
-                const player = bot.players[username] ? bot.players[username].entity : null;
-                if(!player) return bot.whisper(username, 'I can\'t find you!');
-
-                bot.whisper(username, `Pathfinding to ${player.position.x} ${player.position.y} ${player.position.z}`);
-                bot.pathfinder.setGoal(new Pathfinder.goals.GoalNear(player.position.x, player.position.y, player.position.z, 1));
-                break;
-            case 'gotonear':
-                const entity = bot.nearestEntity(e => e.type !== 'player');
-                if(!entity) return bot.whisper(username, 'I can\'t find any nearby entities!');
-
-                bot.whisper(username, `Pathfinding to ${entity.position.x} ${entity.position.y} ${entity.position.z}`);
-                bot.pathfinder.setGoal(new Pathfinder.goals.GoalNear(entity.position.x, entity.position.y, entity.position.z, 1));
-                break;
-            case 'gotonearplayer':
-                const playerEntity = bot.nearestEntity(e => e.type === 'player');
-                if(!playerEntity) return bot.whisper(username, 'I can\'t find any nearby players!');
-
-                bot.whisper(username, `Pathfinding to ${playerEntity.position.x} ${playerEntity.position.y} ${playerEntity.position.z}`);
-                bot.pathfinder.setGoal(new Pathfinder.goals.GoalNear(playerEntity.position.x, playerEntity.position.y, playerEntity.position.z, 1));
-                break;
-            case 'stop':
-                bot.whisper(username, 'Stopping pathfinding');
-                bot.pathfinder.stop();
-                if(args.length > 0 && args[0] == 'force') { bot.pathfinder.setGoal(null); bot.chat('Force stopping pathfinding'); }
-                break;
-            case 'help':
-                let helpReply = 'Pathfinder commands:';
-                for(const command of Object.values(botConfig.commands)) {
-                    if(command.enabled) helpReply += `\n${botConfig.pathFinderCommandPrefix}${command.name}${command.usage} - ${command.description}`;
-                }
-                bot.whisper(username, helpReply);
-                break;
-        }
-    }); 
+    bot.on('whisper', (username, message) => onCommand(username, message, bot.whisper)); 
+    if(botConfig.chatCommands.enabled) bot.on('chat', (username, message) => onCommand(username, message, (author, msg) => botConfig.chatCommands.replyWhisper ? bot.whisper(author, msg) : bot.chat(`${author}, ${msg}`) )); 
 
     bot.on('death', () => {
         if(bot.pathfinder.isMoving() || bot.pathfinder.isMining() || bot.pathfinder.isBuilding()) {
@@ -85,6 +27,73 @@ function pathFinder(bot, Pathfinder, botConfig) {
             bot.pathfinder.stop();
         }
     });
+
+    function onCommand(username, message, reply = (username, reply) => {}) { 
+        if(username === bot.username) return;
+
+        const commandData = Util.detectCommand(message, botConfig.pathFinderCommandPrefix) ? Util.getCommand(message, botConfig.pathFinderCommandPrefix) : null;
+        if(!commandData) return;
+
+        const command = commandData.command.toLowerCase();
+        const args = commandData.args;
+        
+        if(!(command == 'help' || command == 'stop') && !Object.values(botConfig.commands).find(c => c.name === command)?.enabled) return reply(username, `${command} is not found or disabled.`);
+
+        if(botConfig.commandAccessPermissions.enabled) {
+            const allowedPlayer = !botConfig.commandAccessPermissions.invertAllowedToDisallowed ? botConfig.commandAccessPermissions.allowedPlayers.includes(username) : !botConfig.commandAccessPermissions.allowedPlayers.includes(username);
+            if(!allowedPlayer) return reply(username, `You are not allowed to use ${command}`);
+        }
+
+        if((bot.pathfinder.isMoving() || bot.pathfinder.isMining() || bot.pathfinder.isBuilding()) && !(command == 'stop' || command == 'help' || command == 'rejoin')) return reply(username, 'I am already pathfinding! Stop it first!');
+        bot.pathfinder.setMovements(defaultMove);
+        switch(command) {
+            case 'goto':
+                if(args.length <= 2 || (!parseInt(args[0]) || !parseInt(args[1]) || !parseInt(args[2]))) return reply(username, `Usage: ${command} <x> <y> <z>`);
+                reply(username, `Pathfinding to ${args[0]} ${args[1]} ${args[2]}`);
+
+                bot.pathfinder.setGoal(new Pathfinder.goals.GoalBlock(args[0], args[1], args[2]));
+                break;
+            case 'gotome':
+                const player = bot.players[username] ? bot.players[username].entity : null;
+                if(!player) return reply(username, 'I can\'t find you!');
+
+                reply(username, `Pathfinding to ${player.position.x} ${player.position.y} ${player.position.z}`);
+                bot.pathfinder.setGoal(new Pathfinder.goals.GoalNear(player.position.x, player.position.y, player.position.z, 1));
+                break;
+            case 'gotonear':
+                const entity = bot.nearestEntity(e => e.type !== 'player');
+                if(!entity) return reply(username, 'I can\'t find any nearby entities!');
+
+                reply(username, `Pathfinding to ${entity.position.x} ${entity.position.y} ${entity.position.z}`);
+                bot.pathfinder.setGoal(new Pathfinder.goals.GoalNear(entity.position.x, entity.position.y, entity.position.z, 1));
+                break;
+            case 'gotonearplayer':
+                const playerEntity = bot.nearestEntity(e => e.type === 'player');
+                if(!playerEntity) return reply(username, 'I can\'t find any nearby players!');
+
+                reply(username, `Pathfinding to ${playerEntity.position.x} ${playerEntity.position.y} ${playerEntity.position.z}`);
+                bot.pathfinder.setGoal(new Pathfinder.goals.GoalNear(playerEntity.position.x, playerEntity.position.y, playerEntity.position.z, 1));
+                break;
+            case 'rejoin':
+                reply(username, 'Rejoining the server...');
+                bot.pathfinder.stop();
+                bot.pathfinder.setGoal(null);
+                bot.end();
+                break;
+            case 'stop':
+                reply(username, 'Stopping pathfinding');
+                bot.pathfinder.stop();
+                if(args.length > 0 && args[0] == 'force') { bot.pathfinder.setGoal(null); reply(username, 'Force stopping pathfinding'); }
+                break;
+            case 'help':
+                let helpReply = 'Pathfinder commands:';
+                for(const commandDescription of Object.values(botConfig.commands)) {
+                    if(commandDescription.enabled) helpReply += `\n${botConfig.pathFinderCommandPrefix}${commandDescription.name}${commandDescription.usage} - ${commandDescription.description}`;
+                }
+                reply(username, helpReply);
+                break;
+        }
+    }
 }
 
 function configureMovements(movements, botConfig) {
@@ -130,12 +139,22 @@ function getConfig(configLocation) {
                 usage: '',
                 description: 'Pathfind to a nearby player',
             },
+            rejoin: {
+                name: 'rejoin',
+                enabled: true,
+                usage: '',
+                description: 'Rejoin the server',
+            },
             stop: {
                 name: 'stop',
                 enabled: true,
                 usage: ' [force]',
                 description: 'Stop pathfinding',
             }
+        },
+        chatCommands: {
+            enabled: true,
+            replyWhisper: false,
         },
         commandAccessPermissions: {
             enabled: true,
@@ -147,7 +166,7 @@ function getConfig(configLocation) {
                 enabled: false,
                 message: 'I died while pathfinding!',
             },
-            breakBlocksWhilePathfinding: true
+            breakBlocksWhilePathfinding: false
         },
         pathfinder: {
             maxDropDown: 4,
