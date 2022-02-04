@@ -15,6 +15,7 @@ function pathFinder(bot, Pathfinder, botConfig) {
     const mcData = require('minecraft-data')(bot.version);
     const defaultMove = configureMovements(new Pathfinder.Movements(bot, mcData), botConfig);
 
+    let announce = (msg) => bot.chat(msg);
     bot.on('whisper', (username, message) => onCommand(username, message, bot.whisper)); 
     if(botConfig.chatCommands.enabled) bot.on('chat', (username, message) => onCommand(username, message, (author, msg) => botConfig.chatCommands.replyWhisper ? bot.whisper(author, msg) : bot.chat(`${author}, ${msg}`) )); 
 
