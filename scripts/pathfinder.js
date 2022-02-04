@@ -16,6 +16,7 @@ function pathFinder(bot, Pathfinder, botConfig) {
     const defaultMove = configureMovements(new Pathfinder.Movements(bot, mcData), botConfig);
 
     let announce = (msg) => bot.chat(msg);
+
     bot.on('whisper', (username, message) => onCommand(username, message, bot.whisper)); 
     if(botConfig.chatCommands.enabled) bot.on('chat', (username, message) => onCommand(username, message, (author, msg) => botConfig.chatCommands.replyWhisper ? bot.whisper(author, msg) : bot.chat(`${author}, ${msg}`) )); 
 
@@ -29,8 +30,10 @@ function pathFinder(bot, Pathfinder, botConfig) {
         }
     });
 
-    function onCommand(username, message, reply = (username, reply) => {}) { 
-        if(username === bot.username) return;
+    addListeners(bot, botConfig, announce);
+
+    function onCommand(username, message, reply = (username, reply) => { /** reply **/ }) { 
+        if(username === bot.username || username.toLowerCase() == 'you') return;
 
         const commandData = Util.detectCommand(message, botConfig.pathFinderCommandPrefix) ? Util.getCommand(message, botConfig.pathFinderCommandPrefix) : null;
         if(!commandData) return;
@@ -45,8 +48,9 @@ function pathFinder(bot, Pathfinder, botConfig) {
             if(!allowedPlayer) return reply(username, `You are not allowed to use ${command}`);
         }
 
-        if((bot.pathfinder.isMoving() || bot.pathfinder.isMining() || bot.pathfinder.isBuilding()) && !(command == 'stop' || command == 'help' || command == 'rejoin')) return reply(username, 'I am already pathfinding! Stop it first!');
+        // TODO: if((bot.pathfinder.isMoving() || bot.pathfinder.isMining() || bot.pathfinder.isBuilding()) && !(command == 'stop' || command == 'help' || command == 'rejoin')) return reply(username, 'I am already pathfinding! Stop it first!');
         bot.pathfinder.setMovements(defaultMove);
+        announce = (msg) => reply(username, msg);
         switch(command) {
             case 'goto':
                 if(args.length <= 2 || (!parseInt(args[0]) || !parseInt(args[1]) || !parseInt(args[2]))) return reply(username, `Usage: ${command} <x> <y> <z>`);
@@ -95,6 +99,12 @@ function pathFinder(bot, Pathfinder, botConfig) {
                 break;
         }
     }
+}
+
+function addListeners(bot, botConfig, announce = (msg) => { /** announce **/ }) {
+    if(botConfig.events.announceGoalReached) bot.on('goal_reached', () => announce('Goal reached!'));
+    if(botConfig.events.announceGoalUpdated) bot.on('goal_updated', () => announce('Goal updated!'));
+    if(botConfig.events.announcePathResetReason) bot.on('path_reset', (reason) => announce(`Path reset: ${reason}`));
 }
 
 function configureMovements(movements, botConfig) {
@@ -167,6 +177,9 @@ function getConfig(configLocation) {
                 enabled: false,
                 message: 'I died while pathfinding!',
             },
+            announcePathResetReason: true,
+            announceGoalReached: true,
+            announceGoalUpdated: true,
             breakBlocksWhilePathfinding: false
         },
         pathfinder: {
