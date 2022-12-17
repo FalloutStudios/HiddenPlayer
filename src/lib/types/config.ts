@@ -3,12 +3,21 @@ export interface Config {
         host: string;
         port?: number;
         username: string;
+        version?: string|false;
     };
     connection: {
         reconnect: {
             enabled: boolean;
             timeout: number;
         };
+    };
+    messages: {
+        allowChatsInTerminal: boolean;
+        loginMessages: {
+            enabled: boolean;
+            delayTimeout: number;
+            messages: string[];
+        }
     };
     logs: {
         enabled: boolean;

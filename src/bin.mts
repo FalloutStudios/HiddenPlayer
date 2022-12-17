@@ -58,6 +58,7 @@ if (config.logs.enabled) console.logFile(config.logs.latestLog);
 
 const bot = new HiddenPlayer({
     ...config.auth,
+    version: config.auth.version || undefined,
     reconnectTimeout: config.connection.reconnect.enabled ? config.connection.reconnect.timeout : undefined
 });
 
@@ -68,6 +69,7 @@ bot.on('ready', (_bot) => {
 
     _bot.bot.on('error', err => console.error(`An error occured:`, err));
     _bot.bot.on('kicked', reason => console.warn(`Bot has been kicked: `, reason));
+    _bot.bot.on('chat', (username, message) => console.log(`${chalk.blue(username)} ${chalk.gray('>')} ${message}`))
 });
 
 bot.on('reconnect', () => {

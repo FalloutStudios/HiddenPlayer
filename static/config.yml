@@ -2,11 +2,19 @@ auth:
   host: play.ourmcworld.gq
   port: 25565
   username: HiddenPlayer
+  version: false
 
 connection:
   reconnect:
     enabled: true
     timeout: 5000
+
+messages:
+  allowChatsInTerminal: true
+  loginMessages:
+    enabled: false
+    delayTimeout: 1000
+    messages: []
 
 logs:
   enabled: true
