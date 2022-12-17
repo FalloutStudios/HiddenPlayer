@@ -1,0 +1,14 @@
+auth:
+  host: play.ourmcworld.gq
+  port: 25565
+  username: HiddenPlayer
+
+connection:
+  reconnect:
+    enabled: true
+    timeout: 5000
+
+logs:
+  enabled: true
+  debugMode: false
+  latestLog: './logs/latest.log'
