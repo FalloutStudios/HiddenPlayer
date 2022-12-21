@@ -1,6 +1,6 @@
 {
     "name": "test",
-    "private": "true",
+    "private": true,
     "devDependencies": {
         "hiddenplayer": "../"
     }
